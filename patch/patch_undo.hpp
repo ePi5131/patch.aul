@@ -499,7 +499,7 @@ namespace patch {
 			// Ctrlで複数オブジェクトを選択しながら設定ダイアログのトラックバーを動かすと一部オブジェクトが正常に戻らない
 			ReplaceNearJmp(GLOBAL::exedit_base + 0x040e5d, &set_undo_wrap_40e5c);
 
-			// オブジェクトの左端をつまんで動かすと再生位置パラメータが変わるが、それが元に戻らない	
+			// オブジェクトの左端をつまんで動かすと再生位置パラメータが変わるが、それが元に戻らない
 			ReplaceNearJmp(GLOBAL::exedit_base + 0x03e038, &set_undo_wrap_3e037);
 			
 			// 一部フィルタのファイル参照を変更→元に戻すで設定ダイアログが更新されない(音声波形など)
@@ -515,7 +515,7 @@ namespace patch {
                 h.replaceNearJmp(4, &f8b97f);
             }
 
-            // テキストオブジェクトの影付き・縁付きを変更してもUndoデータが生成されないs
+            // テキストオブジェクトの影付き・縁付きを変更してもUndoデータが生成されない
             {
                 OverWriteOnProtectHelper h(GLOBAL::exedit_base + 0x08ba86, 2);
                 h.store_i16(0, '\x57\xe8'); // push edi=efp; call (rel32)
