@@ -1,0 +1,476 @@
+/*
+	This program is free software: you can redistribute it and/or modify
+    it under the terms of the GNU Lesser General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    This program is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU Lesser General Public License for more details.
+
+    You should have received a copy of the GNU Lesser General Public License
+    along with this program.  If not, see <https://www.gnu.org/licenses/>.
+*/
+
+#include <winres.h>
+#include "resource.h"
+#include "macro.h"
+
+STRINGTABLE
+LANGUAGE LANG_JAPANESE,SUBLANG_DEFAULT
+{
+	0,		"日本語 (patched)"
+	1,		"patch.aul by ePi"
+
+	10,		"デフォルト"
+	11,		"自動"
+	12,		"なし"
+	13,		"秒"
+	14,		"分"
+	15,		"時間"
+	16,		"インターレース解除"
+	17,		"奇数"
+	18,		"偶数"
+	19,		"二重化"
+	21,		"自動"
+	22,		"自動24fps"
+	23,		"標準"
+	24,		"反転"
+	25,		"周期"
+	26,		"不明"
+	27,		"出力中"
+	28,		"計測中"
+	29,		"検索中"
+	30,		"残り時間"
+	31,		"再圧縮不可"
+	32,		"未圧縮"
+	33,		"fps変換無し"
+	34,		"画像サイズ"
+	35,		"記録時間"
+	36,		"フレームレート"
+	37,		"フレーム数"
+	38,		"ビデオ圧縮"
+	39,		"サンプリングレート"
+	40,		"チャンネル数"
+	41,		"オーディオ形式"
+	42,		"強さ"
+	43,		"範囲"
+	44,		"しきい値"
+	45,		"下限値"
+	46,		"上限値"
+	49,		"上"
+	50,		"下"
+	51,		"左"
+	52,		"右"
+	53,		"明るさ"
+	54,		"コントラスト"
+	55,		"輝度"
+	56,		"ガンマ"
+	57,		"色の濃さ"
+	58,		"色合い"
+	59,		"レベル"
+	60,		"音量の最大化"
+	61,		"ぼかしフィルタ"
+	62,		"クリッピング＆リサイズ"
+	63,		"元の縦横比に合わせる"
+	64,		"元のサイズに拡大"
+	66,		"色調補正"
+	67,		"拡張色調補正"
+	68,		"TV -> PC スケール補正"
+	69,		"RGBの同期"
+	73,		"ヒストグラム"
+	74,		"インターレースの解除"
+	75,		"自動24fps解除"
+	76,		"ドット単位解除"
+	77,		"イメージ表示"
+	78,		"自動解除"
+	79,		"動き重視"
+	80,		"横縞部分を二重化"
+	81,		"奇数偶数解除"
+	82,		"位置補間"
+	83,		"適合補間"
+	84,		"インターリーブ"
+	85,		"0.5秒"
+	86,		"1秒"
+	87,		"2秒"
+	88,		"1フレーム"
+	89,		"2フレーム"
+	90,		"5フレーム"
+	91,		"10フレーム"
+	92,		"指定フレーム数"
+	93,		"ナビゲートウィンドウ"
+	94,		"ノイズ除去フィルタ"
+	95,		"ノイズ除去(時間軸)フィルタ"
+	96,		"再生ウィンドウ"
+	97,		"フレームレートの変更"
+	98,		"フレームレートの設定"
+	99,		"24fps<-30fpsの間引きには自動24fpsの処理を使う"
+	100,	"サイズの変更"
+	101,	"指定サイズ"
+	102,	"シャープフィルタ"
+	105,	"連番BmpFile (*.bmp)|*.bmp"
+	106,	"ツールウィンドウ"
+	107,	"の設定"
+	108,	"の表示"
+	109		"フィールドオーダー"
+	110		"ボトムフィールド -> トップフィールド"
+	111		"トップフィールド -> ボトムフィールド"
+	112		"ファイル制御"
+	113		"ビデオ展開形式"
+	114		"音量の調整"
+	115		"音声の位置調整"
+	116		"位置"
+	122		"縁塗りつぶし"
+	123		"黒で塗る"
+	124		"縁の色で塗る"
+	125		"PC -> TV スケール補正"
+	128		"中央に配置"
+	129		"何もしない"
+	130		"ウィンドウズをシャットダウン"
+	131		"ウィンドウズを休止"
+	132		"ウィンドウズをサスペンド"
+	133		"AviUtlを終了"
+	134		"バッチ出力リスト"
+	135		"[出力ファイル名が指定されていません]"
+	136		"色変換の設定"
+	137		"[ 入力 ]"
+	138		"[ 出力 ]"
+	139		"追加読み込み"
+	140		"音声読み込み"
+	141		"プロジェクトを開く"
+	142		"プロジェクトを保存"
+	143		"AVI出力"
+	144		"WAV出力"
+	145		"AviUtlを終了＆ウィンドウズを休止"
+	146		"AviUtlを終了＆ウィンドウズをサスペンド"
+	1000,	"ファイルの読み込みに失敗しました。"
+	1001,	"ファイルの書き込みに失敗しました。\n\nディスクの空き容量が足りないか\n作成できるファイルサイズの上限を超えた可能性があります。"
+	1002,	"ファイルの作成に失敗しました。"
+	1003,	"このファイルには対応していません。"
+	1004,	"使用されていたファイルが見つからないか変更されています。\n別のファイルを指定しますか？"
+	1005,	"同時に読み込めるファイルは%d個までです。"
+	1006,	"%dx%dを超える画像サイズのファイルは編集できません。\n\n最大画像サイズはシステムの設定で変更出来ます。"
+	1007,	"%dx%dより小さい画像サイズのファイルは編集できません。"
+	1008,	"編集できる最大フレーム数は%dフレームまでです。\n\n最大フレーム数はシステムの設定で変更出来ます。"
+	1009,	"再圧縮するフレームがありますがよろしいですか？\n\n※フレーム%d%s。"
+	1010,	"バッチ登録は最大%d個までです。"
+	1011,	"の画像フォーマットが違う"
+	1012,	"の画像サイズが違う"
+	1013,	"がキーフレームから続いていない"
+	1014,	"が60fps化モードで読み込まれている"
+	1015,	"編集しているファイルへの上書きは出来ません。"
+	1016,	"ビデオ圧縮の初期化に失敗しました。\n\n画像サイズを特定の倍数にしないと\n使用出来ないコーデックの可能性があります。"
+	1017,	"オーディオ圧縮の初期化に失敗しました。\n\n使用出来ないコーデックの可能性があります。"
+	1018,	"出力を中断しますか？"
+	1019,	"検索を中断しますか？"
+	1020,	"ありません。"
+	1021,	"使用されていません。"
+	1022,	"プロファイル名に以下の文字は使えません。\n\n%s"
+	1023,	"入力ファイルへの上書きは出来ません。"
+	1024,	"連結できるファイルは最大%d個までです。"
+	1025,	"再圧縮しないと正常なファイルが作成されない可能性がありますがよろしいですか？"
+	1026,	"出力プラグインが見つかりません。"
+	1028,	"ファイルの情報"
+	1029,	"プラグインフィルタ情報"
+	1030,	"入力プラグイン情報"
+	1031,	"出力プラグイン情報"
+	1032,	"オーバーレイ情報"
+	1033,	"バージョン情報"
+	1034,	"言語拡張リソース情報"
+	1035,	"メモリの確保に失敗しました。\n\nキャッシュサイズを調整して再試行しますか？"
+	1036,	"バッチ出力に失敗したファイルがあります。"
+	1037,	"すべて削除しますがよろしいですか？"
+	1038,	"ファイルの読み込みに失敗しました。\n\nこのファイル形式には対応していないか\n対応するコーデックやプラグインが\n登録されていない可能性があります。"
+	1039,	"ファイルの出力に失敗しました。"
+	1040,	"[開始]ボタンを押すとバッチ出力を開始します"
+	1041,	"すべて正常に終了しました"
+	1042,	"\x22%s\x22を出力中です"
+	1043,	"他のプロセスでの出力終了を待っています"
+	1044,	"色変換プラグイン情報"
+	1045,	"複数の操作が同じショートカットキーに割り当てられています\n\n%s\n%s\n"
+	1046,	"現在の編集データは破棄されますがよろしいですか？"
+	1047,	"メモリをアドレスに割り当てることができません。"
+
+	PATCH_RS_PATCH_FAILED_TO_SAVE_SETTING 				"設定ファイルの保存に失敗"
+	PATCH_RS_PATCH_FAILED_TO_LOAD_SETTING 				"設定ファイルの読込に失敗"
+	PATCH_RS_PATCH_FAILED_TO_INIT_CONSOLE 				"コンソールの初期化に失敗"
+	PATCH_RS_PATCH_CONSOLE_IS_DIABLED 					"コンソール機能は無効になっています。\n有効にするには、switch.console を true にしてください。"
+	PATCH_RS_PATCH_INVALID_SETTING_JSON					"設定ファイルは不正なjsonです。文法を確認してください。\n設定は読込/保存されません。"
+	PATCH_RS_PATCH_FAILED_TO_CREATE_EXCEPTION_DIALOG,	"patch.aulは例外ダイアログの生成に失敗しました。({})\n例外の詳細情報は log/{} に保存されています。\n情報\n{}"
+
+#ifdef PATCH_SWITCH_CL
+	PATCH_RS_PATCH_CANT_USE_CL 							"OpenCL Effectは使用できません"
+#endif
+
+#ifdef PATCH_SWITCH_TRANSRATE
+#endif
+}
+
+AVIUTL MENU
+{
+	POPUP "ファイル"
+	{
+		MENUITEM "開く", 5097
+		MENUITEM "閉じる", 5157
+		MENUITEM "追加読み込み", 5100
+		MENUITEM "音声読み込み", 5168
+		MENUITEM SEPARATOR
+		MENUITEM "編集プロジェクトを開く", 5118
+		MENUITEM "編集プロジェクトの保存", 1023
+		MENUITEM "編集プロジェクトの上書き", 1024
+		MENUITEM SEPARATOR
+		MENUITEM "AVI出力", 1003
+		MENUITEM "WAV出力", 1062
+		POPUP "プラグイン出力"
+		{
+			MENUITEM "", 5395
+		}
+		MENUITEM "バッチ出力", 1025
+		MENUITEM "出力の中断", 1009
+		MENUITEM SEPARATOR
+		POPUP "インポート"
+		{
+			MENUITEM "キーフレームリスト", 5167
+			MENUITEM "", 14000
+		}
+		POPUP "エクスポート"
+		{
+			MENUITEM "キーフレームリスト", 1054
+			MENUITEM "", 15000
+		}
+		POPUP "AVIファイル操作"
+		{
+			MENUITEM "AVIファイルの連結", 1057
+			MENUITEM "AVIファイルの合成", 1058
+		}
+		POPUP "最近使ったファイル"
+		{
+			MENUITEM "なし", 5596
+			MENUITEM SEPARATOR
+			MENUITEM "最近使ったファイルの履歴を消去", 1073
+		}
+		MENUITEM SEPARATOR
+		POPUP "環境設定"
+		{
+			POPUP "優先度"
+			{
+				MENUITEM "Highest", 1041
+				MENUITEM "High", 1040
+				MENUITEM "Normal", 1039
+				MENUITEM "Low", 1038
+				MENUITEM "Lowest", 1037
+				MENUITEM SEPARATOR
+				MENUITEM "Realtime", 1042
+			}
+			MENUITEM SEPARATOR
+			MENUITEM "システムの設定", 108
+			MENUITEM "コーデックの設定", 109
+			POPUP "入力プラグインの設定"
+			{
+				MENUITEM "", 5595
+			}
+			MENUITEM "入力プラグイン優先度の設定", 1086
+			MENUITEM "ショートカットキーの設定", 102
+			MENUITEM "言語の設定 (Language)", 106
+			MENUITEM SEPARATOR
+			MENUITEM "ウィンドウの位置を初期化", 111
+		}
+		MENUITEM SEPARATOR
+		MENUITEM "終了", 1002
+	}
+	POPUP "フィルタ"
+	{
+		MENUITEM "", 10000
+		MENUITEM SEPARATOR
+		MENUITEM "", 10999
+		MENUITEM SEPARATOR
+		MENUITEM "すべてのフィルタをOFFにする", 5183
+	}
+	POPUP "設定"
+	{
+		MENUITEM "", 11000
+		MENUITEM SEPARATOR
+		MENUITEM "", 11999
+		MENUITEM SEPARATOR
+		MENUITEM "", 11998
+		MENUITEM SEPARATOR
+		POPUP "圧縮の設定"
+		{
+			MENUITEM "ビデオ圧縮の設定", 5127
+			MENUITEM "オーディオ圧縮の設定", 5128
+			MENUITEM SEPARATOR
+			MENUITEM "プラグイン出力の設定", 5399
+		}
+		POPUP "フィルタ順序の設定"
+		{
+			MENUITEM "ビデオフィルタ順序の設定", 5139
+			MENUITEM "オーディオフィルタ順序の設定", 5181
+		}
+	}
+	POPUP "編集"
+	{
+		MENUITEM "現在のフレームの画像をコピー", 1020
+		MENUITEM "現在のフレームに画像を貼り付け", 5117
+		MENUITEM "現在のフレームをクリップボードにコピー", 1026
+		MENUITEM "現在のフレームにクリップボードから貼り付け", 5123
+		MENUITEM "現在のフレームの出力イメージをクリップボードにコピー", 1070
+		MENUITEM "指定のフレームに移動", 5131
+		MENUITEM "選択範囲の指定", 5115
+		MENUITEM "選択範囲のフレームに画像を貼り付け", 5184
+		MENUITEM "選択範囲のフレーム切り出し", 5143
+		MENUITEM "選択範囲のフレーム削除", 5101
+		MENUITEM SEPARATOR
+		MENUITEM "元に戻す", 5147
+		MENUITEM "すべてのフレームを選択", 5112
+		MENUITEM SEPARATOR
+		MENUITEM "選択範囲を新しいプロファイルにする", 5109
+		MENUITEM "選択範囲を新しい圧縮の設定にする", 5126
+		MENUITEM "選択範囲のインターレース解除を指定", 5125
+		POPUP "現在のフレームのインターレース解除"
+		{
+			MENUITEM "標準", 5196
+			MENUITEM "反転", 5197
+			MENUITEM "奇数", 5198
+			MENUITEM "偶数", 5199
+			MENUITEM "二重化", 5200
+			MENUITEM "自動", 5201
+		}
+		POPUP "現在のフレームのプロファイル"
+		{
+			MENUITEM "標準プロファイル", 5206
+			MENUITEM "プロファイル[1]", 5207
+			MENUITEM "プロファイル[2]", 5208
+			MENUITEM "プロファイル[3]", 5209
+			MENUITEM "プロファイル[4]", 5210
+			MENUITEM "プロファイル[5]", 5211
+			MENUITEM "プロファイル[6]", 5212
+			MENUITEM "プロファイル[7]", 5213
+			MENUITEM "プロファイル[8]", 5214
+			MENUITEM "プロファイル[9]", 5215
+		}
+		MENUITEM SEPARATOR
+		MENUITEM "現在のフレームをキーフレームにする", 5129
+		MENUITEM "現在のフレームを優先間引きフレームにする", 5132
+		MENUITEM "現在のフレームをマークする", 5130
+		MENUITEM "現在のフレームをコピーフレームにする", 5156
+		MENUITEM SEPARATOR
+		MENUITEM "再生速度の情報を変更", 5398
+		MENUITEM SEPARATOR
+		POPUP "基本機能"
+		{
+			MENUITEM "次のフレームに移動 (→)", 9002
+			MENUITEM "前のフレームに移動 (←)", 9001
+			MENUITEM "削除フレームを飛ばして次のフレームに移動 (↓)", 5142
+			MENUITEM "削除フレームを飛ばして前のフレームに移動 (↑)", 5141
+			MENUITEM "先頭のフレームに移動(Home)", 5396
+			MENUITEM "最後のフレームに移動(End)", 5397
+			MENUITEM "現在のフレームを選択開始フレームにする ([)", 5110
+			MENUITEM "現在のフレームを選択終了フレームにする (])", 5111
+			MENUITEM "選択開始フレームに移動", 5103
+			MENUITEM "選択終了フレームに移動", 5104
+			MENUITEM "次のキーフレームに移動", 5174
+			MENUITEM "前のキーフレームに移動", 5175
+			MENUITEM "次のマークフレームに移動", 5178
+			MENUITEM "前のマークフレームに移動", 5179
+			MENUITEM "次のプロファイルの変更フレームに移動", 5176
+			MENUITEM "前のプロファイルの変更フレームに移動", 5177
+			MENUITEM "次のフレーム不連続点に移動", 5170
+			MENUITEM "前のフレーム不連続点に移動", 5171
+			MENUITEM "任意フレーム数次移動A (PageDown)", 5187
+			MENUITEM "任意フレーム数前移動A (PageUp)", 5188
+			MENUITEM "任意フレーム数次移動B", 5189
+			MENUITEM "任意フレーム数前移動B", 5190
+			MENUITEM "任意フレーム数次移動C", 5191
+			MENUITEM "任意フレーム数前移動C", 5192
+			MENUITEM "任意フレーム数次移動D", 5193
+			MENUITEM "任意フレーム数前移動D", 5194
+			MENUITEM "現在のフレームから再生ウィンドウで再生/停止", 1099
+			MENUITEM "現在のフレーム番号をクリップボードにコピー", 1090
+		}
+	}
+	POPUP "プロファイル"
+	{
+		MENUITEM "", 8005
+		MENUITEM SEPARATOR
+		POPUP "プロファイルの編集"
+		{
+			MENUITEM "新しいプロファイルを作る", 8001
+			MENUITEM "現在のプロファイルを削除する", 8002
+			MENUITEM "現在のプロファイルを初期値に戻す", 8000
+		}
+	}
+	POPUP "表示"
+	{
+		POPUP "拡大表示"
+		{
+			MENUITEM "25%", 9200
+			MENUITEM "50%", 9201
+			MENUITEM "100%", 9202
+			MENUITEM "200%", 9203
+			MENUITEM "300%", 9204
+			MENUITEM "400%", 9205
+			MENUITEM "WindowSize", 9206
+			MENUITEM SEPARATOR
+			MENUITEM "ズームイン", 9107
+			MENUITEM "ズームアウト", 9108
+			MENUITEM SEPARATOR
+			MENUITEM "ウィンドウサイズを自動変更", 9116
+		}
+		MENUITEM "オーディオ波形の表示", 9104
+		MENUITEM "時間の表示", 9114
+		MENUITEM "セーブ中もプレビュー表示", 9105
+		MENUITEM "セーブ中にデータレートを表示", 9115
+		MENUITEM "間引き予定フレームの表示", 9106
+		MENUITEM "再圧縮が必要なフレームの表示", 9110
+		MENUITEM "ソースファイルのキーフレーム表示", 9109
+		MENUITEM SEPARATOR
+		MENUITEM "", 10998
+		MENUITEM SEPARATOR
+#ifdef PATCH_SWITCH_CONSOLE
+		MENUITEM "コンソールの表示", PATCH_MENU_CONSOLE
+		MENUITEM SEPARATOR
+#endif
+		MENUITEM "常に手前に表示", 9113
+		MENUITEM "オーバーレイ表示", 9111
+		MENUITEM "セーブ中のみフィルタリングして表示", 5144
+	}
+	POPUP "その他"
+	{
+		MENUITEM "ファイルの情報", 1006
+		MENUITEM "オーバーレイ情報", 104
+		MENUITEM "プラグインフィルタ情報", 101
+		MENUITEM "入力プラグイン情報", 103
+		MENUITEM "出力プラグイン情報", 105
+		MENUITEM "色変換プラグイン情報", 110
+		MENUITEM "言語拡張リソース情報", 107
+		MENUITEM SEPARATOR
+		MENUITEM "バージョン情報", 100
+		MENUITEM "patch.aul", PATCH_MENU_INFO
+	}
+}
+
+PATCH_DIALOG_EXCEPTION DIALOGEX 0, 0, 286, 166
+STYLE DS_SETFONT | DS_MODALFRAME | DS_FIXEDSYS | WS_POPUP | WS_CAPTION | WS_SYSMENU | DS_NOFAILCREATE
+CAPTION "AviUtl : Application Exception"
+FONT 8, "MS Shell Dlg", 400, 0, 0x1
+{
+    DEFPUSHBUTTON   "OK", PATCH_ID_EXCEPTION_OK, 18, 108, 120, 14
+    PUSHBUTTON      "詳細",PATCH_ID_EXCEPTION_DETAIL_BUTTON, 150, 108, 120, 14
+	PUSHBUTTON      "編集プロジェクトの保存",PATCH_ID_EXCEPTION_SAVE_PROJECT, 18, 148, 252, 14
+    LTEXT           "例外が発生しました。\n詳細情報は以下のファイルに出力されました。", PATCH_ID_EXCEPTION_LABEL1, 10, 6, 264, 18
+	LTEXT           "この画面から、現在の編集プロジェクトの保存が出来ます\n(元のファイルと同じ名前は使用しないでください)。", PATCH_ID_EXCEPTION_LABEL2, 10, 128, 264, 18
+    CONTROL         "dummy syslink", PATCH_ID_EXCEPTION_LINK, "SysLink", WS_GROUP | WS_TABSTOP, 10, 25, 264, 12
+    EDITTEXT        PATCH_ID_EXCEPTION_DETAIL_TEXT, 10, 38, 266, 54, ES_AUTOHSCROLL | ES_AUTOVSCROLL | ES_READONLY | ES_MULTILINE
+	CONTROL         "しばらく同種のメッセージの表示を停止する", PATCH_ID_EXCEPTION_STOPMES, "Button", BS_AUTOCHECKBOX | WS_TABSTOP, 11, 94, 258, 12
+/*
+	COMBOBOX		PATCH_ID_EXCEPTION_THREADID_COMBO, 227, 7, 51, 12,CBS_DROPDOWN | CBS_SORT | WS_VSCROLL | WS_TABSTOP
+	LTEXT			"thread id", PATCH_ID_EXCEPTION_LABEL3, 184, 9, 42, 8
+*/
+}
+
+#ifdef PATCH_SWITCH_SPLASH
+
+SPLASH RCDATA "splash.png"
+
+#endif

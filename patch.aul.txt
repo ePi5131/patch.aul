@@ -1,0 +1,251 @@
+patch.aul r17 beta1
+Copyright (c) 2021-2022 ePi
+https://scrapbox.io/ePi5131/patch.aul
+
+概要
+    AviUtlや拡張編集のバグを直したり新機能を追加したりするプラグインです。
+
+要求環境
+    AviUtl version 1.10
+    拡張編集 version 0.92
+
+推奨環境
+    OpenCLを使用可能なデバイス
+
+導入
+    patch.aul は aviutl.exe と同じディレクトリに配置します。
+    
+機能
+    修正
+    ・オブジェクトファイルの入力で、トラックバーの -1 超 0 未満の値が正になってしまう
+    ・オブジェクトファイルの入力で、トラックバー変化方法スクリプトの名前にASCII以外の文字が含まれているとパラメータを読み込めない
+    ・オブジェクトファイルの入出力で、シーン番号を正しく扱えない
+    ・テキストオブジェクトでUTF-16で34バイト以上のフォント名を指定している時、制御文字<s>でサイズのみを指定していると正しい動作をしない
+    ・クリッピング＆リサイズの設定のラベルの脱字
+    ・メニュー文字列を実態に即したものに変更
+    ・動画ファイル と 音声ファイル で中間点を打っていないときでもファイルを再参照しても再生位置などの情報を変更しない
+    ・拡張編集以外のフィルタ(例:拡張色調補正)を使ったプロジェクトをオブジェクトファイルに出力できないことがある
+    ・極座標変換と放射ブラーの高速化
+        OpenCLを使用します
+        わずかにオリジナルと結果が変わってしまいます (floatとdoubleの差です)
+    ・Luaの環境が分かれてしまうことがある
+    ・package.path,package.cpathはどんなときでもscriptフォルダを含めるように
+    ・obj.randでs=-2^31,e=2^31-1とすると例外になる
+    ・obj.getvalueで中心座標(cx,cy,cz)の情報を取得できるように
+    ・obj.getvalue("layerX.time")が正しい値を取得できるように
+    ・拡張編集ウィンドウと設定ダイアログの描画の最適化
+    ・拡張編集ウィンドウの上部をドラッグしても正常にリサイズができるように
+
+    追加
+    ・コンソールの表示
+        標準入出力・エラー出力を流します。
+        「表示」メニューに「コンソールの表示」が追加されています。
+        Ctrlを押しながら選択すると、表示中でも最前面に表示し直します。
+
+    ・拡張編集のOutputDebugStringの内容の表示
+        console,console.debugstringが有効になっていなければ使えません。コンソールに表示します。
+        Luaのエラー内容なら赤い文字、debug_printの内容は青い文字で出力します。
+
+    ・例外メッセージのリニューアル
+        間違いが起こらないようにしました。
+        はいを押して、別のファイルに編集プロジェクトを保存して、それを開いてみるのが正しい作法でしたが、
+        patch.aulが追加する例外ダイアログからプロジェクトの保存を試みられるようになりました。
+        正しくプロジェクトの保存ができなければ、自動バックアップから復元します。
+
+    ・デバッグ情報出力
+        より報告/調査を楽にします。
+        デバッグ情報は <aviutl.exeがあるディレクトリ>\log に出力されます。
+        これを発生したときの状況と一緒に有識者に投げると、原因がわかったり、patch.aulで直されたりするかもしれません。
+
+    ・メニューにアクセスキーを追加
+        ファイル(F) みたいになるやつです。
+        Alt+括弧内のキー を押すと飛べます。
+
+    ・テーマ機能
+        ConstChangerでできるのと同じようなことができます。逆に言えばそれ以上はできません。
+
+    ・Lua関連の仕様変更/追加関数
+        ・randexクラスを追加 標準のrand関数の分布がおかしいので
+        ・package.path,package.cpathに新たなディレクトリを追加
+            ・pathには<exedit.auf dir>\module\?.lua;<exedit.auf dir>\module\?\init.lua
+            ・cpathには<exedit.auf dir>\module\?.dll
+
+    ・やり直し 機能
+        元に戻すの逆
+
+設定
+    patch.aulと同じパスにpatch.aul.jsonが生成されて、これが設定ファイルになります。
+    設定ファイルはAviUtlの起動時に1度だけ読み込まれて、終了時に1度だけ保存されるため、注意してください。
+
+    各キーの説明
+    ※説明用の型
+        color : stringで、書式が[0-9a-fA-F]{6}であるもの RRGGBBの順
+
+    "console" : { ; コンソール関連
+        "visible" : boolean, ; コンソールの表示 (既定値: false)
+        "rect" : [number, number, number, number], ; コンソールの位置(left,top,right,bottom)
+    },
+    "theme_cc" : { ; ConstChangerでできる設定
+        "layer" : {
+            "height_large" : number,  ; レイヤーの高さ (大 既定値: 31)
+            "height_medium" : number, ; レイヤーの高さ (中 既定値: 26)
+            "height_small" : number,  ; レイヤーの高さ (小 既定値: 22)
+            "link_col" : [color, color] or color, ; 座標のリンク ([縁色, 塗りつぶし色] または 色 既定値: "4040c0")
+            "clipping_col" : [color, color] or color, ; クリッピング ([縁色, 塗りつぶし色] または 色 既定値: "c04040")
+            "lock_col" : [color, color], ; レイヤーのロックの色 ([縁色, 塗りつぶし色] 既定値: [ "000000", "c04040" ])
+            "hide_alpha" : number, ; 非表示レイヤーの不透明度 ([0,1] 既定値: 0.85)
+        },
+        "object" : {
+            "media_col" : [color, color, color], ; 図形 などの青系のオブジェクトの色 ([グラデーション始点, 終点, 選択中] 既定値: [ "10206c", "1830c0", "4080ff" ])
+            "mfilter_col" : [color, color, color], ; シーンチェンジ などの緑系のオブジェクトの色 (既定値: [ "106c10", "18c018", "40f040" ])
+            "audio_col" : [color, color, color], ; 音声ファイル などの赤系のオブジェクトの色 (既定値: [ "6c1018", "c01820", "f83040" ])
+            "afilter_col" : [color, color, color], ; 音量の調整 などの黄系のオブジェクトの色 (既定値: [ "6c6c10", "c0c020", "d8d840" ])
+            "control_col" : [color, color, color], ; カメラ制御 などの青緑系のオブジェクトの色 (既定値: [ "106c6c", "18c0c0", "40d8d8" ])
+            "inactive_col" : [color, color, color], ; アルファチャンネル付きシーン中のフィルタオブジェクト などの灰系のオブジェクトの色 (既定値: [ "606060", "808080", "909090" ])
+            "clipping_col" : color, ; 上のオブジェクトでクリッピング(オブジェクト)の色 (既定値: "c04040")
+            "clipping_height" : number, ; 上のオブジェクトでクリッピング(オブジェクト)の印の高さ (既定値: -3)
+            "midpt_size" : [number, number, number], ; 中間点の大きさ(レイヤーの高さ大,中,小) (既定値: [4, 3, 3])
+            "name_col" : [color, color], ; オブジェクト名の色 ([有効時,無効時] 既定値: [ "ffffff", "a0a0a0" ])
+        },
+        "timeline" : {
+            "scale_col" : [fore, back], ; 拡大率の色 (既定値: [ "60a0ff", "204080" ])
+            "bpm_grid_col" : [measure, beat], ; BPMグリッドの色 (既定値: [ "646464", "a0a0a0" ])
+        }
+    },
+	"switch" : { ; どのパッチを有効にするかを選択するものです trueなら有効、falseなら無効
+		"access_key" : boolean, ; アクセスキーを付加するか (既定値: false)
+		"exo_aviutl_filter" : boolean, ; 拡張編集以外のフィルタ(例:拡張色調補正)を使ったプロジェクトをオブジェクトファイルに出力できないことがある (既定値: true)
+        "exo_track_minusval" : boolean, ; オブジェクトファイルの入力で、トラックバーの -1 超 0 未満の値が正になってしまう (既定値: true)
+		"exo_sceneidx" : boolean, ; オブジェクトファイルの入出力で、シーン番号を正しく扱えない (既定値: true)
+		"exo_trackparam" : boolean, ; オブジェクトファイルの入力で、トラックバー変化方法スクリプトの名前にASCII以外の文字が含まれているとパラメータを読み込めない (既定値: true)
+        "exo_specialcolorconv" : boolean, ; オブジェクトファイルの入出力で、特定色域変換のstatusが2つあって正しく入出力できない (既定値: true)
+		"text_op_size" : boolean, ; テキストオブジェクトでUTF-16で34バイト以上のフォント名を指定している時、制御文字<s>でサイズのみを指定していると正しい動作をしない (既定値: true)
+        "ignore_media_param_reset" : boolean, ; 動画ファイル と 音声ファイル で中間点を打っていないときでもファイルを再参照しても再生位置などの情報を変更しない (既定値: false)
+		"theme_cc" : boolean, ; テーマ機能 (既定値: true)
+		"exeditwindow_sizing" : boolean, ; 拡張編集ウィンドウの上部をドラッグして正常にリサイズできるようにする (既定値: true)
+        "settingdialog_move" : boolean, ; 設定ダイアログを高ポーリングレートマウス環境で移動すると重たい の解消 (既定値: true)
+        "undo" : boolean, ; 元に戻す 関連のバグ修正 (既定値: true)
+        "undo.redo" : boolean, ; やり直す を追加 (既定値: true)
+        "undo.redo.shift" : boolean, ; やり直す を Ctrl+Shift+Zで使えるようにする (既定値: true)
+		"console" : boolean, ; コンソール (既定値: true)
+		"console.escape" : boolean, ; エスケープシーケンス (既定値: true)
+		"console.input" : boolean, ; 標準入力を受け取るか (既定値: false)
+		"console.debug_string" : boolean, ; 拡張編集のOutputDebugStringの内容を表示する (既定値: true)
+		"console.debug_string.time" : boolean, ; 拡張編集のOutputDebugStringの内容の先頭に時刻を表示する (既定値: true)
+		"lua" : boolean, ; lua.*配下のスイッチの主電源 (既定値: true)
+        "lua.env" : boolean, ; Luaの環境を統一する
+		"lua.rand" : boolean, ; rand関数で例外になるパターンを潰す (既定値: true)
+		"lua.randex" : boolean, ; 正確な乱数を提供するrandexクラスの追加 (既定値: true)
+		"lua.getvalue" : boolean, ; getvalueで中心座標を取得できるように (既定値: true)
+        "lua.path" : boonean, ; package.path,cpathにパスを追加 (既定値: false)
+		"fast" : boolean, ; fast.*配下のスイッチの主電源 (既定値: true)
+		"fast.cl" : boolean, ; fast.*でOpenCLが必要なオプションに必要なオプション (既定値: true)
+		"fast.exeditwindow" : boolean, ; 拡張編集ウィンドウの描画の最適化 (既定値: true),
+        "fast.exeditwindow.step" : number, ; グラデーション描画の方法 (負数でパッチ無効,0でグラデーションのパッチ,正数でその分割数の単色矩形 既定値: 0),
+		"fast.settingdialog" boolean, ; 設定ダイアログの描画の最適化 (既定値: true),
+		"fast.radiationalblur" : boolean, ; fast.clが前提 放射ブラーの高速化 (既定値: true)
+		"fast.polortransform" : boolean, ; fast.clが前提 極座標変換の高速化 (既定値: true)
+	}
+
+Lua追加要素詳細
+    _PATCH
+        patch.aulのバージョン情報
+        現在は "patch.aul r17 beta1" という文字列が格納されている
+
+    obj.randex(seed,time)
+        seed : integer
+        frame : integer
+            obj.randのseed,frameと同じ使い方をする
+
+        return : userdata
+            乱数生成オブジェクト
+            userdata(start,end)の形式で呼び出せて、呼び出しの毎に返されるintegerは変わる
+
+ライセンス
+    LGPLv3 詳細はLICENSEファイルを見よ
+
+その他の注意
+    デバッグ情報ファイルには、個人情報が含まれる可能性があります。例えば個人情報を扱っているところで例外が発生した場合、レジスタやスタックにその情報が載っているかもしれません。
+    ファイルを第三者に送信する際には気をつけて下さい。
+
+更新履歴
+    r2
+        バージョンが異なっていたときの処理/メッセージ修正
+        けしからんフックをするプラグインへの対策
+
+    r3
+        デバッグ情報のstackの目盛りがズレてた
+        ConstChanger相当の機能を追加
+        コンソールのエスケープシーケンスを有効にする設定を追加(デフォルトでは有効)
+        debug_print,Luaのエラーの時に先頭に時刻を付加する設定を追加(デフォルトでは有効)
+        例外ダイアログをモーダルにした
+        例外ダイアログの生成に失敗するパターンを潰した
+        例外ダイアログのXボタンでアプリケーションが終了するのは意図していない挙動だったので修正
+        その他内部の整理
+
+    r4
+        未成の処理が紛れ込んでいたので削除
+
+    r5
+        SysInfo::info に誤ったポインタを代入していた問題(r3から)を修正
+
+    r6
+        どのパッチを適用するかユーザーが指定できるようにした
+        例外ダイアログ表示時に音が出るようにした
+        例外ダイアログが言語拡張リソースに対応した
+        
+    r7
+        動画ファイル と 音声ファイル で中間点を打っていないときでもファイルを再参照しても再生位置などの情報を変更しない を追加
+
+    r8
+        例外ダイアログから編集プロジェクトの保存を試みられるようにした
+        コンソールウィンドウの位置をAviUtlが再起動しても保持するようにした
+        コンソールウィンドウが標準入力を受け取るかを選択できるようにして、受け取らないときはコンソールの表示がSW_SHOW/SW_HIDEになるようにした
+        Luaで error() としてpatch.aulの例外になるケースを修正
+        拡張編集以外のフィルタ(例:拡張色調補正)を使ったプロジェクトをオブジェクトファイルに出力できないことがある の修正を追加
+        不正な設定ファイルであったとき、初期設定で上書きしないようにした
+        patch.aulの出すメッセージが言語拡張リソースに一部対応
+        中間点のサイズがレイヤー幅中のときのものしか変更できなかった問題を修正
+        オブジェクトファイルの入出力で、特定色域変換のstatusが2つあって正しく入出力できない の修正を追加
+        [表示][拡大表示][ウィンドウサイズを自動変更]が欠落していた問題を修正
+
+    r9
+        patch.aulの出すメッセージが言語拡張リソースに全て対応
+        例外情報のC++ exceptionの詳細情報を追加
+        極座標変換と放射ブラーの高速化を追加
+
+    r10
+        v_func_WndProcをフックするプログラムにやさしくない書き方をしていたのを修正
+
+    r11
+        Luaの環境を統一
+        obj.randで例外になるものの修正
+        randexクラスを追加
+        obj.getvalueで中心座標の情報を取得できるようにした
+        obj.getvalue("layerX.time")が正しい値を取得できるようにした
+        スクリプトがscriptフォルダの子フォルダにあった時にpackage.path,cpathにscriptを追加
+        package.path,cpathにmoduleフォルダを追加
+        OpenCLの要求バージョンを1系に下げた
+        OpenCLのdouble拡張を要求しないようにした
+
+    r12
+        Luaに _PATCH 変数を追加
+
+    r13
+        拡張編集ウィンドウと設定ダイアログの描画の最適化
+        拡張編集ウィンドウの上部をドラッグしても正常にリサイズができるように
+        switch\lua.pathの既定値をfalseに
+
+    r14
+        スクリプト並び替えプラグインとの競合を解消
+
+    r15
+        Luaの環境統合をlua.envスイッチに切り出し
+        起動時に設定ファイルを生成するように
+        その他内部の整理
+
+    r17
+        OSS化
+        設定ダイアログを高ポーリングレートマウス環境で移動すると重たい の解消
+        拡張編集の元に戻すのバグ修正
+        拡張編集にやり直すを追加

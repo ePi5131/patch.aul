@@ -1,0 +1,237 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="feature">
+      <UniqueIdentifier>{f2c356a4-9aa7-4917-b27b-4b37a59cc03e}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="feature\fast">
+      <UniqueIdentifier>{0921e89c-9ee4-4242-9edf-9f1278a8fd04}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="util">
+      <UniqueIdentifier>{42fd95df-c430-425e-839f-50891f36ebff}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="cryptostring.hpp" />
+    <ClInclude Include="debug_log.hpp" />
+    <ClInclude Include="gate.hpp" />
+    <ClInclude Include="global.hpp" />
+    <ClInclude Include="global_minimum.hpp" />
+    <ClInclude Include="hash.hpp" />
+    <ClInclude Include="init.hpp" />
+    <ClInclude Include="json.h" />
+    <ClInclude Include="macro.h" />
+    <ClInclude Include="moduledata.hpp" />
+    <ClInclude Include="multi_threading.hpp" />
+    <ClInclude Include="mycl.hpp" />
+    <ClInclude Include="mylua.hpp" />
+    <ClInclude Include="mywindow.hpp" />
+    <ClInclude Include="offset_address.hpp" />
+    <ClInclude Include="overwrite_resource.hpp" />
+    <ClInclude Include="patch.hpp" />
+    <ClInclude Include="resource.h" />
+    <ClInclude Include="stopwatch.hpp" />
+    <ClInclude Include="version.hpp" />
+    <ClInclude Include="add_dll_ref.hpp" />
+    <ClInclude Include="configfile.hpp" />
+    <ClInclude Include="patch_access_key.hpp">
+      <Filter>feature</Filter>
+    </ClInclude>
+    <ClInclude Include="patch_alpha_bg.hpp">
+      <Filter>feature</Filter>
+    </ClInclude>
+    <ClInclude Include="patch_aviutl_wndproc_override.hpp">
+      <Filter>feature</Filter>
+    </ClInclude>
+    <ClInclude Include="patch_console.hpp">
+      <Filter>feature</Filter>
+    </ClInclude>
+    <ClInclude Include="patch_copybuffer_smem.hpp">
+      <Filter>feature</Filter>
+    </ClInclude>
+    <ClInclude Include="patch_exception_history.hpp">
+      <Filter>feature</Filter>
+    </ClInclude>
+    <ClInclude Include="patch_exception_log.hpp">
+      <Filter>feature</Filter>
+    </ClInclude>
+    <ClInclude Include="patch_exception_log_dialog.hpp">
+      <Filter>feature</Filter>
+    </ClInclude>
+    <ClInclude Include="patch_exeditwindow_sizing.hpp">
+      <Filter>feature</Filter>
+    </ClInclude>
+    <ClInclude Include="patch_exo_aviutlfilter.hpp">
+      <Filter>feature</Filter>
+    </ClInclude>
+    <ClInclude Include="patch_exo_sceneidx.hpp">
+      <Filter>feature</Filter>
+    </ClInclude>
+    <ClInclude Include="patch_exo_specialcolorconv.hpp">
+      <Filter>feature</Filter>
+    </ClInclude>
+    <ClInclude Include="patch_exo_trackminusval.hpp">
+      <Filter>feature</Filter>
+    </ClInclude>
+    <ClInclude Include="patch_exo_trackparam.hpp">
+      <Filter>feature</Filter>
+    </ClInclude>
+    <ClInclude Include="patch_font_dialog.hpp">
+      <Filter>feature</Filter>
+    </ClInclude>
+    <ClInclude Include="patch_helpful_msgbox.hpp">
+      <Filter>feature</Filter>
+    </ClInclude>
+    <ClInclude Include="patch_ignore_media_param_reset.hpp">
+      <Filter>feature</Filter>
+    </ClInclude>
+    <ClInclude Include="patch_lua.hpp">
+      <Filter>feature</Filter>
+    </ClInclude>
+    <ClInclude Include="patch_lua_getvalueex.hpp">
+      <Filter>feature</Filter>
+    </ClInclude>
+    <ClInclude Include="patch_lua_rand.hpp">
+      <Filter>feature</Filter>
+    </ClInclude>
+    <ClInclude Include="patch_lua_randex.hpp">
+      <Filter>feature</Filter>
+    </ClInclude>
+    <ClInclude Include="patch_override_debugstring.hpp">
+      <Filter>feature</Filter>
+    </ClInclude>
+    <ClInclude Include="patch_scroll_objdlg.hpp">
+      <Filter>feature</Filter>
+    </ClInclude>
+    <ClInclude Include="patch_setting_gui.hpp">
+      <Filter>feature</Filter>
+    </ClInclude>
+    <ClInclude Include="patch_splash.hpp">
+      <Filter>feature</Filter>
+    </ClInclude>
+    <ClInclude Include="patch_susie_load.hpp">
+      <Filter>feature</Filter>
+    </ClInclude>
+    <ClInclude Include="patch_sysinfo_write.hpp">
+      <Filter>feature</Filter>
+    </ClInclude>
+    <ClInclude Include="patch_text_op_size.hpp">
+      <Filter>feature</Filter>
+    </ClInclude>
+    <ClInclude Include="patch_theme_cc.hpp">
+      <Filter>feature</Filter>
+    </ClInclude>
+    <ClInclude Include="patch_fast_setting_dialog.hpp">
+      <Filter>feature\fast</Filter>
+    </ClInclude>
+    <ClInclude Include="patch_fast_exeditwindow.hpp">
+      <Filter>feature\fast</Filter>
+    </ClInclude>
+    <ClInclude Include="patch_fast_getputpixeldata.hpp">
+      <Filter>feature\fast</Filter>
+    </ClInclude>
+    <ClInclude Include="patch_fast_polortransform.hpp">
+      <Filter>feature\fast</Filter>
+    </ClInclude>
+    <ClInclude Include="patch_fast_radiationalblur.hpp">
+      <Filter>feature\fast</Filter>
+    </ClInclude>
+    <ClInclude Include="util_resource.hpp">
+      <Filter>util</Filter>
+    </ClInclude>
+    <ClInclude Include="util.hpp">
+      <Filter>util</Filter>
+    </ClInclude>
+    <ClInclude Include="util_int.hpp">
+      <Filter>util</Filter>
+    </ClInclude>
+    <ClInclude Include="util_magic.hpp">
+      <Filter>util</Filter>
+    </ClInclude>
+    <ClInclude Include="util_others.hpp">
+      <Filter>util</Filter>
+    </ClInclude>
+    <ClInclude Include="util_pe.hpp">
+      <Filter>util</Filter>
+    </ClInclude>
+    <ClInclude Include="patch_setting_dialog_wndproc_override.hpp">
+      <Filter>feature</Filter>
+    </ClInclude>
+    <ClInclude Include="patch_setting_dialog_move.hpp">
+      <Filter>feature</Filter>
+    </ClInclude>
+    <ClInclude Include="patch_undo.hpp">
+      <Filter>feature</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="init.cpp" />
+    <ClCompile Include="overwrite_resource.cpp" />
+    <ClCompile Include="patch.cpp" />
+    <ClCompile Include="configfile.cpp" />
+    <ClCompile Include="patch_aviutl_wndproc_override.cpp">
+      <Filter>feature</Filter>
+    </ClCompile>
+    <ClCompile Include="patch_exception_log.cpp">
+      <Filter>feature</Filter>
+    </ClCompile>
+    <ClCompile Include="patch_exception_log_dialog.cpp">
+      <Filter>feature</Filter>
+    </ClCompile>
+    <ClCompile Include="patch_exo_trackminusval.cpp">
+      <Filter>feature</Filter>
+    </ClCompile>
+    <ClCompile Include="patch_helpful_msgbox.cpp">
+      <Filter>feature</Filter>
+    </ClCompile>
+    <ClCompile Include="patch_lua.cpp">
+      <Filter>feature</Filter>
+    </ClCompile>
+    <ClCompile Include="patch_lua_getvalueex.cpp">
+      <Filter>feature</Filter>
+    </ClCompile>
+    <ClCompile Include="patch_lua_rand.cpp">
+      <Filter>feature</Filter>
+    </ClCompile>
+    <ClCompile Include="patch_lua_randex.cpp">
+      <Filter>feature</Filter>
+    </ClCompile>
+    <ClCompile Include="patch_override_debugstring.cpp">
+      <Filter>feature</Filter>
+    </ClCompile>
+    <ClCompile Include="patch_splash.cpp">
+      <Filter>feature</Filter>
+    </ClCompile>
+    <ClCompile Include="patch_susie_load.cpp">
+      <Filter>feature</Filter>
+    </ClCompile>
+    <ClCompile Include="patch_fast_getputpixeldata.cpp">
+      <Filter>feature\fast</Filter>
+    </ClCompile>
+    <ClCompile Include="patch_fast_polortransform.cpp">
+      <Filter>feature\fast</Filter>
+    </ClCompile>
+    <ClCompile Include="patch_fast_radiationalblur.cpp">
+      <Filter>feature\fast</Filter>
+    </ClCompile>
+    <ClCompile Include="patch_fast_setting_dialog.cpp">
+      <Filter>feature\fast</Filter>
+    </ClCompile>
+    <ClCompile Include="patch_fast_exeditwindow.cpp">
+      <Filter>feature\fast</Filter>
+    </ClCompile>
+    <ClCompile Include="util_others.cpp">
+      <Filter>util</Filter>
+    </ClCompile>
+    <ClCompile Include="patch_undo.cpp">
+      <Filter>feature</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ResourceCompile Include="patch.rc" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include=".editorconfig" />
+    <None Include="clprogram.cl" />
+  </ItemGroup>
+</Project>

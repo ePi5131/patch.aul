@@ -1,0 +1,272 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup Label="ProjectConfigurations">
+    <ProjectConfiguration Include="Debug|Win32">
+      <Configuration>Debug</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Release_PDB|Win32">
+      <Configuration>Release_PDB</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Release|Win32">
+      <Configuration>Release</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="add_dll_ref.hpp" />
+    <ClInclude Include="configfile.hpp" />
+    <ClInclude Include="cryptostring.hpp" />
+    <ClInclude Include="debug_log.hpp" />
+    <ClInclude Include="gate.hpp" />
+    <ClInclude Include="global.hpp" />
+    <ClInclude Include="global_minimum.hpp" />
+    <ClInclude Include="hash.hpp" />
+    <ClInclude Include="init.hpp" />
+    <ClInclude Include="json.h" />
+    <ClInclude Include="macro.h" />
+    <ClInclude Include="moduledata.hpp" />
+    <ClInclude Include="multi_threading.hpp" />
+    <ClInclude Include="mycl.hpp" />
+    <ClInclude Include="mylua.hpp" />
+    <ClInclude Include="mywindow.hpp" />
+    <ClInclude Include="offset_address.hpp" />
+    <ClInclude Include="overwrite_resource.hpp" />
+    <ClInclude Include="patch.hpp" />
+    <ClInclude Include="patch_access_key.hpp" />
+    <ClInclude Include="patch_alpha_bg.hpp" />
+    <ClInclude Include="patch_aviutl_wndproc_override.hpp" />
+    <ClInclude Include="patch_console.hpp" />
+    <ClInclude Include="patch_copybuffer_smem.hpp" />
+    <ClInclude Include="patch_exception_history.hpp" />
+    <ClInclude Include="patch_exception_log.hpp" />
+    <ClInclude Include="patch_exception_log_dialog.hpp" />
+    <ClInclude Include="patch_exeditwindow_sizing.hpp" />
+    <ClInclude Include="patch_exo_aviutlfilter.hpp" />
+    <ClInclude Include="patch_exo_sceneidx.hpp" />
+    <ClInclude Include="patch_exo_specialcolorconv.hpp" />
+    <ClInclude Include="patch_exo_trackminusval.hpp" />
+    <ClInclude Include="patch_exo_trackparam.hpp" />
+    <ClInclude Include="patch_fast_exeditwindow.hpp" />
+    <ClInclude Include="patch_fast_getputpixeldata.hpp" />
+    <ClInclude Include="patch_fast_polortransform.hpp" />
+    <ClInclude Include="patch_fast_radiationalblur.hpp" />
+    <ClInclude Include="patch_fast_setting_dialog.hpp" />
+    <ClInclude Include="patch_font_dialog.hpp" />
+    <ClInclude Include="patch_helpful_msgbox.hpp" />
+    <ClInclude Include="patch_ignore_media_param_reset.hpp" />
+    <ClInclude Include="patch_lua.hpp" />
+    <ClInclude Include="patch_lua_getvalueex.hpp" />
+    <ClInclude Include="patch_lua_rand.hpp" />
+    <ClInclude Include="patch_lua_randex.hpp" />
+    <ClInclude Include="patch_override_debugstring.hpp" />
+    <ClInclude Include="patch_scroll_objdlg.hpp" />
+    <ClInclude Include="patch_setting_dialog_wndproc_override.hpp" />
+    <ClInclude Include="patch_setting_gui.hpp" />
+    <ClInclude Include="patch_splash.hpp" />
+    <ClInclude Include="patch_susie_load.hpp" />
+    <ClInclude Include="patch_sysinfo_write.hpp" />
+    <ClInclude Include="patch_text_op_size.hpp" />
+    <ClInclude Include="patch_theme_cc.hpp" />
+    <ClInclude Include="patch_undo.hpp" />
+    <ClInclude Include="resource.h" />
+    <ClInclude Include="stopwatch.hpp" />
+    <ClInclude Include="util.hpp" />
+    <ClInclude Include="util_int.hpp" />
+    <ClInclude Include="util_magic.hpp" />
+    <ClInclude Include="util_others.hpp" />
+    <ClInclude Include="util_pe.hpp" />
+    <ClInclude Include="util_resource.hpp" />
+    <ClInclude Include="version.hpp" />
+    <ClInclude Include="patch_setting_dialog_move.hpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="configfile.cpp" />
+    <ClCompile Include="init.cpp" />
+    <ClCompile Include="overwrite_resource.cpp" />
+    <ClCompile Include="patch.cpp" />
+    <ClCompile Include="patch_aviutl_wndproc_override.cpp" />
+    <ClCompile Include="patch_exception_log.cpp" />
+    <ClCompile Include="patch_exception_log_dialog.cpp" />
+    <ClCompile Include="patch_exo_trackminusval.cpp" />
+    <ClCompile Include="patch_fast_exeditwindow.cpp" />
+    <ClCompile Include="patch_fast_getputpixeldata.cpp" />
+    <ClCompile Include="patch_fast_polortransform.cpp" />
+    <ClCompile Include="patch_fast_radiationalblur.cpp" />
+    <ClCompile Include="patch_fast_setting_dialog.cpp" />
+    <ClCompile Include="patch_helpful_msgbox.cpp" />
+    <ClCompile Include="patch_lua.cpp" />
+    <ClCompile Include="patch_lua_getvalueex.cpp" />
+    <ClCompile Include="patch_lua_rand.cpp" />
+    <ClCompile Include="patch_lua_randex.cpp" />
+    <ClCompile Include="patch_override_debugstring.cpp" />
+    <ClCompile Include="patch_splash.cpp" />
+    <ClCompile Include="patch_susie_load.cpp" />
+    <ClCompile Include="patch_undo.cpp" />
+    <ClCompile Include="util_others.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <ResourceCompile Include="patch.rc" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include=".editorconfig" />
+    <None Include="clprogram.cl" />
+  </ItemGroup>
+  <PropertyGroup Label="Globals">
+    <VCProjectVersion>16.0</VCProjectVersion>
+    <Keyword>Win32Proj</Keyword>
+    <ProjectGuid>{20c4ed31-b17f-445a-90fe-77f8119f831b}</ProjectGuid>
+    <RootNamespace>patch</RootNamespace>
+    <WindowsTargetPlatformVersion>10.0</WindowsTargetPlatformVersion>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
+    <ConfigurationType>DynamicLibrary</ConfigurationType>
+    <UseDebugLibraries>true</UseDebugLibraries>
+    <PlatformToolset>v143</PlatformToolset>
+    <CharacterSet>MultiByte</CharacterSet>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="Configuration">
+    <ConfigurationType>DynamicLibrary</ConfigurationType>
+    <UseDebugLibraries>false</UseDebugLibraries>
+    <PlatformToolset>v143</PlatformToolset>
+    <WholeProgramOptimization>true</WholeProgramOptimization>
+    <CharacterSet>MultiByte</CharacterSet>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release_PDB|Win32'" Label="Configuration">
+    <ConfigurationType>DynamicLibrary</ConfigurationType>
+    <UseDebugLibraries>false</UseDebugLibraries>
+    <PlatformToolset>v143</PlatformToolset>
+    <WholeProgramOptimization>true</WholeProgramOptimization>
+    <CharacterSet>MultiByte</CharacterSet>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
+  <ImportGroup Label="ExtensionSettings">
+  </ImportGroup>
+  <ImportGroup Label="Shared">
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <ImportGroup Condition="'$(Configuration)|$(Platform)'=='Release_PDB|Win32'" Label="PropertySheets">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <PropertyGroup Label="UserMacros" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <LinkIncremental>true</LinkIncremental>
+    <TargetExt>.aul</TargetExt>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <LinkIncremental>false</LinkIncremental>
+    <TargetExt>.aul</TargetExt>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release_PDB|Win32'">
+    <LinkIncremental>false</LinkIncremental>
+    <TargetExt>.aul</TargetExt>
+  </PropertyGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <ClCompile>
+      <WarningLevel>Level3</WarningLevel>
+      <SDLCheck>true</SDLCheck>
+      <PreprocessorDefinitions>WIN32;_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <ConformanceMode>true</ConformanceMode>
+      <LanguageStandard>stdcpplatest</LanguageStandard>
+      <AdditionalIncludeDirectories>%BOOST_1_78_0_DIR%;%AVIUTL_EXEDIT_SDK_DIR%;%WINWRAP_DIR%;%CUDA_PATH%\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalOptions>/source-charset:utf-8 %(AdditionalOptions)</AdditionalOptions>
+      <MultiProcessorCompilation>true</MultiProcessorCompilation>
+    </ClCompile>
+    <Link>
+      <SubSystem>Console</SubSystem>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+      <DelayLoadDLLs>OpenCL.DLL</DelayLoadDLLs>
+      <AdditionalLibraryDirectories>%CUDA_PATH%\lib\Win32</AdditionalLibraryDirectories>
+    </Link>
+    <PostBuildEvent>
+      <Command>copy /Y "$(TargetPath)" "$(SolutionDir)test\$(TargetFileName)"
+copy /Y "$(TargetPath)" "$(SolutionDir)pack\$(TargetFileName)"
+copy /Y "$(SolutionDir)patch.aul.txt" "$(SolutionDir)pack\patch.aul.txt"
+copy /Y "$(SolutionDir)credits.md" "$(SolutionDir)pack\credits.md"
+copy /Y "$(SolutionDir)LICENSE" "$(SolutionDir)pack\LICENSE"
+copy /Y "$(SolutionDir)COPYING" "$(SolutionDir)pack\COPYING"
+copy /Y "$(SolutionDir)COPYING.LESSER" "$(SolutionDir)pack\COPYING.LESSER"</Command>
+    </PostBuildEvent>
+    <ResourceCompile>
+      <AdditionalOptions>/c 65001 %(AdditionalOptions)</AdditionalOptions>
+    </ResourceCompile>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <ClCompile>
+      <WarningLevel>Level3</WarningLevel>
+      <FunctionLevelLinking>true</FunctionLevelLinking>
+      <IntrinsicFunctions>true</IntrinsicFunctions>
+      <SDLCheck>true</SDLCheck>
+      <PreprocessorDefinitions>WIN32;NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <ConformanceMode>true</ConformanceMode>
+      <LanguageStandard>stdcpplatest</LanguageStandard>
+      <AdditionalIncludeDirectories>%BOOST_1_78_0_DIR%;%AVIUTL_EXEDIT_SDK_DIR%;%WINWRAP_DIR%;%CUDA_PATH%\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalOptions>/source-charset:utf-8 %(AdditionalOptions)</AdditionalOptions>
+      <MultiProcessorCompilation>true</MultiProcessorCompilation>
+    </ClCompile>
+    <Link>
+      <SubSystem>Console</SubSystem>
+      <EnableCOMDATFolding>true</EnableCOMDATFolding>
+      <OptimizeReferences>true</OptimizeReferences>
+      <GenerateDebugInformation>false</GenerateDebugInformation>
+      <DelayLoadDLLs>OpenCL.DLL</DelayLoadDLLs>
+      <AdditionalLibraryDirectories>%CUDA_PATH%\lib\Win32</AdditionalLibraryDirectories>
+    </Link>
+    <PostBuildEvent>
+      <Command>copy /Y "$(TargetPath)" "$(SolutionDir)test\$(TargetFileName)"
+copy /Y "$(TargetPath)" "$(SolutionDir)pack\$(TargetFileName)"
+copy /Y "$(SolutionDir)patch.aul.txt" "$(SolutionDir)pack\patch.aul.txt"
+copy /Y "$(SolutionDir)credits.md" "$(SolutionDir)pack\credits.md"
+copy /Y "$(SolutionDir)LICENSE" "$(SolutionDir)pack\LICENSE"
+copy /Y "$(SolutionDir)COPYING" "$(SolutionDir)pack\COPYING"
+copy /Y "$(SolutionDir)COPYING.LESSER" "$(SolutionDir)pack\COPYING.LESSER"</Command>
+    </PostBuildEvent>
+    <ResourceCompile>
+      <AdditionalOptions>/c 65001 %(AdditionalOptions)</AdditionalOptions>
+    </ResourceCompile>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release_PDB|Win32'">
+    <ClCompile>
+      <WarningLevel>Level3</WarningLevel>
+      <FunctionLevelLinking>true</FunctionLevelLinking>
+      <IntrinsicFunctions>true</IntrinsicFunctions>
+      <SDLCheck>true</SDLCheck>
+      <PreprocessorDefinitions>WIN32;NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <ConformanceMode>true</ConformanceMode>
+      <LanguageStandard>stdcpplatest</LanguageStandard>
+      <AdditionalIncludeDirectories>%BOOST_1_78_0_DIR%;%AVIUTL_EXEDIT_SDK_DIR%;%WINWRAP_DIR%;%CUDA_PATH%\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalOptions>/source-charset:utf-8 %(AdditionalOptions)</AdditionalOptions>
+      <MultiProcessorCompilation>true</MultiProcessorCompilation>
+    </ClCompile>
+    <Link>
+      <SubSystem>Console</SubSystem>
+      <EnableCOMDATFolding>true</EnableCOMDATFolding>
+      <OptimizeReferences>true</OptimizeReferences>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+      <DelayLoadDLLs>OpenCL.DLL</DelayLoadDLLs>
+      <AdditionalLibraryDirectories>%CUDA_PATH%\lib\Win32</AdditionalLibraryDirectories>
+    </Link>
+    <PostBuildEvent>
+      <Command>copy /Y "$(TargetPath)" "$(SolutionDir)test\$(TargetFileName)"
+copy /Y "$(TargetPath)" "$(SolutionDir)pack\$(TargetFileName)"
+copy /Y "$(SolutionDir)patch.aul.txt" "$(SolutionDir)pack\patch.aul.txt"
+copy /Y "$(SolutionDir)credits.md" "$(SolutionDir)pack\credits.md"
+copy /Y "$(SolutionDir)LICENSE" "$(SolutionDir)pack\LICENSE"
+copy /Y "$(SolutionDir)COPYING" "$(SolutionDir)pack\COPYING"
+copy /Y "$(SolutionDir)COPYING.LESSER" "$(SolutionDir)pack\COPYING.LESSER"</Command>
+    </PostBuildEvent>
+    <ResourceCompile>
+      <AdditionalOptions>/c 65001 %(AdditionalOptions)</AdditionalOptions>
+    </ResourceCompile>
+  </ItemDefinitionGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
+  <ImportGroup Label="ExtensionTargets">
+  </ImportGroup>
+</Project>
