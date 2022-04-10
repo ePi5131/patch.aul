@@ -1,4 +1,4 @@
-patch.aul r17
+patch.aul r18
 Copyright (c) 2021-2022 ePi
 https://scrapbox.io/ePi5131/patch.aul
 
@@ -170,7 +170,7 @@ https://scrapbox.io/ePi5131/patch.aul
 Lua追加要素詳細
     _PATCH
         patch.aulのバージョン情報
-        現在は "patch.aul r17" という文字列が格納されている
+        現在は "patch.aul r18" という文字列が格納されている
 
     obj.randex(seed,time)
         seed : integer
@@ -269,3 +269,6 @@ Lua追加要素詳細
         設定ダイアログを高ポーリングレートマウス環境で移動すると重たい の解消
         拡張編集の元に戻すのバグ修正
         拡張編集にやり直すを追加
+
+    r18
+        設定ダイアログへの操作の修正

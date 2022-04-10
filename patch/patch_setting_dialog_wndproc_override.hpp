@@ -25,7 +25,7 @@ namespace patch {
 
 	inline class setting_dialog_t {
 		inline static WNDPROC wndproc_orig;
-		static LRESULT wndproc(HWND hwnd, UINT message, WPARAM wparam, LPARAM lparam) {
+		static LRESULT CALLBACK wndproc(HWND hwnd, UINT message, WPARAM wparam, LPARAM lparam) {
 			switch (message) {
 				case WM_MOVE:
 					#ifdef PATCH_SWITCH_SETTINGDIALOG_MOVE
