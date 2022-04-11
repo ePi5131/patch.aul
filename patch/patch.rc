@@ -197,6 +197,7 @@ LANGUAGE LANG_JAPANESE,SUBLANG_DEFAULT
 	PATCH_RS_PATCH_FAILED_TO_INIT_CONSOLE 				"コンソールの初期化に失敗"
 	PATCH_RS_PATCH_CONSOLE_IS_DIABLED 					"コンソール機能は無効になっています。\n有効にするには、switch.console を true にしてください。"
 	PATCH_RS_PATCH_INVALID_SETTING_JSON					"設定ファイルは不正なjsonです。文法を確認してください。\n設定は読込/保存されません。"
+	PATCH_RS_PATCH_CONFLICT_PLUGIN						"以下のプラグインはpatch.aulと競合します。読み込みは中止されました。\n\n{}\n\nこのプラグインの機能はpatch.aulが既に持っているため、除去してください。\nプラグインファイルを削除しますか？"
 	PATCH_RS_PATCH_FAILED_TO_CREATE_EXCEPTION_DIALOG,	"patch.aulは例外ダイアログの生成に失敗しました。({})\n例外の詳細情報は log/{} に保存されています。\n情報\n{}"
 
 #ifdef PATCH_SWITCH_CL

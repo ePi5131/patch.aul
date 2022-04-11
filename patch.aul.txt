@@ -1,4 +1,4 @@
-patch.aul r18
+patch.aul r19
 Copyright (c) 2021-2022 ePi
 https://scrapbox.io/ePi5131/patch.aul
 
@@ -8,6 +8,7 @@ https://scrapbox.io/ePi5131/patch.aul
 要求環境
     AviUtl version 1.10
     拡張編集 version 0.92
+    Visual C++ 再頒布可能パッケージ 2015-2022
 
 推奨環境
     OpenCLを使用可能なデバイス
@@ -170,7 +171,7 @@ https://scrapbox.io/ePi5131/patch.aul
 Lua追加要素詳細
     _PATCH
         patch.aulのバージョン情報
-        現在は "patch.aul r18" という文字列が格納されている
+        現在は "patch.aul r19" という文字列が格納されている
 
     obj.randex(seed,time)
         seed : integer
@@ -272,3 +273,6 @@ Lua追加要素詳細
 
     r18
         設定ダイアログへの操作の修正
+
+    r19
+        競合プラグインがあったら無効化した上で消すか訊くことにした

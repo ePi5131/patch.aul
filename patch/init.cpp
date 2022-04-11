@@ -14,7 +14,13 @@
 */
 
 #include "init.hpp"
+
+#include <set>
+#include <string>
+
 #include "cryptostring.hpp"
+#include "util_others.hpp"
+
 
 void init_t::InitAtDllMain() {
 	ExchangeFunction(GLOBAL::aviutl_hmod, cstr_kernel32_dll.get(), cstr_EnumResourceLanguagesA.get(), EnumResourceLanguagesA_Wrap);
@@ -202,6 +208,31 @@ HMODULE WINAPI init_t::LoadLibraryAWrap(LPCSTR lpLibFileName) {
 		original_func_proc = std::exchange(filters[0]->func_proc, func_procWrap);
 #endif
 		InitAtExeditLoad();
+	}
+	else {
+		static std::set<std::string> list = {
+			"bakusoku.auf",
+			"eclipse_fast.auf",
+			"redo.auf",
+		};
+
+		std::string check = filename;
+		std::transform(check.begin(), check.end(), check.begin(), [](auto c) { return std::tolower(c); });
+
+		if (list.find(check) != list.end()) {
+			FreeLibrary(ret);
+			
+			auto ret = patch_resource_message_w(PATCH_RS_PATCH_CONFLICT_PLUGIN, MB_TASKMODAL | MB_ICONINFORMATION | MB_YESNO, string_convert_A2W(filename));
+
+			if (ret) {
+				switch (*ret) {
+				case IDYES:
+					DeleteFileA(lpLibFileName);
+				}
+			}
+
+			return NULL;
+		}
 	}
 	return ret;
 }

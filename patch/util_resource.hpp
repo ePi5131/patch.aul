@@ -92,55 +92,61 @@ inline std::optional<std::wstring> resource_format_w(UINT rs_id, Args&& ...args)
 	}
 }
 
-inline void patch_resource_message_a(UINT rs_id, UINT uType) {
+inline std::optional<int> patch_resource_message_a(UINT rs_id, UINT uType) {
 	auto str = resource_string_a(rs_id);
 	if (str.has_value()) {
-		MessageBoxA(NULL, str.value().c_str(), "patch.aul", uType);
+		return MessageBoxA(NULL, str.value().c_str(), "patch.aul", uType);
 	}
 	else {
 		MessageBoxW(NULL, L"resource error ({})"_fmt(rs_id).c_str(), L"patch.aul", MB_TOPMOST | MB_TASKMODAL | MB_ICONERROR);
+		return std::nullopt;
 	}
 }
 
-inline void patch_resource_message_w(UINT rs_id, UINT uType) {
+inline std::optional<int> patch_resource_message_w(UINT rs_id, UINT uType) {
 	auto str = resource_string_w(rs_id);
 	if (str.has_value()) {
-		MessageBoxW(NULL, str.value().c_str(), L"patch.aul", uType);
+		return MessageBoxW(NULL, str.value().c_str(), L"patch.aul", uType);
 	}
 	else {
 		MessageBoxW(NULL, L"resource error ({})"_fmt(rs_id).c_str(), L"patch.aul", MB_TOPMOST | MB_TASKMODAL | MB_ICONERROR);
+		return std::nullopt;
 	}
 }
 
 template<class... Args>
-inline void patch_resource_message_a(UINT rs_id, UINT uType, Args&& ...args) {
+inline std::optional<int> patch_resource_message_a(UINT rs_id, UINT uType, Args&& ...args) {
 	auto str = resource_string_a(rs_id);
 	if (str.has_value()) {
 		try {
-			MessageBoxA(NULL, std::vformat(str.value(), std::make_format_args(args...)).c_str(), "patch.aul", uType);
+			return MessageBoxA(NULL, std::vformat(str.value(), std::make_format_args(args...)).c_str(), "patch.aul", uType);
 		}
 		catch (const std::format_error&) {
 			MessageBoxW(NULL, L"format error ({})"_fmt(rs_id).c_str(), L"patch.aul", MB_TOPMOST | MB_TASKMODAL | MB_ICONERROR);
+			return std::nullopt;
 		}
 	}
 	else {
 		MessageBoxW(NULL, L"resource error ({})"_fmt(rs_id).c_str(), L"patch.aul", MB_TOPMOST | MB_TASKMODAL | MB_ICONERROR);
+		return std::nullopt;
 	}
 }
 
 template<class... Args>
-inline void patch_resource_message_w(UINT rs_id, UINT uType, Args&& ...args) {
+inline std::optional<int> patch_resource_message_w(UINT rs_id, UINT uType, Args&& ...args) {
 	auto str = resource_string_w(rs_id);
 	if (str.has_value()) {
 		try {
-			MessageBoxW(NULL, std::vformat(str.value(), std::make_wformat_args(args...)).c_str(), L"patch.aul", uType);
+			return MessageBoxW(NULL, std::vformat(str.value(), std::make_wformat_args(args...)).c_str(), L"patch.aul", uType);
 		}
 		catch (const std::format_error&) {
 			MessageBoxW(NULL, L"format error ({})"_fmt(rs_id).c_str(), L"patch.aul", MB_TOPMOST | MB_TASKMODAL | MB_ICONERROR);
+			return std::nullopt;
 		}
 	}
 	else {
 		MessageBoxW(NULL, L"resource error ({})"_fmt(rs_id).c_str(), L"patch.aul", MB_TOPMOST | MB_TASKMODAL | MB_ICONERROR);
+		return std::nullopt;
 	}
 }
 
