@@ -1,9 +1,9 @@
-patch.aul r19
+patch.aul r20
 Copyright (c) 2021-2022 ePi
 https://scrapbox.io/ePi5131/patch.aul
 
 概要
-    AviUtlや拡張編集のバグを直したり新機能を追加したりするプラグインです。
+    AviUtlや拡張編集のバグを直したり高速化をしたり新機能を追加したりするプラグインです。
 
 要求環境
     AviUtl version 1.10
@@ -171,7 +171,7 @@ https://scrapbox.io/ePi5131/patch.aul
 Lua追加要素詳細
     _PATCH
         patch.aulのバージョン情報
-        現在は "patch.aul r19" という文字列が格納されている
+        現在は "patch.aul r20" という文字列が格納されている
 
     obj.randex(seed,time)
         seed : integer
@@ -276,3 +276,6 @@ Lua追加要素詳細
 
     r19
         競合プラグインがあったら無効化した上で消すか訊くことにした
+
+    r20
+        設定ダイアログのサイズが変更されたときの画面外の領域が正しく描画されないのを修正

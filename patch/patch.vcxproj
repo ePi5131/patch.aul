@@ -101,6 +101,7 @@
     <ClCompile Include="patch_lua_rand.cpp" />
     <ClCompile Include="patch_lua_randex.cpp" />
     <ClCompile Include="patch_override_debugstring.cpp" />
+    <ClCompile Include="patch_setting_dialog_wndproc_override.cpp" />
     <ClCompile Include="patch_splash.cpp" />
     <ClCompile Include="patch_susie_load.cpp" />
     <ClCompile Include="patch_undo.cpp" />
