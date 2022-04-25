@@ -224,6 +224,20 @@ namespace patch {
         return *ObjectArrayPointer_ptr;
     }
 
+
+
+    void __stdcall undo_t::f4355c(ExEdit::Object* obj) {
+        AddUndoCount();
+        set_undo((reinterpret_cast<uintptr_t>(obj) - reinterpret_cast<uintptr_t>(*ObjectArrayPointer_ptr)) / sizeof(struct ExEdit::Object), 0);
+        *(int*)&obj->flag ^= 0x200;
+    }
+
+    void __stdcall undo_t::f435bd(ExEdit::Object* obj) {
+        AddUndoCount();
+        set_undo((reinterpret_cast<uintptr_t>(obj) - reinterpret_cast<uintptr_t>(*ObjectArrayPointer_ptr)) / sizeof(struct ExEdit::Object), 0);
+        *(int*)&obj->flag ^= 0x100;
+    }
+
 #ifdef PATCH_SWITCH_UNDO_REDO
 
     void __cdecl undo_t::init_undo_patch() {
