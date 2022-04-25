@@ -25,20 +25,14 @@ namespace patch {
 	inline class setting_dialog_move_t {
 		inline static std::jthread th;
 		inline static std::atomic_bool waiting;
+
+		static bool enabled() {
+			return PATCH_SWITCHER_MEMBER(PATCH_SWITCH_SETTINGDIALOG_MOVE);
+		}
 public:
 		void operator()(HWND hwnd) {
-			if (!waiting.load()) {
-				PostMessage(hwnd, WM_SETREDRAW, FALSE, NULL);
-				th = std::jthread(
-					[](HWND hwnd) {
-						waiting.store(true);
-						std::this_thread::sleep_for(std::chrono::milliseconds{ 10 });
-						PostMessage(hwnd, WM_SETREDRAW, TRUE, NULL);
-						waiting.store(false);
-					},
-					hwnd
-				);
-			}
+			if (!enabled())return;
+			std::this_thread::sleep_for(std::chrono::milliseconds{ 10 });
 		}
 	} setting_dialog_move;
 }

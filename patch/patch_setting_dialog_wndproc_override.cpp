@@ -15,18 +15,14 @@
 
 #include "patch_setting_dialog_wndproc_override.hpp"
 
+#include "patch_setting_dialog_move.hpp"
+
 namespace patch {
 	LRESULT CALLBACK setting_dialog_t::wndproc(HWND hwnd, UINT message, WPARAM wparam, LPARAM lparam) {
 		switch (message) {
 		case WM_MOVE:
 			#ifdef PATCH_SWITCH_SETTINGDIALOG_MOVE
 				setting_dialog_move(hwnd);
-			#endif
-			break;
-		case WM_SIZE:
-			#ifdef PATCH_SWITCH_FAST_SETTINGDIALOG
-				InvalidateRect(hwnd, nullptr, FALSE);
-				UpdateWindow(hwnd);
 			#endif
 			break;
 		}

@@ -19,8 +19,6 @@
 #include "global.hpp"
 #include "util_magic.hpp"
 
-#include "patch_setting_dialog_move.hpp"
-
 namespace patch {
 
 	inline class setting_dialog_t {
