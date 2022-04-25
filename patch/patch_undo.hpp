@@ -616,6 +616,18 @@ namespace patch {
                 h.replaceNearJmp(1, &f42617);
             }
 
+            // カメラ制御の対象 を切り替えてもUndoデータが生成されない
+            {
+                OverWriteOnProtectHelper h(GLOBAL::exedit_base + 0x04355b, 6);
+                h.store_i16(0, '\x51\xe8'); // push ecx, call (rel32)
+                h.replaceNearJmp(2, &f4355c);
+            }
+            // 上のオブジェクトでクリッピング を切り替えてもUndoデータが生成されない
+            {
+                OverWriteOnProtectHelper h(GLOBAL::exedit_base + 0x0435ba, 8);
+                h.store_i32(0, '\x90\x90\x50\xe8'); // nop, push eax, call (rel32)
+                h.replaceNearJmp(4, &f435bd);
+            }
 
             #ifdef PATCH_SWITCH_UNDO_REDO
                 if (!enable_redo())return;
