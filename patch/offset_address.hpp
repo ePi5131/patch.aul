@@ -45,6 +45,7 @@ namespace OFS {
 		constexpr i32 efpip_g = 0x1b2b20;
 
 		constexpr i32 getpixeldata = 0x09a65c;
+		constexpr i32 rgb2yc = 0x06fed0;
 
 		constexpr i32 exedit_max_h_add8 = 0x135c64;
 		constexpr i32 exedit_buffer_line = 0x135c68;
@@ -56,6 +57,9 @@ namespace OFS {
 		constexpr i32 efPolorTransform_func_proc_ptr = 0x0add30;
 		constexpr i32 efRadiationalBlur_func_proc = 0x00b310;
 		constexpr i32 efRadiationalBlur_func_proc_ptr = 0x09fdb0;
+		constexpr i32 efFlash_func_proc = 0x04e560;
+		constexpr i32 efFlash_var_ptr = 0x1a6b7c;
+		constexpr i32 efFlash_func_proc_ptr = 0x0a5a28;
 
 		constexpr i32 ScriptProcessingFilter = 0x1b2b10;
 
