@@ -160,6 +160,9 @@ void init_t::InitAtExeditLoad() {
 				#ifdef PATCH_SWITCH_FAST_RADIATIONALBLUR
 					patch::fast::RadiationalBlur();
 				#endif
+				#ifdef PATCH_SWITCH_FAST_FLASH
+					patch::fast::Flash();
+				#endif
 			}
 			else {
 				patch_resource_message_w(PATCH_RS_PATCH_CANT_USE_CL, MB_TASKMODAL | MB_ICONEXCLAMATION);
