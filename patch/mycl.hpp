@@ -243,24 +243,20 @@ kernel void RadiationalBlur(
     int range = (Range * c_dist_times8) / 1000;
 
     if (pixel_range < c_dist_times8) {
-        range = (pixel_range * range) / c_dist_times8;
+        range = pixel_range * Range / 1000;
         c_dist_times8 = pixel_range;
     }
-    else if (c_dist_times8 < 9) {
-        if (c_dist_times8 < 5) {
-            if (2 < c_dist_times8) {
-                c_dist_times8 *= 2;
-                range *= 2;
-            }
-        }
-        else {
-            c_dist_times8 *= 4;
-            range *= 4;
-        }
-    }
-    else {
+    else if (8 < c_dist_times8) {
         c_dist_times8 *= 8;
         range *= 8;
+    }
+    else if (4 < c_dist_times8) {
+        c_dist_times8 *= 4;
+        range *= 4;
+    }
+    else if (2 < c_dist_times8) {
+        c_dist_times8 *= 2;
+        range *= 2;
     }
     if ((c_dist_times8 < 2) || (range < 2)) {
         if (x_detail < 0x8000 || y_detail < 0x8000 || src_w <= x || src_h <= y) {
@@ -319,214 +315,6 @@ kernel void RadiationalBlur(
         }
         else{
             dst[pixel_itr * 4 + 3] = (short)(sum_a / range);
-        }
-    }
-}
-kernel void Flash(global short* dst, global short* src, int src_w, int src_h, int exedit_buffer_line,
-    int g_cx,
-    int g_cy,
-    int g_range,
-    int g_pixel_range,
-    int g_temp_x,
-    int g_temp_y,
-    int g_r_intensity
-) {
-
-    int xi = get_global_id(0);
-    int yi = get_global_id(1);
-
-    int x = xi + g_temp_x;
-    int y = yi + g_temp_y;
-
-    int pixel_itr = xi + yi * exedit_buffer_line;
-
-    int cx = g_cx - x;
-    int cy = g_cy - y;
-    int c_dist_times8 = (int)round(sqrt((float)(cx * cx + cy * cy)) * 8.0f);
-    int range = g_range * c_dist_times8 / 1000;
-
-    if (g_pixel_range < c_dist_times8) {
-        range = g_pixel_range * g_range / 1000;
-        c_dist_times8 = g_pixel_range;
-    } else if (8 < c_dist_times8) {
-        c_dist_times8 *= 8;
-        range *= 8;
-    } else if (4 < c_dist_times8) {
-        c_dist_times8 *= 4;
-        range *= 4;
-    } else if (2 < c_dist_times8) {
-        c_dist_times8 *= 2;
-        range *= 2;
-    }
-
-    int sum_y, sum_cb, sum_cr;
-
-    if (2 <= c_dist_times8 && 2 <= range) {
-        sum_y = sum_cb = sum_cr = 0;
-        for (int i = 0; i < range; i++) {
-            int x_itr = x + i * cx / c_dist_times8;
-            int y_itr = y + i * cy / c_dist_times8;
-
-            if (0 <= x_itr && 0 <= y_itr && x_itr < src_w && y_itr < src_h) {
-                short4 itr = vload4(x_itr + y_itr * exedit_buffer_line, src);
-                if (itr.w != 0) {
-                    if (itr.w < 4096) {
-                        sum_y += itr.x * itr.w / 4096;
-                        sum_cb += itr.y * itr.w / 4096;
-                        sum_cr += itr.z * itr.w / 4096;
-                    } else {
-                        sum_y += itr.x;
-                        sum_cb += itr.y;
-                        sum_cr += itr.z;
-                    }
-                }
-            }
-        }
-        sum_y /= range;
-        sum_cb /= range;
-        sum_cr /= range;
-    } else {
-        if (x < 0 || y < 0 || src_w <= x || src_h <= y) {
-            vstore4((short4)(0, 0, 0, 0), pixel_itr, dst);
-            return;
-        } else {
-            short4 itr = vload4(x + y * exedit_buffer_line, src);
-            sum_y = itr.x * itr.w / 4096;
-            sum_cb = itr.y * itr.w / 4096;
-            sum_cr = itr.z * itr.w / 4096;
-        }
-    }
-
-    int ya = sum_y - g_r_intensity;
-    if (ya < 1) {
-        vstore4((short4)(0, 0, 0, 0), pixel_itr, dst);
-    } else {
-        sum_cb -= g_r_intensity * sum_cb / sum_y;
-        sum_cr -= g_r_intensity * sum_cr / sum_y;
-        if (ya < 4096) {
-            vstore4(
-                (short4)(
-                    4096,
-                    sum_cb * 4096 / ya,
-                    sum_cr * 4096 / ya,
-                    ya
-                    ),
-                pixel_itr, dst
-            );
-        } else {
-            vstore4(
-                (short4)(
-                    ya,
-                    sum_cb,
-                    sum_cr,
-                    4096
-                    ),
-                pixel_itr, dst
-            );
-        }
-    }
-}
-kernel void FlashColor(global short* dst, global short* src, int src_w, int src_h, int exedit_buffer_line,
-    int g_cx,
-    int g_cy,
-    int g_range,
-    int g_pixel_range,
-    int g_temp_x,
-    int g_temp_y,
-    int g_r_intensity,
-    short g_color_y,
-    short g_color_cb,
-    short g_color_cr
-) {
-
-    int xi = get_global_id(0);
-    int yi = get_global_id(1);
-
-    int x = xi + g_temp_x;
-    int y = yi + g_temp_y;
-
-    int pixel_itr = xi + yi * exedit_buffer_line;
-
-    int cx = g_cx - x;
-    int cy = g_cy - y;
-    int c_dist_times8 = (int)round(sqrt((float)(cx * cx + cy * cy)) * 8.0f);
-    int range = g_range * c_dist_times8 / 1000;
-    if (g_pixel_range < c_dist_times8) {
-        range = g_pixel_range * g_range / 1000;
-        c_dist_times8 = g_pixel_range;
-    } else if (8 < c_dist_times8) {
-        c_dist_times8 *= 8;
-        range *= 8;
-    } else if (4 < c_dist_times8) {
-        c_dist_times8 *= 4;
-        range *= 4;
-    } else if (2 < c_dist_times8) {
-        c_dist_times8 *= 2;
-        range *= 2;
-    }
-    int itr_y, itr_cb, itr_cr;
-
-    if (2 <= c_dist_times8 && 2 <= range) {
-        int sum_a = 0;
-        for (int i = 0; i < range; i++) {
-            int x_itr = x + i * cx / c_dist_times8;
-            int y_itr = y + i * cy / c_dist_times8;
-
-            if (0 <= x_itr && 0 <= y_itr && x_itr < src_w && y_itr < src_h) {
-                short4 itr = vload4(x_itr + y_itr * exedit_buffer_line, src);
-                int itr_a = itr.w;
-                if (itr_a != 0) {
-                    if (itr_a < 4096) {
-                        sum_a += itr_a;
-                    } else {
-                        sum_a += 4096;
-                    }
-                }
-            }
-        }
-        sum_a /= range;
-        itr_y = g_color_y * sum_a / 4096;
-        itr_cb = g_color_cb * sum_a / 4096;
-        itr_cr = g_color_cr * sum_a / 4096;
-    } else {
-        if (x < 0 || y < 0 || src_w <= x || src_h <= y) {
-            vstore4((short4)(0, 0, 0, 0), pixel_itr, dst);
-            return;
-        } else {
-            short4 itr = vload4(x + y * exedit_buffer_line, src);
-            int itr_a = itr.w;
-            itr_y = g_color_y * itr_a / 4096;
-            itr_cb = g_color_cb * itr_a / 4096;
-            itr_cr = g_color_cr * itr_a / 4096;
-        }
-    }
-
-    int ya = itr_y - g_r_intensity;
-    if (ya < 1) {
-        vstore4((short4)(0, 0, 0, 0), pixel_itr, dst);
-    } else {
-        itr_cb -= g_r_intensity * itr_cb / itr_y;
-        itr_cr -= g_r_intensity * itr_cr / itr_y;
-        if (ya < 4096) {
-            vstore4(
-                (short4)(
-                    4096,
-                    itr_cb * 4096 / ya,
-                    itr_cr * 4096 / ya,
-                    ya
-                    ),
-                pixel_itr, dst
-            );
-        } else {
-            vstore4(
-                (short4)(
-                    ya,
-                    itr_cb,
-                    itr_cr,
-                    4096
-                    ),
-                pixel_itr, dst
-            );
         }
     }
 }
