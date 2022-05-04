@@ -107,65 +107,53 @@ namespace patch::fast {
                 th = (th * flash.corrected_intensity / 4096) + efpip->obj_h;
 
                 int tmin = (std::min)({ exedit_max_w,efpip->scene_w + efpip->obj_w * 2 });
-                if (tmin < tw - tx) {
-                    int sub1 = tw - tx - tmin;
-                    if (tx + tw < efpip->obj_w) {
-                        int sub2 = efpip->obj_w - tx - tw;
+                int sub1 = tw - tx - tmin;
+                if (0 < sub1) {
+                    int sub2 = efpip->obj_w - tx - tw;
+                    if (0 < sub2) {
                         if (sub2 <= sub1) {
-                            tx += sub2;
-                            sub1 -= sub2;
+                            if (sub2 < sub1) {
+                                tx += sub2;
+                                sub1 -= sub2;
+                            }
+                            if (sub1 & 1) {
+                                tw--;
+                                sub1--;
+                            }
+                            if (sub1 > 0) {
+                                tx += sub1 / 2;
+                                tw -= sub1 / 2;
+                            }
                         } else {
                             tx += sub1;
-                            sub1 = 0;
                         }
                     } else {
-                        int sub2 = tx + tw - efpip->obj_w;
-                        if (sub2 < sub1) {
-                            tw -= sub2;
-                            sub1 -= sub2;
-                        } else {
-                            tw -= sub1;
-                            sub1 = 0;
-                        }
-                    }
-                    if (sub1 & 1) {
-                        tw--;
-                        sub1--;
-                    }
-                    if (sub1 > 0) {
-                        tx += sub1 / 2;
-                        tw -= sub1 / 2;
+                        tw -= sub1;
                     }
                 }
                 tmin = (std::min)({ exedit_max_h, efpip->scene_h + efpip->obj_h * 2 });
-                if (tmin < th - ty) {
-                    int sub1 = th - ty - tmin;
-                    if (ty + th < efpip->obj_h) {
-                        int sub2 = efpip->obj_h - ty - th;
+                sub1 = th - ty - tmin;
+                if (0 < sub1) {
+                    int sub2 = efpip->obj_h - ty - th;
+                    if (0 < sub2) {
                         if (sub2 <= sub1) {
-                            ty += sub2;
-                            sub1 -= sub2;
+                            if (sub2 < sub1) {
+                                ty += sub2;
+                                sub1 -= sub2;
+                            }
+                            if (sub1 & 1) {
+                                th--;
+                                sub1--;
+                            }
+                            if (sub1 > 0) {
+                                ty += sub1 / 2;
+                                th -= sub1 / 2;
+                            }
                         } else {
                             ty += sub1;
-                            sub1 = 0;
                         }
                     } else {
-                        int sub2 = ty + th - efpip->obj_h;
-                        if (sub2 < sub1) {
-                            th -= sub2;
-                            sub1 -= sub2;
-                        } else {
-                            th -= sub1;
-                            sub1 = 0;
-                        }
-                    }
-                    if (sub1 & 1) {
-                        th--;
-                        sub1--;
-                    }
-                    if (sub1 > 0) {
-                        ty += sub1 / 2;
-                        th -= sub1 / 2;
+                        th -= sub1;
                     }
                 }
                 flash.temp_x = tx;
