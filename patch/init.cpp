@@ -90,6 +90,10 @@ void init_t::InitAtExeditLoad() {
 	patch::theme_cc();
 #endif
 
+#ifdef PATCH_SWITCH_TRA_AVIUTL_FILTER
+	patch::tra_aviutlfilter();
+#endif
+
 #ifdef PATCH_SWITCH_EXO_AVIUTL_FILTER
 	patch::exo_aviutlfilter();
 #endif
