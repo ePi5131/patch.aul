@@ -99,8 +99,8 @@ namespace patch {
         set_undo(object_idx, flag);
     }
 
-    int __cdecl undo_t::efRadiationalBlur_func_WndProc_wrap_06e2b4(HWND hwnd, UINT message, WPARAM wparam, LPARAM lparam, AviUtl::EditHandle* editp, ExEdit::Filter* efp) {
-        auto ret = efRadiationalBlur_func_WndProc(hwnd, message, wparam, lparam, editp, efp);
+    int __cdecl undo_t::efDraw_func_WndProc_wrap_06e2b4(HWND hwnd, UINT message, WPARAM wparam, LPARAM lparam, AviUtl::EditHandle* editp, ExEdit::Filter* efp) {
+        auto ret = efDraw_func_WndProc(hwnd, message, wparam, lparam, editp, efp);
         if (ret) return ret;
         if (LOWORD(wparam) == 7708) {
             AddUndoCount();
