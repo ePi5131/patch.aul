@@ -17,6 +17,21 @@
 
 namespace patch {
 #ifdef PATCH_SWITCH_UNDO
+
+    void interval_set_undo(int object_idx, int flag) {
+        static ULONGLONG pretime = 0;
+        static int pre_undo_id = 0;
+        int& UndoInfo_current_id = *UndoInfo_current_id_ptr;
+        ULONGLONG time = GetTickCount64();
+        if (pretime < time - UNDO_INTERVAL || pre_undo_id != UndoInfo_current_id) {
+            AddUndoCount();
+            set_undo(object_idx, flag);
+        }
+        pretime = time;
+        pre_undo_id = UndoInfo_current_id;
+    }
+
+
     void __cdecl undo_t::set_undo_wrap_3e037(unsigned int object_idx, unsigned int flag) {
         auto exists_movable_playback_pos = [](unsigned int object_idx) {
             auto& exdata_buffer = *exdata_buffer_ptr;
@@ -110,13 +125,7 @@ namespace patch {
     }
 
     int __stdcall undo_t::f8b97f(HWND hwnd, ExEdit::Filter* efp, WPARAM wparam, LPARAM lparam) {
-        static ULONGLONG pretime = 0;
-        ULONGLONG time = GetTickCount64();
-        if (pretime + UNDO_INTERVAL < time) {
-            AddUndoCount();
-            set_undo(object(efp->processing) - 1, 1);
-        }
-        pretime = time;
+        interval_set_undo((efp->processing.val & 0xFFFF) - 1, 1);
         return SendMessageA(hwnd, CB_GETLBTEXT, wparam, lparam);
     }
 
@@ -157,13 +166,7 @@ namespace patch {
     }
 
     int __stdcall undo_t::f8b9f0(ExEdit::Filter* efp, HWND hWnd, LPWSTR lpString, int nMaxCount) {
-        static ULONGLONG pretime = 0;
-        ULONGLONG time = GetTickCount64();
-        if (pretime + UNDO_INTERVAL < time) {
-            AddUndoCount();
-            set_undo(object(efp->processing) - 1, 1);
-        }
-        pretime = time;
+        interval_set_undo((efp->processing.val & 0xFFFF) - 1, 1);
         return GetWindowTextW(hWnd, lpString, nMaxCount);
     }
 
@@ -238,6 +241,11 @@ namespace patch {
         *(int*)&obj->flag ^= 0x100;
     }
 
+    void __cdecl undo_t::add_track_value_wrap(ExEdit::Filter* efp, int track_id, int add_value) {
+        interval_set_undo((efp->processing.val & 0xFFFF) - 1, 1);
+        add_track_value(efp, track_id, add_value);
+    }
+
 #ifdef PATCH_SWITCH_UNDO_REDO
 
     void __cdecl undo_t::init_undo_patch() {
@@ -287,8 +295,6 @@ namespace patch {
     int __cdecl undo_t::pre_run_undo() {
 
         // shift + ctrl + zでredoを実行させるためのコード(元に戻せない状態からでも使えます)
-
-
 #ifdef PATCH_SWITCH_UNDO_REDO_SHIFT
         if (PATCH_SWITCHER_MEMBER(PATCH_SWITCH_UNDO_REDO_SHIFT)) {
             if (!running_undo) {
