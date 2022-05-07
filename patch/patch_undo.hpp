@@ -639,17 +639,17 @@ namespace patch {
             }
 
             // テンキー2468+-*/ Ctrl+テンキー2468 で(座標XY 回転 拡大率 中心XY)トラックバーを変えてもUndoデータが生成されない
-            ReplaceNearJmp(GLOBAL::exedit_base + 0x01b710, &add_track_value_wrap); // Ctrl+テンキー2中心Y+, Ctrl+テンキー4中心X-
-            ReplaceNearJmp(GLOBAL::exedit_base + 0x01b73e, &add_track_value_wrap); // テンキー2座標Y+
             ReplaceNearJmp(GLOBAL::exedit_base + 0x01b611, &add_track_value_wrap); // テンキー4座標X-
             ReplaceNearJmp(GLOBAL::exedit_base + 0x01b646, &add_track_value_wrap); // Ctrl+テンキー6中心X+
             ReplaceNearJmp(GLOBAL::exedit_base + 0x01b674, &add_track_value_wrap); // テンキー6座標X+
             ReplaceNearJmp(GLOBAL::exedit_base + 0x01b6ab, &add_track_value_wrap); // Ctrl+テンキー8中心Y-
             ReplaceNearJmp(GLOBAL::exedit_base + 0x01b6db, &add_track_value_wrap); // テンキー8座標Y-
-            ReplaceNearJmp(GLOBAL::exedit_base + 0x01b7d4, &add_track_value_wrap); // テンキー*回転+
-            ReplaceNearJmp(GLOBAL::exedit_base + 0x01b78c, &add_track_value_wrap); // テンキー+拡大率+
+            ReplaceNearJmp(GLOBAL::exedit_base + 0x01b710, &add_track_value_wrap); // Ctrl+テンキー2中心Y+, Ctrl+テンキー4中心X-
+            ReplaceNearJmp(GLOBAL::exedit_base + 0x01b73e, &add_track_value_wrap); // テンキー2座標Y+
             ReplaceNearJmp(GLOBAL::exedit_base + 0x01b765, &add_track_value_wrap); // テンキー-拡大率-
+            ReplaceNearJmp(GLOBAL::exedit_base + 0x01b78c, &add_track_value_wrap); // テンキー+拡大率+
             ReplaceNearJmp(GLOBAL::exedit_base + 0x01b7b0, &add_track_value_wrap); // テンキー/回転-
+            ReplaceNearJmp(GLOBAL::exedit_base + 0x01b7d4, &add_track_value_wrap); // テンキー*回転+
 
             #ifdef PATCH_SWITCH_UNDO_REDO
                 if (!enable_redo())return;
