@@ -38,10 +38,11 @@ namespace patch {
 
         inline static ExEdit::SceneSetting* scene_setting;
 
-		inline static void(__cdecl*set_undo)(unsigned int, unsigned int);
+        inline static void(__cdecl*set_undo)(unsigned int, unsigned int);
         inline static void(__cdecl*AddUndoCount)();
         inline static int(__cdecl*efDraw_func_WndProc)(HWND, UINT, WPARAM, LPARAM, AviUtl::EditHandle*, ExEdit::Filter*);
         inline static int(__cdecl*NormalizeExeditTimelineY)(int);
+        inline static void(__cdecl *add_track_value)(ExEdit::Filter*, int, int);
         
         inline constexpr static int UNDO_INTERVAL = 1000;
 
@@ -85,6 +86,12 @@ namespace patch {
         static int __cdecl NormalizeExeditTimelineY_wrap_4253e(int timeline_y);
 
         static ExEdit::Object* __stdcall f42617();
+
+        static void __stdcall f4355c(ExEdit::Object* obj);
+
+        static void __stdcall f435bd(ExEdit::Object* obj);
+
+        static void __cdecl add_track_value_wrap(ExEdit::Filter* efp, int track_id, int add_value);
 
         static bool enable() {
             return PATCH_SWITCHER_MEMBER(PATCH_SWITCH_UNDO);
@@ -487,6 +494,8 @@ namespace patch {
             AddUndoCount = reinterpret_cast<decltype(AddUndoCount)>(GLOBAL::exedit_base + 0x08d150);
             efDraw_func_WndProc = reinterpret_cast<decltype(efDraw_func_WndProc)>(GLOBAL::exedit_base + 0x01b550);
             NormalizeExeditTimelineY = reinterpret_cast<decltype(NormalizeExeditTimelineY)>(GLOBAL::exedit_base + 0x032c10);
+            add_track_value = reinterpret_cast<decltype(add_track_value)>(GLOBAL::exedit_base + 0x01c0f0);
+
 
 			// レイヤー削除→元に戻すで他シーンのオブジェクトが消える
 			{
@@ -628,6 +637,19 @@ namespace patch {
                 h.store_i32(0, '\x90\x90\x50\xe8'); // nop, push eax, call (rel32)
                 h.replaceNearJmp(4, &f435bd);
             }
+
+            // テンキー2468+-*/ Ctrl+テンキー2468 で(座標XY 回転 拡大率 中心XY)トラックバーを変えてもUndoデータが生成されない
+            ReplaceNearJmp(GLOBAL::exedit_base + 0x01b710, &add_track_value_wrap); // Ctrl+テンキー2中心Y+, Ctrl+テンキー4中心X-
+            ReplaceNearJmp(GLOBAL::exedit_base + 0x01b73e, &add_track_value_wrap); // テンキー2座標Y+
+            ReplaceNearJmp(GLOBAL::exedit_base + 0x01b611, &add_track_value_wrap); // テンキー4座標X-
+            ReplaceNearJmp(GLOBAL::exedit_base + 0x01b646, &add_track_value_wrap); // Ctrl+テンキー6中心X+
+            ReplaceNearJmp(GLOBAL::exedit_base + 0x01b674, &add_track_value_wrap); // テンキー6座標X+
+            ReplaceNearJmp(GLOBAL::exedit_base + 0x01b6ab, &add_track_value_wrap); // Ctrl+テンキー8中心Y-
+            ReplaceNearJmp(GLOBAL::exedit_base + 0x01b6db, &add_track_value_wrap); // テンキー8座標Y-
+            ReplaceNearJmp(GLOBAL::exedit_base + 0x01b7d4, &add_track_value_wrap); // テンキー*回転+
+            ReplaceNearJmp(GLOBAL::exedit_base + 0x01b78c, &add_track_value_wrap); // テンキー+拡大率+
+            ReplaceNearJmp(GLOBAL::exedit_base + 0x01b765, &add_track_value_wrap); // テンキー-拡大率-
+            ReplaceNearJmp(GLOBAL::exedit_base + 0x01b7b0, &add_track_value_wrap); // テンキー/回転-
 
             #ifdef PATCH_SWITCH_UNDO_REDO
                 if (!enable_redo())return;
