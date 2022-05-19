@@ -61,14 +61,14 @@ namespace patch {
             switch (wparam) {
                 case SC_RESTORE: {
                     auto ret = org();
-                    if (GLOBAL::config.console.visible) {
+                    if (console.visible) {
                         console.showWindow(SW_RESTORE);
                     }
                     return ret;
                 }
                 case SC_MINIMIZE: {
                     auto ret = org();
-                    if (GLOBAL::config.console.visible) {
+                    if (console.visible) {
                         console.showWindow(SW_MINIMIZE);
                     }
                     return ret;

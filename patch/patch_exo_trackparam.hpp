@@ -21,12 +21,39 @@
 #include "global.hpp"
 #include "offset_address.hpp"
 #include "util.hpp"
+#include "config_rw.hpp"
+
 namespace patch {
 	// init at exedit load
 	// オブジェクトファイルへの出力で，ascii文字以外が含まれたスクリプトのパラメータが0になる
-	inline void exo_trackparam() {
-		if (!PATCH_SWITCHER_MEMBER(PATCH_SWITCH_EXO_TRACKPARAM))return;
-		OverWriteOnProtectHelper(GLOBAL::exedit_base + OFS::ExEdit::exo_trackparam_overwrite, 1).store_i8(0, 0x73);
-	}
+    inline class exo_trackparam_t {
+        std::optional<restorable_patch_i8> rp;
+
+        bool enabled = true;
+        inline static const char key[] = "exo_trackparam";
+    public:
+        void init() {
+            rp.emplace(GLOBAL::exedit_base + OFS::ExEdit::exo_trackparam_overwrite, 0x73);
+
+            rp->switching(enabled);
+        }
+
+        void switching(bool flag) {
+            rp->switching(enabled = flag);
+        }
+
+        bool is_enabled() { return enabled; }
+        bool is_enabled_i() { return enabled; }
+
+        void switch_load(ConfigReader& cr) {
+            cr.regist(key, [this](json_value_s* value) {
+                ConfigReader::load_variable(value, enabled);
+           });
+        }
+
+        void switch_store(ConfigWriter& cw) {
+            cw.append(key, enabled);
+        }
+    } exo_trackparam;
 } // namespace patch
 #endif // #ifdef PATCH_SWITCH_EXO_TRACKPARAM

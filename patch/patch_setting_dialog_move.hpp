@@ -21,19 +21,37 @@
 #include <thread>
 #include <Windows.h>
 
+#include "config_rw.hpp"
+
 namespace patch {
 	inline class setting_dialog_move_t {
 		inline static std::jthread th;
 		inline static std::atomic_bool waiting;
 
-		static bool enabled() {
-			return PATCH_SWITCHER_MEMBER(PATCH_SWITCH_SETTINGDIALOG_MOVE);
-		}
+		bool enabled = true;
+        inline static const char key[] = "settingdialog_move";
 public:
 		void operator()(HWND hwnd) {
-			if (!enabled())return;
+			if (!enabled)return;
 			std::this_thread::sleep_for(std::chrono::milliseconds{ 10 });
 		}
+		
+        void switching(bool flag) {
+            enabled = flag;
+        }
+
+        bool is_enabled() { return enabled; }
+        bool is_enabled_i() { return enabled; }
+
+        void switch_load(ConfigReader& cr) {
+            cr.regist(key, [this](json_value_s* value) {
+                ConfigReader::load_variable(value, enabled);
+            });
+        }
+
+        void switch_store(ConfigWriter& cw) {
+            cw.append(key, enabled);
+        }
 	} setting_dialog_move;
 }
 #endif

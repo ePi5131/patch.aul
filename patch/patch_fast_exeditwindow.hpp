@@ -19,6 +19,7 @@
 #include <Windows.h>
 #include "util_magic.hpp"
 #include "global.hpp"
+#include "config_rw.hpp"
 
 namespace patch {
 	// init at exedit load
@@ -34,18 +35,22 @@ namespace patch {
 		inline static auto GetDC_Wrap_ptr = &GetDC_Wrap;
 		inline static auto ReleaseDC_Wrap_ptr = &ReleaseDC_Wrap;
 
-		inline static bool enabled() {
-			return PATCH_SWITCHER_MEMBER(PATCH_SWITCH_FAST_EXEDITWINDOW);
-		}
+		bool enabled = true;
+		bool enabled_i;
+
+		int step = 0;
+		int step_i;
+
+		inline static const char key[] = "fast.exeditwindow";
+		inline static const char c_step_name[] = "step";
 
 	public:
-		void operator()() {
-			if (!enabled())return;
+		void init() {
+			enabled_i = enabled;
+			step_i = step;
 
-			auto& step = PATCH_SWITCHER_MEMBER(fast_exeditwindow_step);
-			if (!step.has_value()) {
-				step = 0;
-			}
+			if (!enabled_i)return;
+
 
 			if (step >= 0) {
 				decltype(&FUN_10036a70_Wrap_gradation) f_036a70_ptr;
@@ -79,6 +84,40 @@ namespace patch {
 			//OverWriteOnProtectHelper(GLOBAL::exedit_base + 0x03943c, 4).store_i32(0, &GetDC_Wrap_ptr);
 			//OverWriteOnProtectHelper(GLOBAL::exedit_base + 0x039483, 4).store_i32(0, &ReleaseDC_Wrap_ptr);
 		}
+
+        void switching(bool flag) { enabled = flag; }
+
+        bool is_enabled() { return enabled; }
+        bool is_enabled_i() { return enabled_i; }
+
+		void set_step(int x) { step = x; }
+
+		int get_step() { return step; }
+		int get_step_i() { return step_i; }
+
+        void switch_load(ConfigReader& cr) {
+            cr.regist(key, [this](json_value_s* value) {
+                ConfigReader::load_variable(value, enabled);
+            });
+			cr.regist(key, [this](json_value_s* value) {
+                ConfigReader::load_variable(value, enabled);
+            });
+        }
+
+        void switch_store(ConfigWriter& cw) {
+            cw.append(key, enabled);
+        }
+
+		void config_load(ConfigReader& cr) {
+			cr.regist(c_step_name, [this](json_value_s* value) {
+				ConfigReader::load_variable(value, step);
+			});
+		}
+
+		void config_store(ConfigWriter& cw) {
+			cw.append(c_step_name, step);
+		}
+
 	} fast_exeditwindow;
 } // namespace patch
 #endif // ifdef PATCH_SWITCH_FAST_EXEDITWINDOW

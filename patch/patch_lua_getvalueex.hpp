@@ -21,16 +21,21 @@
 
 #include "global.hpp"
 #include "util.hpp"
+#include "config_rw.hpp"
 
 #include "mylua.hpp"
 
 namespace patch {
 	// obj.getvalue で中心座標をもらえるようにする
-	class lua_getvalueex_t {
+	inline class lua_getvalueex_t {
 		static int __cdecl lua_getvalue_override(lua_State* L);
 
 		// index
 		static int __cdecl lua_getvalueex_main(lua_State* L);
+
+		bool enabled;
+		bool enabled_i;
+		inline static const char key[] = "lua.getvalue";
 
 	public:
 
@@ -41,6 +46,25 @@ namespace patch {
 			lua_pushcfunction(L, &lua_getvalueex_main);
 			lua_setfield(L, -2, "getvalueex");
 		}
-	};
+
+		void switching(bool flag) {
+			enabled = flag;
+		}
+
+		bool is_enabled() { return enabled; }
+		bool is_enabled_i() { return enabled_i; }
+
+		
+        void switch_load(ConfigReader& cr) {
+            cr.regist(key, [this](json_value_s* value) {
+                ConfigReader::load_variable(value, enabled);
+            });
+        }
+
+        void switch_store(ConfigWriter& cw) {
+            cw.append(key, enabled);
+        }
+
+	} lua_getvalueex;
 } // namespace patch
 #endif // ifdef PATCH_SWITCH_LUA_GETVALUE

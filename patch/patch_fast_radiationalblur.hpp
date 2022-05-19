@@ -20,6 +20,7 @@
 #include "util_magic.hpp"
 #include "offset_address.hpp"
 #include "global.hpp"
+#include "config_rw.hpp"
 
 namespace patch::fast {
 	// init at exedit load
@@ -27,13 +28,31 @@ namespace patch::fast {
 	inline class RadiationalBlur_t {
 		static BOOL func_proc(ExEdit::Filter* efp, ExEdit::FilterProcInfo* efpip);
 
+		bool enabled = true;
+		bool enabled_i;
+		inline static const char key[] = "fast.radiationalblur";
 	public:
-		inline static bool enabled() { return PATCH_SWITCHER_MEMBER(PATCH_SWITCH_FAST_RADIATIONALBLUR); }
-
-		void operator()() {
-			if (!enabled())return;
+		void init() {
+			enabled_i = enabled;
+			if (!enabled_i)return;
 			store_i32(GLOBAL::exedit_base + OFS::ExEdit::efRadiationalBlur_func_proc_ptr, &func_proc);
 		}
+
+		void switching(bool flag) { enabled = flag; }
+
+		bool is_enabled() { return enabled; }
+		bool is_enabled_i() { return enabled_i; }
+		
+        void switch_load(ConfigReader& cr) {
+            cr.regist(key, [this](json_value_s* value) {
+                ConfigReader::load_variable(value, enabled);
+            });
+        }
+
+        void switch_store(ConfigWriter& cw) {
+            cw.append(key, enabled);
+        }
+
 	} RadiationalBlur;
 } // namespace patch::fast
 #endif // ifdef PATCH_SWITCH_FAST_RADIATIONALBLUR

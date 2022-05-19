@@ -18,14 +18,49 @@
 #ifdef PATCH_SWITCH_IGNORE_MEDIA_PARAM_RESET
 #include "global.hpp"
 #include "util_magic.hpp"
+
+#include "restorable_patch.hpp"
+
 namespace patch {
 	// init at exedit load
 	// 動画ファイル と 音声ファイル で中間点を打っていないときでもファイルを再参照しても再生位置などの情報を変更しない
-	inline void ignore_media_param_reset() {
-		if (!PATCH_SWITCHER_MEMBER(PATCH_SWITCH_IGNORE_MEDIA_PARAM_RESET))return;
+    inline class ignore_media_param_reset_t {
 
-		OverWriteOnProtectHelper(GLOBAL::exedit_base + OFS::ExEdit::ignore_media_param_reset_mov, 2).store_i16(0, '\x90\xe9');
-		OverWriteOnProtectHelper(GLOBAL::exedit_base + OFS::ExEdit::ignore_media_param_reset_aud, 1).store_i8(0, '\xeb');
-	}
+        std::optional<restorable_patch_i16> rp1;
+        std::optional<restorable_patch_i8> rp2;
+
+        bool enabled = false;
+
+        inline static const char key[] = "ignore_media_param_reset";
+
+    public:
+        void init() {
+            rp1.emplace(GLOBAL::exedit_base + OFS::ExEdit::ignore_media_param_reset_mov, '\x90\xe9');
+            rp2.emplace(GLOBAL::exedit_base + OFS::ExEdit::ignore_media_param_reset_aud, '\xeb');
+
+            rp1->switching(enabled);
+            rp2->switching(enabled);
+        }
+
+        void switching(bool flag) {
+            enabled = flag;
+            rp1->switching(enabled);
+            rp2->switching(enabled);
+        }
+
+        bool is_enabled() { return enabled; }
+        bool is_enabled_i() { return enabled; }
+
+        void switch_load(ConfigReader& cr) {
+            cr.regist(key, [this](json_value_s* value) {
+                ConfigReader::load_variable(value, enabled);
+           });
+        }
+
+        void switch_store(ConfigWriter& cw) {
+            cw.append(key, enabled);
+        }
+
+    } ignore_media_param_reset;
 } // namespace patch
 #endif // ifdef PATCH_SWITCH_IGNORE_MEDIA_PARAM_RESET

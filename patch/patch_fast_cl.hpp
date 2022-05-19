@@ -1,5 +1,5 @@
 /*
-	This program is free software: you can redistribute it and/or modify
+    This program is free software: you can redistribute it and/or modify
     it under the terms of the GNU Lesser General Public License as published by
     the Free Software Foundation, either version 3 of the License, or
     (at your option) any later version.
@@ -41,8 +41,12 @@
 #include "cryptostring.hpp"
 #include "util.hpp"
 #include "debug_log.hpp"
+#include "config_rw.hpp"
 
-inline class CLManager {
+namespace patch::fast {
+
+inline class cl_t {
+#pragma region clprogram
     inline static auto program_str = make_cryptostring(R"(
 kernel void PolorTransform(global short* dst, global short* src, int src_w, int src_h, int exedit_buffer_line, int center, int radius, float angle, float uzu, float uzu_a) {
     int x = get_global_id(0);
@@ -323,26 +327,31 @@ kernel void RadiationalBlur(
     }
 }
 )");
+#pragma endregion
 
-	template<size_t i, class Head>
-	static void KernelSetArg(cl::Kernel& kernel, Head head) {
-		kernel.setArg(i, head);
-	}
+    template<size_t i, class Head>
+    static void KernelSetArg(cl::Kernel& kernel, Head head) {
+        kernel.setArg(i, head);
+    }
 
-	template<size_t i, class Head, class... Tail>
-	static void KernelSetArg(cl::Kernel& kernel, Head head, Tail... tail) {
-		kernel.setArg(i, head);
-		KernelSetArg<i + 1>(kernel, tail...);
-	}
+    template<size_t i, class Head, class... Tail>
+    static void KernelSetArg(cl::Kernel& kernel, Head head, Tail... tail) {
+        kernel.setArg(i, head);
+        KernelSetArg<i + 1>(kernel, tail...);
+    }
+
+    bool enabled = true;
+    bool enabled_i;
+    inline static const char key[] = "fast.cl";
 
 public:
     cl::Platform platform;
-	std::vector<cl::Device> devices;
-	cl::Context context;
+    std::vector<cl::Device> devices;
+    cl::Context context;
 
-	std::byte program_mem[sizeof(cl::Program)];
+    std::byte program_mem[sizeof(cl::Program)];
     bool program_opt;
-	cl::CommandQueue queue;
+    cl::CommandQueue queue;
 
     HMODULE CLLib;
 
@@ -352,8 +361,8 @@ public:
         Failed
     } state;
 
-	CLManager() :state(State::NotYet), CLLib(NULL) {}
-    ~CLManager() {
+    cl_t() :state(State::NotYet), CLLib(NULL) {}
+    ~cl_t() {
         FreeLibrary(CLLib);
         if (program_opt) {
             auto program = reinterpret_cast<cl::Program*>(program_mem);
@@ -361,25 +370,20 @@ public:
         }
     }
 
-	bool init() {
-        /*
-        CLLib = LoadLibraryW(L"OpenCL.dll");
-        if (CLLib == NULL) {
-            debug_log("OpenCL not available");
-            state = State::Failed;
-            return false;
-        }
-        */
+    bool init() {
+        enabled_i = enabled;
 
-        if(![]() {
+        if (!enabled_i)return true;
+
+        if (![]() {
             __try {
                 auto load_ret = __HrLoadAllImportsForDll("OpenCL.dll");
-                if (FAILED(load_ret)) {
-                    [load_ret]() {
-                        debug_log("OpenCL not available {}", std::format("delay load failed {}", load_ret));
-                    }();
-                    return false;
-                }
+                    if (FAILED(load_ret)) {
+                        [load_ret]() {
+                            debug_log("OpenCL not available {}", "delay load failed {}"_fmt(load_ret));
+                        }();
+                        return false;
+                    }
                 return true;
             }
             __except ([](int code) {
@@ -394,21 +398,21 @@ public:
                 debug_log("OpenCL not available {}\n", "delay load exception");
                 return false;
             }
-        }()){
+        }()) {
             state = State::Failed;
             return false;
         }
-        
 
-        switch(state) {
+
+        switch (state) {
         case State::NotYet:
-		    try {
+            try {
                 cl::Platform::get(&platform);
                 platform.getDevices(CL_DEVICE_TYPE_ALL, &devices);
-			    context = cl::Context(devices);
-			    new (&program_mem[0]) cl::Program(context, program_str.get(), true);
+                context = cl::Context(devices);
+                new (&program_mem[0]) cl::Program(context, program_str.get(), true);
                 program_opt = true;
-			    //program.build(devices);
+                //program.build(devices);
                 program_str.re_encrypt();
 
                 struct DeviceInfo {
@@ -436,21 +440,21 @@ public:
                     device_itr++;
                 }
 
-			    queue = cl::CommandQueue(context, devices[0]);
-		    }
-		    catch (const cl::Error& err) {
+                queue = cl::CommandQueue(context, devices[0]);
+            }
+            catch (const cl::Error& err) {
                 program_str.re_encrypt();
-                
-			    if (err.err() == CL_BUILD_PROGRAM_FAILURE) {
+
+                if (err.err() == CL_BUILD_PROGRAM_FAILURE) {
                     try {
                         if (program_opt) {
                             auto program = reinterpret_cast<cl::Program*>(program_mem);
-				            if (auto status = program->getBuildInfo<CL_PROGRAM_BUILD_STATUS>(devices[0]); status == CL_BUILD_ERROR) {
+                            if (auto status = program->getBuildInfo<CL_PROGRAM_BUILD_STATUS>(devices[0]); status == CL_BUILD_ERROR) {
                                 debug_log(
                                     "OpenCL Error (CL_BUILD_PROGRAM_FAILURE : CL_BUILD_ERROR)\n{}",
                                     program->getBuildInfo<CL_PROGRAM_BUILD_LOG>(devices[0]).c_str()
                                 );
-				            }
+                            }
                             else {
                                 debug_log("OpenCL Error (CL_BUILD_PROGRAM_FAILURE)\nstatus: {}", status);
                             }
@@ -465,11 +469,11 @@ public:
                         state = State::Failed;
                         return false;
                     }
-			    }
+                }
                 debug_log("OpenCL Error\n({}) {}", err.err(), err.what());
                 state = State::Failed;
                 return false;
-		    }
+            }
             state = State::OK;
             [[fallthrough]];
         case State::OK:
@@ -477,7 +481,7 @@ public:
         default:
             return false;
         }
-	}
+    }
 
     template<class... Args>
     cl::Kernel readyKernel(std::string_view name, Args&&... args) {
@@ -487,6 +491,24 @@ public:
         return kernel;
     }
 
-} cl_manager;
+    void switching(bool flag) {
+        enabled = flag;
+    }
+
+    bool is_enabled() { return enabled; }
+    bool is_enabled_i() { return enabled_i; }
+    
+	void switch_load(ConfigReader& cr) {
+		cr.regist(key, [this](json_value_s* value) {
+			ConfigReader::load_variable(value, enabled);
+		});
+	}
+
+	void switch_store(ConfigWriter& cw) {
+		cw.append(key, enabled);
+	}
+} cl;
+
+} // namespace patch::fast
 
 #endif

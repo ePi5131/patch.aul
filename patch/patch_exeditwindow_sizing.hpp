@@ -21,43 +21,69 @@
 #include "global.hpp"
 #include "util_magic.hpp"
 
+#include "config_rw.hpp"
+
 namespace patch {
 	// call at v_func_WncProc WM_SIZING
 	// 拡張編集ウィンドウの上部を正常にドラッグできるようにする
-	inline BOOL exeditwindow_sizing(WPARAM wparam, LPARAM lparam) {
-		if (!PATCH_SWITCHER_MEMBER(PATCH_SWITCH_EXEDITWINDOW_SIZING)) return -1;
+	inline class exeditwindow_sizing_t {
 
-		auto LayerHeightState = load_i32<int>(GLOBAL::exedit_base + 0x0a3e20);
-		auto DAT_101a530c = load_i32<int>(GLOBAL::exedit_base + 0x1a530c);
+		bool enabled = true;
+		inline static const char key[] = "exeditwindow_sizing";
 
-		auto rect = (RECT*)lparam;
-		if (rect->right < rect->left + 128) rect->right = rect->left + 128;
+	public:
+		BOOL wndproc(WPARAM wparam, LPARAM lparam) {
+			if (!enabled) return -1;
 
-		auto top = rect->top;
-		auto layer_count = (rect->bottom - rect->top - DAT_101a530c + LayerHeightState / 2) / LayerHeightState;
+			auto LayerHeightState = load_i32<int>(GLOBAL::exedit_base + 0x0a3e20);
+			auto DAT_101a530c = load_i32<int>(GLOBAL::exedit_base + 0x1a530c);
 
-		bool is_top;
-		switch (wparam) {
-		case WMSZ_TOP:
-		case WMSZ_TOPLEFT:
-		case WMSZ_TOPRIGHT:
-			is_top = true;
-			break;
-		default:
-			is_top = false;
+			auto rect = (RECT*)lparam;
+			if (rect->right < rect->left + 128) rect->right = rect->left + 128;
+
+			auto top = rect->top;
+			auto layer_count = (rect->bottom - rect->top - DAT_101a530c + LayerHeightState / 2) / LayerHeightState;
+
+			bool is_top;
+			switch (wparam) {
+				case WMSZ_TOP:
+				case WMSZ_TOPLEFT:
+				case WMSZ_TOPRIGHT:
+					is_top = true;
+					break;
+				default:
+					is_top = false;
+			}
+
+			if (layer_count < 1) layer_count = 1;
+			else if (100 < layer_count) layer_count = 100;
+
+			if (is_top) {
+				rect->top = rect->bottom - (DAT_101a530c + LayerHeightState * layer_count);
+			}
+			else {
+				rect->bottom = rect->top + DAT_101a530c + LayerHeightState * layer_count;
+			}
+			return 0;
 		}
 
-		if (layer_count < 1) layer_count = 1;
-		else if (100 < layer_count) layer_count = 100;
+		void switching(bool flag) {
+			enabled = flag;
+		}
 
-		if (is_top) {
-			rect->top = rect->bottom - (DAT_101a530c + LayerHeightState * layer_count);
+		bool is_enabled() { return enabled; }
+		bool is_enabled_i() { return enabled; }
+
+		void switch_load(ConfigReader& cr) {
+			cr.regist(key, [this](json_value_s* value) {
+				ConfigReader::load_variable(value, enabled);
+			});
 		}
-		else {
-			rect->bottom = rect->top + DAT_101a530c + LayerHeightState * layer_count;
+
+		void switch_store(ConfigWriter& cw) {
+			cw.append(key, enabled);
 		}
-		return 0;
-	}
+	} exeditwindow_sizing;
 
 } // namespace patch
 #endif // ifdef PATCH_SWITCH_EXEDITWINDOW_SIZING

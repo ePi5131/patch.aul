@@ -23,7 +23,6 @@
 #include "offset_address.hpp"
 #include "util.hpp"
 #include "patch.hpp"
-#include "mycl.hpp"
 #include "debug_log.hpp"
 
 #include "overwrite_resource.hpp"

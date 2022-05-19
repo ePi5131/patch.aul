@@ -20,6 +20,7 @@
 #include "global.hpp"
 #include "util_magic.hpp"
 #include "global.hpp"
+#include "config_rw.hpp"
 
 namespace patch {
 	// init at exedit load
@@ -34,12 +35,16 @@ namespace patch {
 		static void __cdecl FUN_10030500_Wrap3();
 
 		static void __cdecl FUN_1002bf10_Wrap(HDC hDC);
+
+		bool enabled = true;
+		bool enabled_i;
+		inline static const char key[] = "fast_settingdialog";
+
 	public:
 
-		inline static bool enabled() { return PATCH_SWITCHER_MEMBER(PATCH_SWITCH_FAST_SETTINGDIALOG); }
-
-		void operator()() {
-			if (!enabled()) return;
+		void init() {
+			enabled_i = enabled;
+			if (!enabled_i) return;
 
 			// 単体呼び出し
 			ReplaceNearJmp(GLOBAL::exedit_base + 0x0417c8, &FUN_10030500_Wrap);
@@ -70,6 +75,21 @@ namespace patch {
 			ReplaceNearJmp(GLOBAL::exedit_base + 0x02ceb7, &FUN_1002bf10_Wrap);
 			// テキスト の行間等のコントロールの描画がおかしくなる
 			//OverWriteOnProtectHelper(GLOBAL::exedit_base + 0x02e881, 4).store_i32(0, WS_EX_TOOLWINDOW | WS_EX_COMPOSITED);
+		}
+
+		void switching(bool flag) { enabled = flag; }
+
+		bool is_enabled() { return enabled; }
+		bool is_enabled_i() { return enabled_i; }
+
+		void switch_load(ConfigReader& cr) {
+			cr.regist(key, [this](json_value_s* value) {
+				ConfigReader::load_variable(value, enabled);
+			});
+		}
+
+		void switch_store(ConfigWriter& cw) {
+			cw.append(key, enabled);
 		}
 
 	} fast_setting_dialog;

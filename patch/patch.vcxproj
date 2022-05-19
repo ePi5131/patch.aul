@@ -16,7 +16,8 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="add_dll_ref.hpp" />
-    <ClInclude Include="configfile.hpp" />
+    <ClInclude Include="config.hpp" />
+    <ClInclude Include="config_rw.hpp" />
     <ClInclude Include="cryptostring.hpp" />
     <ClInclude Include="debug_log.hpp" />
     <ClInclude Include="gate.hpp" />
@@ -28,7 +29,6 @@
     <ClInclude Include="macro.h" />
     <ClInclude Include="moduledata.hpp" />
     <ClInclude Include="multi_threading.hpp" />
-    <ClInclude Include="mycl.hpp" />
     <ClInclude Include="mylua.hpp" />
     <ClInclude Include="mywindow.hpp" />
     <ClInclude Include="offset_address.hpp" />
@@ -37,6 +37,7 @@
     <ClInclude Include="patch_access_key.hpp" />
     <ClInclude Include="patch_alpha_bg.hpp" />
     <ClInclude Include="patch_aviutl_wndproc_override.hpp" />
+    <ClInclude Include="patch_base.hpp" />
     <ClInclude Include="patch_console.hpp" />
     <ClInclude Include="patch_copybuffer_smem.hpp" />
     <ClInclude Include="patch_exception_history.hpp" />
@@ -48,6 +49,8 @@
     <ClInclude Include="patch_exo_specialcolorconv.hpp" />
     <ClInclude Include="patch_exo_trackminusval.hpp" />
     <ClInclude Include="patch_exo_trackparam.hpp" />
+    <ClInclude Include="patch_fast.hpp" />
+    <ClInclude Include="patch_fast_cl.hpp" />
     <ClInclude Include="patch_fast_exeditwindow.hpp" />
     <ClInclude Include="patch_fast_getputpixeldata.hpp" />
     <ClInclude Include="patch_fast_polortransform.hpp" />
@@ -61,6 +64,7 @@
     <ClInclude Include="patch_lua_rand.hpp" />
     <ClInclude Include="patch_lua_randex.hpp" />
     <ClInclude Include="patch_override_debugstring.hpp" />
+    <ClInclude Include="patch_redo.hpp" />
     <ClInclude Include="patch_scroll_objdlg.hpp" />
     <ClInclude Include="patch_setting_dialog_wndproc_override.hpp" />
     <ClInclude Include="patch_setting_gui.hpp" />
@@ -70,6 +74,7 @@
     <ClInclude Include="patch_text_op_size.hpp" />
     <ClInclude Include="patch_theme_cc.hpp" />
     <ClInclude Include="patch_undo.hpp" />
+    <ClInclude Include="restorable_patch.hpp" />
     <ClInclude Include="resource.h" />
     <ClInclude Include="stopwatch.hpp" />
     <ClInclude Include="util.hpp" />
@@ -82,7 +87,6 @@
     <ClInclude Include="patch_setting_dialog_move.hpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="configfile.cpp" />
     <ClCompile Include="init.cpp" />
     <ClCompile Include="overwrite_resource.cpp" />
     <ClCompile Include="patch.cpp" />
@@ -101,6 +105,7 @@
     <ClCompile Include="patch_lua_rand.cpp" />
     <ClCompile Include="patch_lua_randex.cpp" />
     <ClCompile Include="patch_override_debugstring.cpp" />
+    <ClCompile Include="patch_redo.cpp" />
     <ClCompile Include="patch_setting_dialog_wndproc_override.cpp" />
     <ClCompile Include="patch_splash.cpp" />
     <ClCompile Include="patch_susie_load.cpp" />

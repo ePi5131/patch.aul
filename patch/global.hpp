@@ -20,7 +20,6 @@
 #include <Windows.h>
 
 #include "global_minimum.hpp"
-#include "configfile.hpp"
 
 namespace GLOBAL {
 	inline HMODULE exedit_hmod;
@@ -30,5 +29,4 @@ namespace GLOBAL {
 	inline std::wstring patchaul_path;
 	inline std::wstring patchaul_config_path;
 	inline std::string patchaul_path_a;
-	inline Config config;
 }

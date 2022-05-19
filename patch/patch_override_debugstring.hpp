@@ -33,10 +33,15 @@ namespace patch {
 		
 		inline static constexpr auto* debug_print_override_ptr = &debug_print_override;
 		inline static constexpr auto* exedit_lua_error_override_ptr = &exedit_lua_error_override;
+
+		bool enabled;
+		bool enabled_i;
+
 	public:
 		void operator()() {
-			if (!PATCH_SWITCHER_MEMBER(PATCH_SWITCH_DEBUGSTRING))return;
-			if (!console.valid()) return;
+			enabled_i = enabled;
+			if (!enabled_i)return;
+			if (!console.is_valid()) return;
 			
 			OverWriteOnProtectHelper(GLOBAL::exedit_base + OFS::ExEdit::OutputDebugString_calling_err1, 4).store_i32(0, &exedit_lua_error_override_ptr);
 			OverWriteOnProtectHelper(GLOBAL::exedit_base + OFS::ExEdit::OutputDebugString_calling_err2, 4).store_i32(0, &exedit_lua_error_override_ptr);

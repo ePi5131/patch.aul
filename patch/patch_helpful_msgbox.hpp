@@ -25,6 +25,8 @@
 #include "global.hpp"
 #include "util_resource.hpp"
 #include "util_magic.hpp"
+#include "restorable_patch.hpp"
+#include "config_rw.hpp"
 
 namespace patch {
 	// init at exedit load
@@ -56,18 +58,39 @@ namespace patch {
 
 		static int WINAPI MessageBoxAWrap(HWND hWnd, LPCSTR lpText, LPCSTR lpCaption, UINT uType);
 
-	public:
-		inline static bool enabled() { return PATCH_SWITCHER_MEMBER(PATCH_SWITCH_HELPFUL_MSGBOX); }
+		bool enabled = true;
+		inline static const char key[] = "helpful_msgbox";
 
-		void operator()() {
-			if (!enabled())return;
+		std::optional<restorable_patch_i32> rp;
+
+	public:
+		void init() {
+			if (!enabled)return;
 
 			for (auto& p : strptr2rid_ofs_ee) {
 				strptr2rid.emplace(GLOBAL::exedit_base + p.first, p.second);
 			}
 
-			ExchangeFunction(GLOBAL::exedit_hmod, cstr_user32_dll.get(), cstr_MessageBoxA.get(), &MessageBoxAWrap);
+			auto address = search_import(GLOBAL::exedit_hmod, cstr_user32_dll.get(), cstr_MessageBoxA.get());
+			rp.emplace(reinterpret_cast<uintptr_t>(address), reinterpret_cast<i32>(&MessageBoxAWrap));
 		}
+
+        void switching(bool flag) {
+            rp->switching(enabled = flag);
+        }
+
+        bool is_enabled() { return enabled; }
+        bool is_enabled_i() { return enabled; }
+
+        void switch_load(ConfigReader& cr) {
+			cr.regist(key, [this](json_value_s* value) {
+				ConfigReader::load_variable(value, enabled);
+			});
+        }
+
+        void switch_store(ConfigWriter& cw) {
+            cw.append(key, enabled);
+        }
 	} helpful_msgbox;
 } // namespace patch
 #endif // ifdef PATCH_SWITCH_HELPFUL_MSGBOX

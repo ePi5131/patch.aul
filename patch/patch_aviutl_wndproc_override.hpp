@@ -36,8 +36,6 @@ namespace patch {
 		inline static HMENU aviutl_hmenu; // menu parent
 		inline static HMENU aviutl_hmwnu_disp; // menu 表示
 
-		//inline static HWND console_parent_hwnd_org;
-
 		inline static WNDPROC aviutl_wndproc_orig;
 
 		friend class console_t;
@@ -48,11 +46,10 @@ namespace patch {
 			
 			auto hwnd = load_i32<AviUtl::EditHandle*>(GLOBAL::aviutl_base + OFS::AviUtl::edit_handle_ptr)->aviutl_window_info.main_window;
 
-			//console_parent_hwnd_org = (HWND)SetWindowLongA(console.get_console_hwnd(), GWL_HWNDPARENT, (LONG)hwnd);
-			aviutl_wndproc_orig = (WNDPROC)SetWindowLongA(hwnd, GWL_WNDPROC, (LONG)wrap);
+			aviutl_wndproc_orig = reinterpret_cast<WNDPROC>(SetWindowLongA(hwnd, GWL_WNDPROC, reinterpret_cast<LONG>(wrap)));
 
 #ifdef PATCH_SWITCH_CONSOLE
-			if (!GLOBAL::config.console.visible) console.showWindow(SW_MINIMIZE);
+			if (!patch::console.visible) console.showWindow(SW_MINIMIZE);
 #endif
 
 			aviutl_hmenu = GetMenu(hwnd);

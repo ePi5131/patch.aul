@@ -136,7 +136,7 @@ namespace patch {
 	}
 
 	void __cdecl fast_exeditwindow_t::FUN_10036a70_Wrap_step(HDC hDC, LPRECT prect, int r1, int g1, int b1, int r2, int g2, int b2, int gradation_left, int gradation_right) {
-		auto steps = PATCH_SWITCHER_MEMBER(fast_exeditwindow_step).value();
+		auto steps = patch::fast_exeditwindow.step;
 
 		auto brush = (HBRUSH)GetStockObject(DC_BRUSH);
 

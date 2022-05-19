@@ -23,7 +23,6 @@
     <ClInclude Include="macro.h" />
     <ClInclude Include="moduledata.hpp" />
     <ClInclude Include="multi_threading.hpp" />
-    <ClInclude Include="mycl.hpp" />
     <ClInclude Include="mylua.hpp" />
     <ClInclude Include="mywindow.hpp" />
     <ClInclude Include="offset_address.hpp" />
@@ -33,7 +32,6 @@
     <ClInclude Include="stopwatch.hpp" />
     <ClInclude Include="version.hpp" />
     <ClInclude Include="add_dll_ref.hpp" />
-    <ClInclude Include="configfile.hpp" />
     <ClInclude Include="patch_access_key.hpp">
       <Filter>feature</Filter>
     </ClInclude>
@@ -163,12 +161,24 @@
     <ClInclude Include="patch_undo.hpp">
       <Filter>feature</Filter>
     </ClInclude>
+    <ClInclude Include="config.hpp" />
+    <ClInclude Include="patch_base.hpp" />
+    <ClInclude Include="restorable_patch.hpp" />
+    <ClInclude Include="config_rw.hpp" />
+    <ClInclude Include="patch_redo.hpp">
+      <Filter>feature</Filter>
+    </ClInclude>
+    <ClInclude Include="patch_fast.hpp">
+      <Filter>feature\fast</Filter>
+    </ClInclude>
+    <ClInclude Include="patch_fast_cl.hpp">
+      <Filter>feature\fast</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="init.cpp" />
     <ClCompile Include="overwrite_resource.cpp" />
     <ClCompile Include="patch.cpp" />
-    <ClCompile Include="configfile.cpp" />
     <ClCompile Include="patch_aviutl_wndproc_override.cpp">
       <Filter>feature</Filter>
     </ClCompile>
@@ -227,6 +237,9 @@
       <Filter>feature</Filter>
     </ClCompile>
     <ClCompile Include="patch_setting_dialog_wndproc_override.cpp">
+      <Filter>feature</Filter>
+    </ClCompile>
+    <ClCompile Include="patch_redo.cpp">
       <Filter>feature</Filter>
     </ClCompile>
   </ItemGroup>

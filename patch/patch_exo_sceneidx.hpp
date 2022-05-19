@@ -21,15 +21,52 @@
 #include "offset_address.hpp"
 #include "util.hpp"
 
+#include "restorable_patch.hpp"
+
 namespace patch {
 	// init at exedit load
 	// オブジェクトファイルにシーン・シーン(音声)のシーン番号が正しく入出力されない
-	inline void exo_sceneidx() {
-		if (!PATCH_SWITCHER_MEMBER(PATCH_SWITCH_EXO_SCENEIDX))return;
-		static const char name[] = "scene";
-		store_i16(GLOBAL::exedit_base + OFS::ExEdit::efSceneAudio_exdatause_idx_type, 1);
-		store_i32(GLOBAL::exedit_base + OFS::ExEdit::efSceneAudio_exdatause_idx_name, &name);
-		store_i32(GLOBAL::exedit_base + OFS::ExEdit::efScene_exdatause_idx_name, &name);
-	}
+	inline class exo_sceneidx_t {
+
+		bool enabled = true;
+		inline static const char key[] = "exo_sceneidx";
+
+		std::optional<restorable_patch_i16> rp1;
+		std::optional<restorable_patch_i32> rp2;
+		std::optional<restorable_patch_i32> rp3;
+
+		inline static const char scene_name[] = "scene";
+	public:
+		void init() {
+
+			rp1.emplace(GLOBAL::exedit_base + OFS::ExEdit::efSceneAudio_exdatause_idx_type, (i16)1);
+			rp2.emplace(GLOBAL::exedit_base + OFS::ExEdit::efSceneAudio_exdatause_idx_name, &scene_name);
+			rp3.emplace(GLOBAL::exedit_base + OFS::ExEdit::efScene_exdatause_idx_name, &scene_name);
+
+			rp1->switching(enabled);
+			rp2->switching(enabled);
+			rp3->switching(enabled);
+		}
+
+        void switching(bool flag) {
+			enabled = flag;
+            rp1->switching(enabled);
+			rp2->switching(enabled);
+			rp3->switching(enabled);
+        }
+
+        bool is_enabled() { return enabled; }
+		bool is_enabled_i() { return enabled; }
+        
+		void switch_load(ConfigReader& cr) {
+			cr.regist(key, [this](json_value_s* value) {
+				ConfigReader::load_variable(value, enabled);
+			});
+		}
+
+		void switch_store(ConfigWriter& cw) {
+			cw.append(key, enabled);
+		}
+	} exo_sceneidx;
 } // namespace patch
 #endif // ifdef PATCH_SWITCH_EXO_SCENEIDX

@@ -19,6 +19,8 @@
 
 #include <bit>
 
+#include "config_rw.hpp"
+
 #include "mylua.hpp"
 
 namespace patch {
@@ -62,6 +64,10 @@ namespace patch {
             setmetatable(L, -1);
             return rnd;
         }
+
+        bool enabled;
+        bool enabled_i;
+        inline static const char key[] = "lua.randex";
     public:
 
         static void require(lua_State* L) {
@@ -82,6 +88,23 @@ namespace patch {
             lua_setfield(L, -3, "randex");
             lua_pushcfunction(L, l_randex);
             lua_setfield(L, -2, "randex");
+        }
+
+        void switching(bool flag) {
+            enabled = flag;
+        }
+
+        bool is_enabled() { return enabled; }
+        bool is_enabled_i() { return enabled_i; }
+        
+        void switch_load(ConfigReader& cr) {
+            cr.regist(key, [this](json_value_s* value) {
+                ConfigReader::load_variable(value, enabled);
+            });
+        }
+
+        void switch_store(ConfigWriter& cw) {
+            cw.append(key, enabled);
         }
     } lua_randex;
 }

@@ -21,6 +21,8 @@
 #include "util.hpp"
 #include "util_resource.hpp"
 
+#include "patch_exo_trackminusval.hpp"
+
 // playground
 inline class mywindow_t {
 	HMENU hmenu;
@@ -30,9 +32,13 @@ inline class mywindow_t {
 		if (message != WM_COMMAND) return DefWindowProc(hwnd, message, wparam, lparam);
 		switch (LOWORD(wparam)) {
 		case 10000: {
-
-		}
+			patch::exo_trackminusval.switching(false);
 			return FALSE;
+		}
+		case 10001: {
+			patch::exo_trackminusval.switching(true);
+			return FALSE;
+		}
 		}
 		return DefWindowProc(hwnd, message, wparam, lparam);
 	}
@@ -47,6 +53,7 @@ public:
 	void init() {
 		hmenu = CreateMenu();
 		InsertMenuA(hmenu, -1, MF_BYPOSITION | MF_STRING, 10000, "switch");
+		InsertMenuA(hmenu, -1, MF_BYPOSITION | MF_STRING, 10001, "switch2");
 
 		hwnd = CreateWindowA("STATIC", "patchhhhhhhh", 0, 0, 0, 1000, 500, NULL, hmenu, GLOBAL::patchaul_hinst, NULL);
 

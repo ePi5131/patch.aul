@@ -24,6 +24,7 @@
 #include "offset_address.hpp"
 #include "util.hpp"
 #include "global.hpp"
+#include "config_rw.hpp"
 
 namespace patch::fast {
 	// init at exedit load
@@ -31,13 +32,32 @@ namespace patch::fast {
 	inline class PolorTransform_t {
 		static BOOL func_proc(ExEdit::Filter* efp, ExEdit::FilterProcInfo* efpip);
 
-	public:
-		inline static bool enabled() { return PATCH_SWITCHER_MEMBER(PATCH_SWITCH_FAST_POLORTRANSFORM); }
+		bool enabled = true;
+		bool enabled_i;
+		inline static const char key[] = "fast.polortransform";
 
-		void operator()() {
-			if (!enabled())return;
+	public:
+		void init() {
+			enabled_i = enabled;
+			if (!enabled_i)return;
 			store_i32(GLOBAL::exedit_base + OFS::ExEdit::efPolorTransform_func_proc_ptr, &func_proc);
 		}
+
+		void switching(bool flag) { enabled = flag; }
+
+		bool is_enabled() { return enabled; }
+		bool is_enabled_i() { return enabled_i; }
+
+		void switch_load(ConfigReader& cr) {
+			cr.regist(key, [this](json_value_s* value) {
+				ConfigReader::load_variable(value, enabled);
+			});
+		}
+
+		void switch_store(ConfigWriter& cw) {
+			cw.append(key, enabled);
+		}
+
 	} PolorTransform;
 } // namespace patch::fast
 #endif // ifdef PATCH_SWITCH_FAST_POLORTRANSFORM

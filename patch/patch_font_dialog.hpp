@@ -28,11 +28,14 @@ namespace patch {
 
 		//inline static constexpr LPCWSTR class_name = L"PATCH_FONTDLG";
 
-	public:
-		inline static bool enabled() { return PATCH_SWITCHER_MEMBER(PATCH_SWITCH_FONT_DIALOG); }
+		bool enabled = true;
+		bool enabled_i;
+		inline static const char key[] = "font_dialog";
 
-		void operator()() {
-			if (!enabled())return;
+	public:
+		void init() {
+			enabled_i = enabled;
+			if (!enabled_i)return;
 			/*WNDCLASSW wc{
 				.style = 0,
 				.lpfnWndProc = nullptr,
@@ -56,6 +59,23 @@ namespace patch {
 			//UnregisterClassW(class_name, GLOBAL::patchaul_hinst);
 		}
 
+
+		void switching(bool flag) {
+			enabled = flag;
+		}
+
+		bool is_enabled() { return enabled; }
+		bool is_enabled_i() { return enabled_i; }
+
+		void switch_load(ConfigReader& cr) {
+			cr.regist(key, [this](json_value_s* value) {
+				ConfigReader::load_variable(value, enabled);
+			});
+		}
+
+		void switch_store(ConfigWriter& cw) {
+			cw.append(key, enabled);
+		}
 	} font_dialog;
 	
 } // namespace patch

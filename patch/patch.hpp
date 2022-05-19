@@ -15,6 +15,7 @@
 
 #pragma once
 
+#include "patch_access_key.hpp"
 #include "patch_exo_sceneidx.hpp"
 #include "patch_exo_trackparam.hpp"
 #include "patch_exo_trackminusval.hpp"
@@ -42,3 +43,11 @@
 #include "patch_fast_getputpixeldata.hpp"
 #include "patch_fast_polortransform.hpp"
 #include "patch_fast_radiationalblur.hpp"
+#include "patch_font_dialog.hpp"
+#include "patch_setting_dialog_move.hpp"
+#include "patch_redo.hpp"
+#include "patch_fast.hpp"
+#include "patch_fast_cl.hpp"
+#include "patch_lua_getvalueex.hpp"
+#include "patch_lua_rand.hpp"
+#include "patch_lua_randex.hpp"

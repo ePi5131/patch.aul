@@ -39,8 +39,8 @@
 #define PATCH_SWITCH_TEXT_OP_SIZE text_op_size
 #define PATCH_SWITCH_IGNORE_MEDIA_PARAM_RESET ignore_media_param_reset
 #define PATCH_SWITCH_FONT_DIALOG font_dialog
-//#define PATCH_SWITCH_SCROLL_OBJDLG scroll_objdlg
-//#define PATCH_SWITCH_ALPHA_BG alpha_bg
+#define PATCH_SWITCH_SCROLL_OBJDLG scroll_objdlg
+#define PATCH_SWITCH_ALPHA_BG alpha_bg
 #define PATCH_SWITCH_HELPFUL_MSGBOX helpful_msgbox
 #define PATCH_SWITCH_THEME_CC theme_cc
 #define PATCH_SWITCH_EXEDITWINDOW_SIZING exeditwindow_sizing
@@ -62,6 +62,7 @@
 #define PATCH_SWITCH_LUA lua
 #ifdef PATCH_SWITCH_LUA
 
+	#define PATCH_SWITCH_LUA_ENV lua_env
 	#define PATCH_SWITCH_LUA_GETVALUE lua_getvalueex
 	#define PATCH_SWITCH_LUA_RAND lua_rand
 	#define PATCH_SWITCH_LUA_RANDEX lua_randex
@@ -90,7 +91,7 @@
 #endif //define PATCH_SWITCH_FAST
 
 #else // ifdef PATCH_INTERNAL
-#define PATCH_VERSION_STR "r21"
+#define PATCH_VERSION_STR "(config2 branch 1)"
 
 #define PATCH_SWITCH_EXCEPTION_LOG
 #define PATCH_SWITCH_SYSINFO_MODIFY

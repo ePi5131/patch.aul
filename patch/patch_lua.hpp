@@ -26,6 +26,7 @@
 #include "global.hpp"
 #include "offset_address.hpp"
 #include "mylua.hpp"
+#include "config_rw.hpp"
 
 namespace patch {
     // init at exedit load
@@ -111,15 +112,28 @@ namespace patch {
         static const char* __cdecl lua_tolstring_remove_stack(lua_State* L, int idx, size_t* len);
         inline static auto lua_tolstring_remove_stack_ptr = &lua_tolstring_remove_stack;
 
-        static bool enabled() {
-            return PATCH_SWITCHER_MEMBER(PATCH_SWITCH_LUA);
-        }
+        bool enabled = true;
+        bool enabled_i;
+        inline static const char key[] = "lua";
+
+        bool env = false;
+        bool env_i;
+        inline static const char key_env[] = "lua.env";
+
+        bool path = true;
+        bool path_i;
+        inline static const char key_path[] = "lua.path";
 
     public:
-        void operator()() {
-            if (!enabled())return;
+        void init() {
+            enabled_i = enabled;
+            env_i = env;
+            path_i = path;
 
-            if (PATCH_SWITCHER_MEMBER(PATCH_SWITCH_LUA_ENV)) {
+
+            if (!enabled_i)return;
+
+            if (env_i) {
                 ReplaceFunction(GLOBAL::exedit_base + OFS::ExEdit::GetOrCreateLuaState, &luaGetOrCreateState_envpatch);
                 ReplaceFunction(GLOBAL::exedit_base + OFS::ExEdit::LuaUnload, &luaUnload);
                 ReplaceFunction(GLOBAL::exedit_base + OFS::ExEdit::DoScriptInit, &DoScriptInit);
@@ -130,7 +144,7 @@ namespace patch {
             }
 
 
-            if (PATCH_SWITCHER_MEMBER(PATCH_SWITCH_LUA_PATH)) {
+            if (path_i) {
                 ReplaceFunction(GLOBAL::exedit_base + OFS::ExEdit::SetLuaPathAndCpath, &luaUpdatePath);
             }
 
@@ -153,6 +167,40 @@ namespace patch {
             OverWriteOnProtectHelper(GLOBAL::exedit_base + OFS::ExEdit::lua_tostring_calling2, 4).store_i32(0, &lua_tolstring_remove_stack_ptr);
             OverWriteOnProtectHelper(GLOBAL::exedit_base + OFS::ExEdit::lua_tostring_calling3, 4).store_i32(0, &lua_tolstring_remove_stack_ptr);
         }
+
+        void switching(bool flag) {
+            enabled = flag;
+        }
+
+        bool is_enabled() { return enabled; }
+        bool is_enabled_i() { return enabled_i; }
+
+        bool get_env() { return env; }
+        bool get_env_i() { return env_i; }
+        void set_env(bool x) { env = x; }
+
+        bool get_path() { return path; }
+        bool get_path_i() { return path_i; }
+        void set_path(bool x) { path = x; }
+
+        void switch_load(ConfigReader& cr) {
+            cr.regist(key, [this](json_value_s* value) {
+                ConfigReader::load_variable(value, enabled);
+            });
+            cr.regist(key_env, [this](json_value_s* value) {
+                ConfigReader::load_variable(value, enabled);
+            });
+            cr.regist(key_path, [this](json_value_s* value) {
+                ConfigReader::load_variable(value, enabled);
+            });
+        }
+
+        void switch_store(ConfigWriter& cw) {
+            cw.append(key, enabled);
+            cw.append(key_env, env);
+            cw.append(key_path, path);
+        }
+
     } lua;
 } // namespace patch
 #endif // ifdef PATCH_SWITCH_LUA
