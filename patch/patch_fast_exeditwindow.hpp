@@ -99,9 +99,6 @@ namespace patch {
             cr.regist(key, [this](json_value_s* value) {
                 ConfigReader::load_variable(value, enabled);
             });
-			cr.regist(key, [this](json_value_s* value) {
-                ConfigReader::load_variable(value, enabled);
-            });
         }
 
         void switch_store(ConfigWriter& cw) {

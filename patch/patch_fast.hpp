@@ -8,7 +8,9 @@ namespace patch::fast {
 		inline static const char key[] = "fast";
 
 	public:
-		void init() {}
+		void init() {
+            enabled_i = enabled;
+        }
 
         void switching(bool flag) {
             enabled = flag;
