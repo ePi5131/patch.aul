@@ -19,6 +19,7 @@
 #include "patch_exo_sceneidx.hpp"
 #include "patch_exo_trackparam.hpp"
 #include "patch_exo_trackminusval.hpp"
+#include "patch_tra_aviutlfilter.hpp"
 #include "patch_exo_aviutlfilter.hpp"
 #include "patch_exo_specialcolorconv.hpp"
 #include "patch_lua.hpp"
