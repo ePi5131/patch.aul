@@ -198,6 +198,8 @@ public:
     }
 
     void store(std::wstring_view path) {
+        if (invalid_json)return;
+
         auto hFile = CreateFileW(path.data(), GENERIC_WRITE, FILE_SHARE_READ, NULL, CREATE_ALWAYS, 0, NULL);
         if (hFile == INVALID_HANDLE_VALUE) {
             patch_resource_message_w(PATCH_RS_PATCH_FAILED_TO_SAVE_SETTING, MB_TASKMODAL | MB_ICONEXCLAMATION);
