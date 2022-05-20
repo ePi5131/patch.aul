@@ -174,25 +174,6 @@ void init_t::InitAtExeditLoad() {
 			else {
 				patch_resource_message_w(PATCH_RS_PATCH_CANT_USE_CL, MB_TASKMODAL | MB_ICONEXCLAMATION);
 			}
-
-			/*
-		if (PATCH_SWITCHER_MEMBER(PATCH_SWITCH_CL)) {
-			if (cl_manager.init()) {
-				#ifdef PATCH_SWITCH_FAST_POLORTRANSFORM
-					patch::fast::PolorTransform();
-				#endif
-				#ifdef PATCH_SWITCH_FAST_RADIATIONALBLUR
-					patch::fast::RadiationalBlur();
-				#endif
-				#ifdef PATCH_SWITCH_FAST_FLASH
-					patch::fast::Flash();
-				#endif
-			}
-			else {
-				patch_resource_message_w(PATCH_RS_PATCH_CANT_USE_CL, MB_TASKMODAL | MB_ICONEXCLAMATION);
-			}
-		}
-		*/
 		#endif
 	}
 	#endif
