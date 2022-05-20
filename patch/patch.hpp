@@ -43,6 +43,7 @@
 #include "patch_fast_getputpixeldata.hpp"
 #include "patch_fast_polortransform.hpp"
 #include "patch_fast_radiationalblur.hpp"
+#include "patch_fast_flash.hpp"
 #include "patch_font_dialog.hpp"
 #include "patch_setting_dialog_move.hpp"
 #include "patch_redo.hpp"

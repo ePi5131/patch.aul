@@ -162,6 +162,9 @@ void init_t::InitAtExeditLoad() {
 					#ifdef PATCH_SWITCH_FAST_RADIATIONALBLUR
 						patch::fast::RadiationalBlur.init();
 					#endif
+					#ifdef PATCH_SWITCH_FAST_FLASH
+						patch::fast::Flash.init();
+					#endif
 				}
 			}
 			else {
@@ -176,6 +179,9 @@ void init_t::InitAtExeditLoad() {
 				#endif
 				#ifdef PATCH_SWITCH_FAST_RADIATIONALBLUR
 					patch::fast::RadiationalBlur();
+				#endif
+				#ifdef PATCH_SWITCH_FAST_FLASH
+					patch::fast::Flash();
 				#endif
 			}
 			else {
