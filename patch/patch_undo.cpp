@@ -17,6 +17,7 @@
 
 namespace patch {
 #ifdef PATCH_SWITCH_UNDO
+
     void __cdecl undo_t::set_undo_wrap_3e037(unsigned int object_idx, unsigned int flag) {
         auto exists_movable_playback_pos = [](unsigned int object_idx) {
             auto& exdata_buffer = *exdata_buffer_ptr;
@@ -99,8 +100,8 @@ namespace patch {
         set_undo(object_idx, flag);
     }
 
-    int __cdecl undo_t::efRadiationalBlur_func_WndProc_wrap_06e2b4(HWND hwnd, UINT message, WPARAM wparam, LPARAM lparam, AviUtl::EditHandle* editp, ExEdit::Filter* efp) {
-        auto ret = efRadiationalBlur_func_WndProc(hwnd, message, wparam, lparam, editp, efp);
+    int __cdecl undo_t::efDraw_func_WndProc_wrap_06e2b4(HWND hwnd, UINT message, WPARAM wparam, LPARAM lparam, AviUtl::EditHandle* editp, ExEdit::Filter* efp) {
+        auto ret = efDraw_func_WndProc(hwnd, message, wparam, lparam, editp, efp);
         if (ret) return ret;
         if (LOWORD(wparam) == 7708) {
             AddUndoCount();
@@ -110,13 +111,7 @@ namespace patch {
     }
 
     int __stdcall undo_t::f8b97f(HWND hwnd, ExEdit::Filter* efp, WPARAM wparam, LPARAM lparam) {
-        static ULONGLONG pretime = 0;
-        ULONGLONG time = GetTickCount64();
-        if (pretime + UNDO_INTERVAL < time) {
-            AddUndoCount();
-            set_undo(object(efp->processing) - 1, 1);
-        }
-        pretime = time;
+        interval_set_undo(object(efp->processing) - 1, 1);
         return SendMessageA(hwnd, CB_GETLBTEXT, wparam, lparam);
     }
 
@@ -157,13 +152,7 @@ namespace patch {
     }
 
     int __stdcall undo_t::f8b9f0(ExEdit::Filter* efp, HWND hWnd, LPWSTR lpString, int nMaxCount) {
-        static ULONGLONG pretime = 0;
-        ULONGLONG time = GetTickCount64();
-        if (pretime + UNDO_INTERVAL < time) {
-            AddUndoCount();
-            set_undo(object(efp->processing) - 1, 1);
-        }
-        pretime = time;
+        interval_set_undo(object(efp->processing) - 1, 1);
         return GetWindowTextW(hWnd, lpString, nMaxCount);
     }
 
@@ -222,6 +211,23 @@ namespace patch {
         AddUndoCount();
         set_undo((*ObjectArrayPointer_ptr)[*ObjDlg_ObjectIndex_ptr].layer_disp, 0x10);
         return *ObjectArrayPointer_ptr;
+    }
+
+    void __stdcall undo_t::f4355c(ExEdit::Object* obj) {
+        AddUndoCount();
+        set_undo(obj - *ObjectArrayPointer_ptr, 0);
+        *(int*)&obj->flag ^= 0x200;
+    }
+
+    void __stdcall undo_t::f435bd(ExEdit::Object* obj) {
+        AddUndoCount();
+        set_undo(obj - *ObjectArrayPointer_ptr, 0);
+        *(int*)&obj->flag ^= 0x100;
+    }
+
+    void __cdecl undo_t::add_track_value_wrap(ExEdit::Filter* efp, int track_id, int add_value) {
+        interval_set_undo(object(efp->processing) - 1, 1);
+        add_track_value(efp, track_id, add_value);
     }
 
 #endif
