@@ -189,7 +189,11 @@ void init_t::InitAtExeditLoad() {
 
 #ifdef PATCH_SWITCH_UNDO
 	patch::undo.init();
-
+	if (patch::undo.is_enabled_i()) {
+		#ifdef PATCH_SWITCH_UNDO_REDO
+			patch::redo.init();
+		#endif
+	}
 #endif
 
 	//GLOBAL::config.store(GLOBAL::patchaul_config_path);
