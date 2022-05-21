@@ -24,9 +24,34 @@
 namespace patch {
 	// init at exedit load
 	// 制御文字のサイズのみを変えるとフォントの情報が壊れる
-	inline void text_op_size() {
-		if (!PATCH_SWITCHER_MEMBER(PATCH_SWITCH_TEXT_OP_SIZE))return;
-		OverWriteOnProtectHelper(GLOBAL::exedit_base + OFS::ExEdit::text_op_logfont_size, 1).store_i8(0, sizeof(LOGFONTW));
-	}
+    inline class text_op_size_t {
+        std::optional<restorable_patch_i8> rp;
+
+        bool enabled = true;
+        inline static const char key[] = "text_op_size";
+    public:
+        void init() {
+            rp.emplace(GLOBAL::exedit_base + OFS::ExEdit::text_op_logfont_size, sizeof(LOGFONTW));
+
+            rp->switching(enabled);
+        }
+
+        void switching(bool flag) {
+            rp->switching(enabled = flag);
+        }
+
+        bool is_enabled() { return enabled; }
+        bool is_enabled_i() { return enabled; }
+
+        void switch_load(ConfigReader& cr) {
+            cr.regist(key, [this](json_value_s* value) {
+                ConfigReader::load_variable(value, enabled);
+            });
+        }
+
+        void switch_store(ConfigWriter& cw) {
+            cw.append(key, enabled);
+        }
+    } text_op_size;
 } // namespace patch
 #endif // ifdef PATCH_SWITCH_TEXT_OP_SIZE

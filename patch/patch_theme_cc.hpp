@@ -19,6 +19,7 @@
 
 #include "global.hpp"
 #include "util.hpp"
+#include "config_rw.hpp"
 
 namespace patch {
 	// init at exedit load
@@ -28,11 +29,175 @@ namespace patch {
 		inline static void* LayerLockBorder_mod_jmp_ret_adr;
 
 		inline static uint32_t* LayerLockBorder_ptr;
-	public:
-		inline static bool enabled() { return PATCH_SWITCHER_MEMBER(PATCH_SWITCH_THEME_CC); }
 
-		void operator()() {
-			if (!enabled()) return;
+		using ColorBGR = config_type::ColorBGR;
+		using ColorBGR2 = config_type::ColorBGR2;
+		using ColorBGR2_Opt = config_type::ColorBGR2_Opt;
+		using ColorBGR3 = config_type::ColorBGR3;
+
+		bool enabled = true;
+		bool enabled_i;
+
+		inline static const char key[] = "theme_cc";
+
+		struct {
+			inline static const char name[] = "layer";
+
+			std::optional<int> height_large;
+			std::optional<int> height_medium;
+			std::optional<int> height_small;
+			ColorBGR2_Opt link_col;
+			ColorBGR2_Opt clipping_col;
+			ColorBGR2_Opt lock_col;
+			std::optional<double> hide_alpha;
+			//std::optional<int> name_height;
+
+			inline static const char key_large[] = "height_large";
+			inline static const char key_medium[] = "height_medium";
+			inline static const char key_small[] = "height_small";
+			inline static const char key_link_col[] = "link_col";
+			inline static const char key_clipping_col[] = "clipping_col";
+			inline static const char key_lock_col[] = "lock_col";
+			inline static const char key_hide_alpha[] = "hide_alpha";
+			//inline static const char key_name_height[] = "name_height";
+
+			void load(ConfigReader& cr) {
+				cr.regist(key_large, [this](json_value_s* value) {
+					ConfigReader::load_variable(value, height_large);
+				});
+				cr.regist(key_medium, [this](json_value_s* value) {
+					ConfigReader::load_variable(value, height_medium);
+				});
+				cr.regist(key_small, [this](json_value_s* value) {
+					ConfigReader::load_variable(value, height_small);
+				});
+				cr.regist(key_link_col, [this](json_value_s* value) {
+					ConfigReader::load_variable(value, link_col);
+				});
+				cr.regist(key_clipping_col, [this](json_value_s* value) {
+					ConfigReader::load_variable(value, clipping_col);
+				});
+				cr.regist(key_lock_col, [this](json_value_s* value) {
+					ConfigReader::load_variable(value, lock_col);
+				});
+				cr.regist(key_hide_alpha, [this](json_value_s* value) {
+					ConfigReader::load_variable(value, hide_alpha);
+				});
+			}
+
+			void store(ConfigWriter& cw) {
+				cw.append(key_large, height_large);
+				cw.append(key_medium, height_medium);
+				cw.append(key_small, height_small);
+				cw.append(key_link_col, link_col);
+				cw.append(key_clipping_col, clipping_col);
+				cw.append(key_lock_col, lock_col);
+				cw.append(key_hide_alpha, hide_alpha);
+			}
+
+		} layer;
+
+		struct {
+			inline static const char name[] = "object";
+
+			ColorBGR3 media_col;
+			ColorBGR3 mfilter_col;
+			ColorBGR3 audio_col;
+			ColorBGR3 afilter_col;
+			ColorBGR3 control_col;
+			ColorBGR3 inactive_col;
+			ColorBGR clipping_col;
+			std::optional<int> clipping_height;
+			std::optional<std::array<int, 3>> midpt_size;
+			ColorBGR2 name_col;
+
+			inline static const char key_media_col[] = "media_col";
+			inline static const char key_mfilter_col[] = "mfilter_col";
+			inline static const char key_audio_col[] = "audio_col";
+			inline static const char key_afilter_col[] = "afilter_col";
+			inline static const char key_control_col[] = "control_col";
+			inline static const char key_inactive_col[] = "inactive_col";
+			inline static const char key_clipping_col[] = "clipping_col";
+			inline static const char key_clipping_height[] = "clipping_height";
+			inline static const char key_midpt_size[] = "midpt_size";
+			inline static const char key_name_col[] = "name_col";
+
+			void load(ConfigReader& cr) {
+				cr.regist(key_media_col, [this](json_value_s* jv) {
+					ConfigReader::load_variable(jv, media_col);
+				});
+				cr.regist(key_mfilter_col, [this](json_value_s* jv) {
+					ConfigReader::load_variable(jv, mfilter_col);
+				});
+				cr.regist(key_audio_col, [this](json_value_s* jv) {
+					ConfigReader::load_variable(jv, audio_col);
+				});
+				cr.regist(key_afilter_col, [this](json_value_s* jv) {
+					ConfigReader::load_variable(jv, afilter_col);
+				});
+				cr.regist(key_control_col, [this](json_value_s* jv) {
+					ConfigReader::load_variable(jv, control_col);
+				});
+				cr.regist(key_inactive_col, [this](json_value_s* jv) {
+					ConfigReader::load_variable(jv, inactive_col);
+				});
+				cr.regist(key_clipping_col, [this](json_value_s* jv) {
+					ConfigReader::load_variable(jv, clipping_col);
+				});
+				cr.regist(key_clipping_height, [this](json_value_s* jv) {
+					ConfigReader::load_variable(jv, clipping_height);
+				});
+				cr.regist(key_midpt_size, [this](json_value_s* jv) {
+					ConfigReader::load_variable(jv, midpt_size);
+				});
+				cr.regist(key_name_col, [this](json_value_s* jv) {
+					ConfigReader::load_variable(jv, name_col);
+				});
+			}
+
+			void store(ConfigWriter& cw) {
+				cw.append(key_media_col, media_col);
+				cw.append(key_mfilter_col, mfilter_col);
+				cw.append(key_audio_col, audio_col);
+				cw.append(key_afilter_col, afilter_col);
+				cw.append(key_control_col, control_col);
+				cw.append(key_inactive_col, inactive_col);
+				cw.append(key_clipping_col, clipping_col);
+				cw.append(key_clipping_height, clipping_height);
+				cw.append(key_midpt_size, midpt_size);
+				cw.append(key_name_col, name_col);
+			}
+
+		} object;
+
+		struct {
+			inline static const char name[] = "timeline";
+
+			ColorBGR2 scale_col;
+			ColorBGR2 bpm_grid_col;
+
+			inline static const char key_scale_col[] = "scale_col";
+			inline static const char key_bpm_grid_col[] = "bpm_grid_col";
+
+
+			void load(ConfigReader& cr) {
+				cr.regist(key_scale_col, [this](json_value_s* jv) {
+					ConfigReader::load_variable(jv, scale_col);
+				});
+				cr.regist(key_bpm_grid_col, [this](json_value_s* jv) {
+					ConfigReader::load_variable(jv, bpm_grid_col);
+				});
+			}
+
+			void store(ConfigWriter& cw) {
+				cw.append(key_scale_col, scale_col);
+				cw.append(key_bpm_grid_col, bpm_grid_col);
+			}
+		} timeline;
+	public:
+		void init() {
+			enabled_i = enabled;
+			if (!enabled_i) return;
 
 			{
 				auto ptr = GLOBAL::executable_memory_cursor;
@@ -56,7 +221,6 @@ namespace patch {
 			}
 
 			{
-				auto& layer = GLOBAL::config.theme_cc.layer;
 				{
 					OverWriteOnProtectHelper h(GLOBAL::exedit_base + OFS::ExEdit::layer_height_array, 12);
 					auto store = [&h](size_t adr_ofs, std::optional<int>& val) {
@@ -73,7 +237,7 @@ namespace patch {
 					store(8, layer.height_small);
 				}
 				{
-					auto store = [](i32 adr_border, i32 adr_center, Config::ColorBGR2_Opt& val) {
+					auto store = [](i32 adr_border, i32 adr_center, config_type::ColorBGR2_Opt& val) {
 						OverWriteOnProtectHelper hb(adr_border, 4);
 						OverWriteOnProtectHelper hc(adr_center, 4);
 						if (val.has_value()) {
@@ -84,8 +248,8 @@ namespace patch {
 								hc.store_i32(0, val.ary[0].to_col_rgb());
 						}
 						else {
-							const auto cb = Config::ColorBGR::from_rgb(hb.load_i32<uint32_t>(0));
-							const auto cc = Config::ColorBGR::from_rgb(hc.load_i32<uint32_t>(0));
+							const auto cb = config_type::ColorBGR::from_rgb(hb.load_i32<uint32_t>(0));
+							const auto cc = config_type::ColorBGR::from_rgb(hc.load_i32<uint32_t>(0));
 							if (cb == cc)
 								val = { cb, {} };
 							else
@@ -114,8 +278,8 @@ namespace patch {
 					}
 					else {
 						o = {
-							Config::ColorBGR::from_rgb(0),
-							Config::ColorBGR::from_rgb(h.load_i32<uint32_t>(0))
+							config_type::ColorBGR::from_rgb(0),
+							config_type::ColorBGR::from_rgb(h.load_i32<uint32_t>(0))
 						};
 					}
 				}
@@ -144,9 +308,8 @@ namespace patch {
 			}
 
 			{
-				auto& object = GLOBAL::config.theme_cc.object;
 				{
-					auto store = [](uint32_t adr, Config::ColorBGR3& col) {
+					auto store = [](uint32_t adr, config_type::ColorBGR3& col) {
 						OverWriteOnProtectHelper h(adr, 36);
 						if (col.has_value()) {
 							h.store_i32(0 , col.ary[0].r);
@@ -161,17 +324,17 @@ namespace patch {
 						}
 						else {
 							col = {
-								Config::ColorBGR{
+								config_type::ColorBGR{
 									h.load_i32<int>(8),
 									h.load_i32<int>(4),
 									h.load_i32<int>(0)
 								},
-								Config::ColorBGR{
+								config_type::ColorBGR{
 									h.load_i32<int>(20),
 									h.load_i32<int>(16),
 									h.load_i32<int>(12)
 								},
-								Config::ColorBGR{
+								config_type::ColorBGR{
 									h.load_i32<int>(32),
 									h.load_i32<int>(28),
 									h.load_i32<int>(24)
@@ -243,8 +406,6 @@ namespace patch {
 			}
 
 			{
-				auto& timeline = GLOBAL::config.theme_cc.timeline;
-
 				{
 					OverWriteOnProtectHelper hf(GLOBAL::exedit_base + OFS::ExEdit::ScaleColorForeGround, 4);
 					OverWriteOnProtectHelper hb(GLOBAL::exedit_base + OFS::ExEdit::ScaleColorBackGround, 4);
@@ -255,8 +416,8 @@ namespace patch {
 					}
 					else {
 						val = {
-							Config::ColorBGR::from_rgb(hf.load_i32<uint32_t>(0)),
-							Config::ColorBGR::from_rgb(hb.load_i32<uint32_t>(0))
+							config_type::ColorBGR::from_rgb(hf.load_i32<uint32_t>(0)),
+							config_type::ColorBGR::from_rgb(hb.load_i32<uint32_t>(0))
 						};
 					}
 				};
@@ -273,6 +434,65 @@ namespace patch {
 						val = { hm.load_i32<uint32_t>(0),hb.load_i32<uint32_t>(0) };
 					}
 				}
+			}
+		}
+
+		void switching(bool flag) {
+			enabled = flag;
+		}
+
+		bool is_enabled() { return enabled; }
+		bool is_enabled_i() { return enabled_i; }
+
+		void switch_load(ConfigReader& cr) {
+			cr.regist(key, [this](json_value_s* value) {
+				ConfigReader::load_variable(value, enabled);
+			});
+		}
+
+		void switch_store(ConfigWriter& cw) {
+			cw.append(key, enabled);
+		}
+
+		void config_load(ConfigReader& cr) {
+			cr.regist(layer.name, [this](json_value_s* value) {
+				ConfigReader cr(value);
+				layer.load(cr);
+				cr.load();
+			});
+			cr.regist(object.name, [this](json_value_s* value) {
+				ConfigReader cr(value);
+				object.load(cr);
+				cr.load();
+			});
+			cr.regist(timeline.name, [this](json_value_s* value) {
+				ConfigReader cr(value);
+				timeline.load(cr);
+				cr.load();
+			});
+		}
+
+		void config_store(ConfigWriter& cw) {
+			{
+				ConfigWriter cw_layer(cw.get_level() + 1);
+				layer.store(cw_layer);
+				std::stringstream ss;
+				cw_layer.write(ss);
+				cw.append(layer.name, ss.str());
+			}
+			{
+				ConfigWriter cw_object(cw.get_level() + 1);
+				object.store(cw_object);
+				std::stringstream ss;
+				cw_object.write(ss);
+				cw.append(object.name, ss.str());
+			}
+			{
+				ConfigWriter cw_timeline(cw.get_level() + 1);
+				timeline.store(cw_timeline);
+				std::stringstream ss;
+				cw_timeline.write(ss);
+				cw.append(timeline.name, ss.str());
 			}
 		}
 	} theme_cc;

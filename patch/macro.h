@@ -31,6 +31,7 @@
 #define PATCH_SWITCH_ACCESS_KEY access_key
 #define PATCH_SWITCH_SUSIE_LOAD susie_load
 #define PATCH_SWITCH_SPLASH splash
+#define PATCH_SWITCH_TRA_AVIUTL_FILTER tra_aviutl_filter
 #define PATCH_SWITCH_EXO_AVIUTL_FILTER exo_aviutl_filter
 #define PATCH_SWITCH_EXO_TRACK_MINUSVAL exo_track_minusval
 #define PATCH_SWITCH_EXO_SCENEIDX exo_sceneidx
@@ -39,8 +40,8 @@
 #define PATCH_SWITCH_TEXT_OP_SIZE text_op_size
 #define PATCH_SWITCH_IGNORE_MEDIA_PARAM_RESET ignore_media_param_reset
 #define PATCH_SWITCH_FONT_DIALOG font_dialog
-//#define PATCH_SWITCH_SCROLL_OBJDLG scroll_objdlg
-//#define PATCH_SWITCH_ALPHA_BG alpha_bg
+#define PATCH_SWITCH_SCROLL_OBJDLG scroll_objdlg
+#define PATCH_SWITCH_ALPHA_BG alpha_bg
 #define PATCH_SWITCH_HELPFUL_MSGBOX helpful_msgbox
 #define PATCH_SWITCH_THEME_CC theme_cc
 #define PATCH_SWITCH_EXEDITWINDOW_SIZING exeditwindow_sizing
@@ -62,6 +63,7 @@
 #define PATCH_SWITCH_LUA lua
 #ifdef PATCH_SWITCH_LUA
 
+	#define PATCH_SWITCH_LUA_ENV lua_env
 	#define PATCH_SWITCH_LUA_GETVALUE lua_getvalueex
 	#define PATCH_SWITCH_LUA_RAND lua_rand
 	#define PATCH_SWITCH_LUA_RANDEX lua_randex
@@ -84,18 +86,20 @@
 	#ifdef PATCH_SWITCH_CL
 		#define PATCH_SWITCH_FAST_POLORTRANSFORM fast_polortransform
 		#define PATCH_SWITCH_FAST_RADIATIONALBLUR fast_radiationalblur
+		#define PATCH_SWITCH_FAST_FLASH fast_flash
 
 	#endif // define PATCH_SWITCH_CL
 
 #endif //define PATCH_SWITCH_FAST
 
 #else // ifdef PATCH_INTERNAL
-#define PATCH_VERSION_STR "r21"
+#define PATCH_VERSION_STR "(config2_merge branch 1)"
 
 #define PATCH_SWITCH_EXCEPTION_LOG
 #define PATCH_SWITCH_SYSINFO_MODIFY
 
 #define PATCH_SWITCH_ACCESS_KEY access_key
+#define PATCH_SWITCH_TRA_AVIUTL_FILTER tra_aviutl_filter
 #define PATCH_SWITCH_EXO_AVIUTL_FILTER exo_aviutl_filter
 #define PATCH_SWITCH_EXO_TRACK_MINUSVAL exo_track_minusval
 #define PATCH_SWITCH_EXO_SCENEIDX exo_sceneidx
@@ -142,6 +146,7 @@
 	#ifdef PATCH_SWITCH_CL
 		#define PATCH_SWITCH_FAST_POLORTRANSFORM fast_polortransform
 		#define PATCH_SWITCH_FAST_RADIATIONALBLUR fast_radiationalblur
+		#define PATCH_SWITCH_FAST_FLASH fast_flash
 
 	#endif // define PATCH_SWITCH_CL
 

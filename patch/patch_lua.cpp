@@ -35,15 +35,15 @@ namespace patch {
         lua_setfield(L, -3, "_PATCH");
 
         #ifdef PATCH_SWITCH_LUA_RAND
-            if (PATCH_SWITCHER_MEMBER(PATCH_SWITCH_LUA_RAND)) lua_rand_t::require(L);
+            if (lua_rand.is_enabled_i()) lua_rand_t::require(L);
         #endif
 
         #ifdef PATCH_SWITCH_LUA_RANDEX
-            if (PATCH_SWITCHER_MEMBER(PATCH_SWITCH_LUA_RANDEX)) lua_randex_t::require(L);
+            if (lua_randex.is_enabled_i()) lua_randex_t::require(L);
         #endif
 
         #ifdef PATCH_SWITCH_LUA_GETVALUE
-            if (PATCH_SWITCHER_MEMBER(PATCH_SWITCH_LUA_GETVALUE)) lua_getvalueex_t::require(L);
+            if (lua_getvalueex.is_enabled_i()) lua_getvalueex_t::require(L);
         #endif
     }
 

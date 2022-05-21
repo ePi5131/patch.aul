@@ -18,6 +18,7 @@
 #ifdef PATCH_SWITCH_ACCESS_KEY
 
 #include "global.hpp"
+#include "config_rw.hpp"
 
 namespace patch {
 
@@ -77,11 +78,37 @@ namespace patch {
 			return false;
 		}
 
+		bool enabled = false;
+		bool enabled_i;
+
+		inline static const char key[] = "access_key";
+
 	public:
-		inline static bool enabled() { return PATCH_SWITCHER_MEMBER(PATCH_SWITCH_ACCESS_KEY); }
+		void switching(bool flag) {
+			enabled = flag;
+		}
+
+		bool is_enabled() { return enabled; }
+		bool is_enabled_i() { return enabled_i; }
+		
+		bool init() {
+			enabled_i = enabled;
+		}
+
+		void switch_load(ConfigReader& cr) {
+			cr.regist(key, [this](json_value_s* value) {
+				ConfigReader::load_variable(value, enabled);
+			});
+		}
+
+		void switch_store(ConfigWriter& cw) {
+			cw.append(key, enabled);
+		}
+
 
 		HMENU modify(LPCSTR key, HMENU hMenu) {
-			if (!enabled()) return hMenu;
+			if (!enabled_i) return hMenu;
+
 			if (lstrcmpiA(key, "AVIUTL") != 0)return hMenu;
 
 			auto find_submenu = [](HMENU hMenu, int idx, UINT id) {
@@ -131,6 +158,8 @@ namespace patch {
 			}
 			return hMenu;
 		}
+
+
 	} access_key;
 } // namespace patch
 #endif // ifdef PATCH_SWITCH_ACCESS_KEY

@@ -23,18 +23,45 @@
 #include "global.hpp"
 #include "offset_address.hpp"
 
+#include "restorable_patch.hpp"
+#include "config_rw.hpp"
+
 namespace patch {
 	// init at exedit load
 	// Susieのプラグインで正しく対応拡張子情報を取得できない
 	inline class susie_load_t {
 		static void __cdecl LoadSpi(LPCSTR dir);
 
-		inline static bool enabled() { return PATCH_SWITCHER_MEMBER(PATCH_SWITCH_SUSIE_LOAD); }
+		inline static const char key[] = "susie_load";
+
+		bool enabled = true;
+
+		std::optional<restorable_patch_function> rpf;
+
 	public:
-		void operator()() const {
-			if (!enabled())return;
-			ReplaceFunction(GLOBAL::exedit_base + OFS::ExEdit::LoadSpi, &LoadSpi);
+
+		bool init() {
+			rpf.emplace(GLOBAL::exedit_base + OFS::ExEdit::LoadSpi, &LoadSpi);
+			rpf->switching(enabled);
 		}
+
+		void switching(bool flag) {
+			rpf->switching(enabled = flag);
+		}
+
+		bool is_enabled() { return enabled; }
+		bool is_enabled_i() { return enabled; }
+
+		void switch_load(ConfigReader& cr) {
+			cr.regist(key, [this](json_value_s* value) {
+				ConfigReader::load_variable(value, enabled);
+			});
+		}
+
+		void switch_store(ConfigWriter& cw) {
+			cw.append(key, enabled);
+		}
+
 	}susie_load;
 } // namespace patch
 #endif // ifdef PATCH_SWITCH_SUSIE_LOAD

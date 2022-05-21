@@ -17,7 +17,9 @@
 
 #include "init.hpp"
 
+
 #include "add_dll_ref.hpp"
+#include "config.hpp"
 
 BOOL WINAPI DllMain(HINSTANCE hinstDLL, DWORD fdwReason, LPVOID lpReserved) {
 	static bool loading_self = false;
@@ -33,7 +35,8 @@ BOOL WINAPI DllMain(HINSTANCE hinstDLL, DWORD fdwReason, LPVOID lpReserved) {
 
 		break;
 	case DLL_PROCESS_DETACH:
-		GLOBAL::config.store(GLOBAL::patchaul_config_path);
+		//GLOBAL::config.store(GLOBAL::patchaul_config_path);
+		config2.store(GLOBAL::patchaul_config_path);
 		#ifdef PATCH_SWITCH_CONSOLE
 			patch::console.exit();
 		#endif

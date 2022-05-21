@@ -21,6 +21,8 @@
 #include "cryptostring.hpp"
 #include "util_others.hpp"
 
+#include "config.hpp"
+
 
 void init_t::InitAtDllMain() {
 	ExchangeFunction(GLOBAL::aviutl_hmod, cstr_kernel32_dll.get(), cstr_EnumResourceLanguagesA.get(), EnumResourceLanguagesA_Wrap);
@@ -41,7 +43,8 @@ void init_t::InitAtPatchLoaded() {
 
 	GLOBAL::patchaul_config_path = GLOBAL::patchaul_path + L".json";
 
-	GLOBAL::config.load(GLOBAL::patchaul_config_path);
+	//GLOBAL::config.load(GLOBAL::patchaul_config_path);
+	config2.load(GLOBAL::patchaul_config_path);
 
 	add_dll_ref.add_ref();
 
@@ -61,16 +64,15 @@ void init_t::InitAtPatchLoaded() {
 
 #ifdef PATCH_SWITCH_SPLASH
 	if (PATCH_SWITCHER_MEMBER(PATCH_SWITCH_SPLASH)) {
-		patch::splash();
+		patch::splash.init();
 
 		patch::splash.set_phase(L"patch.aulの準備中", L"");
-		patch::splash.init_injection();
 		patch::splash.start();
 	}
 #endif
 
 #ifdef PATCH_SWITCH_CONSOLE
-	patch::console();
+	patch::console.init();
 #endif
 
 #ifdef PATCH_SWITCH_EXCEPTION_LOG
@@ -87,27 +89,31 @@ void init_t::InitAtExeditLoad() {
 	mywindow.init();
 
 #ifdef PATCH_SWITCH_THEME_CC
-	patch::theme_cc();
+	patch::theme_cc.init();
+#endif
+
+#ifdef PATCH_SWITCH_TRA_AVIUTL_FILTER
+	patch::tra_aviutlfilter.init();
 #endif
 
 #ifdef PATCH_SWITCH_EXO_AVIUTL_FILTER
-	patch::exo_aviutlfilter();
+	patch::exo_aviutlfilter.init();
 #endif
 
 #ifdef PATCH_SWITCH_EXO_SCENEIDX
-	patch::exo_sceneidx();
+	patch::exo_sceneidx.init();
 #endif
 
 #ifdef PATCH_SWITCH_EXO_TRACKPARAM
-	patch::exo_trackparam();
+	patch::exo_trackparam.init();
 #endif
 
 #ifdef PATCH_SWITCH_EXO_TRACK_MINUSVAL
-	patch::exo_trackminusval();
+	patch::exo_trackminusval.init();
 #endif
 
 #ifdef PATCH_SWITCH_EXO_SPECIALCOLORCONV
-	patch::exo_specialcolorconv();
+	patch::exo_specialcolorconv.init();
 #endif
 
 #ifdef PATCH_SWITCH_DEBUGSTRING
@@ -115,67 +121,74 @@ void init_t::InitAtExeditLoad() {
 #endif
 
 #ifdef PATCH_SWITCH_TEXT_OP_SIZE
-	patch::text_op_size();
+	patch::text_op_size.init();
 #endif
 	
 #ifdef PATCH_SWITCH_IGNORE_MEDIA_PARAM_RESET
-	patch::ignore_media_param_reset();
+	patch::ignore_media_param_reset.init();
 #endif
 
 #ifdef PATCH_SWITCH_SCROLL_OBJDLG
-	patch::scroll_objdlg();
+	patch::scroll_objdlg.init();
 #endif
 
 #ifdef PATCH_SWITCH_SUSIE_LOAD
-	patch::susie_load();
+	patch::susie_load.init();
 #endif
 
 #ifdef PATCH_SWITCH_HELPFUL_MSGBOX
-	patch::helpful_msgbox();
+	patch::helpful_msgbox.init();
 #endif
 
 	patch::setting_dialog();
 
 	#ifdef PATCH_SWITCH_FAST
-	if (PATCH_SWITCHER_MEMBER(PATCH_SWITCH_FAST)) {
+	patch::fast::fast.init();
+	if (patch::fast::fast.is_enabled_i()) {
 		#ifdef PATCH_SWITCH_FAST_GETPUTPIXELDATA
 			patch::fast::getputpixeldata();
 		#endif
 
 		#ifdef PATCH_SWITCH_FAST_SETTINGDIALOG
-			patch::fast_setting_dialog();
+			patch::fast_setting_dialog.init();
 		#endif
 
 		#ifdef PATCH_SWITCH_FAST_EXEDITWINDOW
-			patch::fast_exeditwindow();
+			patch::fast_exeditwindow.init();
 		#endif
 
 		#ifdef PATCH_SWITCH_CL
-
-		if (PATCH_SWITCHER_MEMBER(PATCH_SWITCH_CL)) {
-			if (cl_manager.init()) {
-				#ifdef PATCH_SWITCH_FAST_POLORTRANSFORM
-					patch::fast::PolorTransform();
-				#endif
-				#ifdef PATCH_SWITCH_FAST_RADIATIONALBLUR
-					patch::fast::RadiationalBlur();
-				#endif
+			if (patch::fast::cl.init()) {
+				if (patch::fast::cl.is_enabled_i()) {
+					#ifdef PATCH_SWITCH_FAST_POLORTRANSFORM
+						patch::fast::PolorTransform.init();
+					#endif
+					#ifdef PATCH_SWITCH_FAST_RADIATIONALBLUR
+						patch::fast::RadiationalBlur.init();
+					#endif
+					#ifdef PATCH_SWITCH_FAST_FLASH
+						patch::fast::Flash.init();
+					#endif
+				}
 			}
 			else {
 				patch_resource_message_w(PATCH_RS_PATCH_CANT_USE_CL, MB_TASKMODAL | MB_ICONEXCLAMATION);
 			}
-		}
 		#endif
 	}
 	#endif
 
 #ifdef PATCH_SWITCH_UNDO
-	patch::undo();
-
+	patch::undo.init();
+	if (patch::undo.is_enabled_i()) {
+		#ifdef PATCH_SWITCH_UNDO_REDO
+			patch::redo.init();
+		#endif
+	}
 #endif
 
-
-	GLOBAL::config.store(GLOBAL::patchaul_config_path);
+	//GLOBAL::config.store(GLOBAL::patchaul_config_path);
+	config2.store(GLOBAL::patchaul_config_path);
 }
 		
 void init_t::InitAufBefore() {
@@ -241,13 +254,13 @@ BOOL __cdecl init_t::func_WndProcWrap(HWND hwnd, UINT message, WPARAM wparam, LP
 	switch (message) {
 		#ifdef PATCH_SWITCH_EXEDITWINDOW_SIZING
 		case WM_SIZING:
-			if (auto ret = patch::exeditwindow_sizing(wparam, lparam) == -1) break;
+			if (auto ret = patch::exeditwindow_sizing.wndproc(wparam, lparam) == -1) break;
 			else return ret;
 		#endif
 		case AviUtl::FilterPlugin::WindowMessage::Command:
 			#ifdef PATCH_SWITCH_UNDO_REDO
 			if (wparam == PATCH_EXEDITMENU_REDO) {
-				patch::undo.run_redo();
+				patch::redo.run_redo();
 				return TRUE;
 			}
 			#endif
@@ -264,7 +277,7 @@ BOOL __cdecl init_t::func_initWrap(AviUtl::FilterPlugin* fp) {
 	#endif
 
 #ifdef PATCH_SWITCH_LUA
-	patch::lua();
+	patch::lua.init();
 #endif
 	
 	return TRUE;

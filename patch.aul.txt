@@ -1,4 +1,4 @@
-patch.aul r21
+patch.aul (config2_merge branch 1)
 Copyright (c) 2021-2022 ePi
 https://scrapbox.io/ePi5131/patch.aul
 
@@ -133,12 +133,18 @@ https://scrapbox.io/ePi5131/patch.aul
             "bpm_grid_col" : [measure, beat], ; BPMグリッドの色 (既定値: [ "646464", "a0a0a0" ])
         }
     },
+    "redo" : { ; やり直し 機能について
+        "shift" : true ; Ctrl+Shift+Z によるやり直し操作を有効化するか (既定値: true)
+    },
+    "fast_exeditwindow" : { ; 拡張編集ウィンドウの描画の最適化 について
+        "step" : 0 ; ; グラデーション描画の方法 (負数でパッチ無効,0でグラデーションのパッチ,正数でその分割数の単色矩形 既定値: 0),
+    },
 	"switch" : { ; どのパッチを有効にするかを選択するものです trueなら有効、falseなら無効
 		"access_key" : boolean, ; アクセスキーを付加するか (既定値: false)
 		"exo_aviutl_filter" : boolean, ; 拡張編集以外のフィルタ(例:拡張色調補正)を使ったプロジェクトをオブジェクトファイルに出力できないことがある (既定値: true)
-        "exo_track_minusval" : boolean, ; オブジェクトファイルの入力で、トラックバーの -1 超 0 未満の値が正になってしまう (既定値: true)
 		"exo_sceneidx" : boolean, ; オブジェクトファイルの入出力で、シーン番号を正しく扱えない (既定値: true)
 		"exo_trackparam" : boolean, ; オブジェクトファイルの入力で、トラックバー変化方法スクリプトの名前にASCII以外の文字が含まれているとパラメータを読み込めない (既定値: true)
+        "exo_track_minusval" : boolean, ; オブジェクトファイルの入力で、トラックバーの -1 超 0 未満の値が正になってしまう (既定値: true)
         "exo_specialcolorconv" : boolean, ; オブジェクトファイルの入出力で、特定色域変換のstatusが2つあって正しく入出力できない (既定値: true)
 		"text_op_size" : boolean, ; テキストオブジェクトでUTF-16で34バイト以上のフォント名を指定している時、制御文字<s>でサイズのみを指定していると正しい動作をしない (既定値: true)
         "ignore_media_param_reset" : boolean, ; 動画ファイル と 音声ファイル で中間点を打っていないときでもファイルを再参照しても再生位置などの情報を変更しない (既定値: false)
@@ -147,23 +153,21 @@ https://scrapbox.io/ePi5131/patch.aul
         "settingdialog_move" : boolean, ; 設定ダイアログを高ポーリングレートマウス環境で移動すると重たい の解消 (既定値: true)
         "undo" : boolean, ; 元に戻す 関連のバグ修正 (既定値: true)
         "undo.redo" : boolean, ; やり直す を追加 (既定値: true)
-        "undo.redo.shift" : boolean, ; やり直す を Ctrl+Shift+Zで使えるようにする (既定値: true)
 		"console" : boolean, ; コンソール (既定値: true)
 		"console.escape" : boolean, ; エスケープシーケンス (既定値: true)
 		"console.input" : boolean, ; 標準入力を受け取るか (既定値: false)
 		"console.debug_string" : boolean, ; 拡張編集のOutputDebugStringの内容を表示する (既定値: true)
 		"console.debug_string.time" : boolean, ; 拡張編集のOutputDebugStringの内容の先頭に時刻を表示する (既定値: true)
 		"lua" : boolean, ; lua.*配下のスイッチの主電源 (既定値: true)
-        "lua.env" : boolean, ; Luaの環境を統一する
+        "lua.env" : boolean, ; Luaの環境を統一する (既定値: false)
+        "lua.path" : boolean, ; package.path,cpathにパスを追加 (既定値: false)
+		"lua.getvalue" : boolean, ; getvalueで中心座標を取得できるように (既定値: true)
 		"lua.rand" : boolean, ; rand関数で例外になるパターンを潰す (既定値: true)
 		"lua.randex" : boolean, ; 正確な乱数を提供するrandexクラスの追加 (既定値: true)
-		"lua.getvalue" : boolean, ; getvalueで中心座標を取得できるように (既定値: true)
-        "lua.path" : boonean, ; package.path,cpathにパスを追加 (既定値: false)
 		"fast" : boolean, ; fast.*配下のスイッチの主電源 (既定値: true)
-		"fast.cl" : boolean, ; fast.*でOpenCLが必要なオプションに必要なオプション (既定値: true)
 		"fast.exeditwindow" : boolean, ; 拡張編集ウィンドウの描画の最適化 (既定値: true),
-        "fast.exeditwindow.step" : number, ; グラデーション描画の方法 (負数でパッチ無効,0でグラデーションのパッチ,正数でその分割数の単色矩形 既定値: 0),
 		"fast.settingdialog" boolean, ; 設定ダイアログの描画の最適化 (既定値: true),
+		"fast.cl" : boolean, ; fast.*でOpenCLが必要なオプションに必要なオプション (既定値: true)
 		"fast.radiationalblur" : boolean, ; fast.clが前提 放射ブラーの高速化 (既定値: true)
 		"fast.polortransform" : boolean, ; fast.clが前提 極座標変換の高速化 (既定値: true)
 	}
@@ -171,9 +175,9 @@ https://scrapbox.io/ePi5131/patch.aul
 Lua追加要素詳細
     _PATCH
         patch.aulのバージョン情報
-        現在は "patch.aul r21" という文字列が格納されている
+        現在は "patch.aul (config2_merge branch 1)" という文字列が格納されている
 
-    obj.randex(seed,time)
+    obj.randex(seed,frame)
         seed : integer
         frame : integer
             obj.randのseed,frameと同じ使い方をする

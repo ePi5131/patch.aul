@@ -26,12 +26,12 @@ namespace patch {
 	// 凍結: 普段からアルファチャンネル付きでのレンダリングをしなきゃならない 容易に操作できるスイッチを用意しなければならない
 	inline class alpha_bg_t {
 
+		bool enabled = true;
+		bool enabled_i;
+		inline static const char key[] = "alpha_bg";
+
 	public:
-		inline static bool enabled() { return PATCH_SWITCHER_MEMBER(PATCH_SWITCH_ALPHA_BG); }
-
 		static BOOL func_proc(AviUtl::FilterPlugin* fp, AviUtl::FilterProcInfo* fpip) {
-			if (!enabled())return;
-
 			const auto rect_size = 16;
 
 			const auto pattern_size = rect_size * 2;
@@ -58,6 +58,24 @@ namespace patch {
 				}
 			}
 			return TRUE;
+		}
+
+		
+		bool is_enabled() { return enabled; }
+		bool is_enabled_i() { return enabled_i; }
+		
+		bool init() {
+			enabled_i = enabled;
+		}
+
+		void switch_load(ConfigReader& cr) {
+			cr.regist(key, [this](json_value_s* value) {
+				ConfigReader::load_variable(value, enabled);
+			});
+		}
+
+		void switch_store(ConfigWriter& cw) {
+			cw.append(key, enabled);
 		}
 
 	} alpha_bg;

@@ -25,24 +25,26 @@
 #include "offset_address.hpp"
 #include "util.hpp"
 
+#include "restorable_patch.hpp"
+#include "config_rw.hpp"
+
 namespace patch {
 
 	// init at exedit load
 	// 拡張編集以外のフィルタを使ったフィルタオブジェクトを正常にオブジェクトファイルに出力できない
 	inline class exo_aviutlfilter_t {
-	private:
 
-		inline static uint32_t jmp1;
-		inline static uint32_t jmp2;
-		inline static uint32_t jmp3;
+		bool enabled = true;
+		inline static const char key[] = "exo_aviutlfilter";
 
-		inline static uint32_t ret1;
-		inline static uint32_t ret2;
-		inline static uint32_t ret3;
+		std::optional<restorable_patch> rp1;
+		std::optional<restorable_patch> rp2;
+		std::optional<restorable_patch> rp3;
 
 	public:
-		void operator()() {
-			if (!PATCH_SWITCHER_MEMBER(PATCH_SWITCH_EXO_AVIUTL_FILTER))return;
+		void init() {
+			
+			if (!enabled)return;
 
 			auto& cursor = GLOBAL::executable_memory_cursor;
 
@@ -72,7 +74,7 @@ namespace patch {
 				10028a9c 
 			*/
 
-			auto apply = [&cursor](uint32_t ofs, uint32_t& jmp, uint32_t& ret, uint32_t esp_add) {
+			auto apply = [&cursor](uint32_t ofs, uint32_t esp_add, std::optional<restorable_patch>& rp) {
 				static const char code_put[] =
 					"\x83\xc4\x0c" // ADD ESP 0CH
 					"\x8a\x46\x03" // MOV AL, BYTE PTR [ESI + 3H]
@@ -83,26 +85,58 @@ namespace patch {
 					"\x74\x0d" // JZ ASSIGN_ZERO
 					"\x8b\x4c\x24\x2c" // MOV ECX, DWORD PTR [ESP + 2CH] ; count
 					"\x8b\x04\x88" // MOV EAX, DWORD PTR [EAX + ECX * 4] ; track_scale[count]
-					"\xff\x25XXXX" // JMP [i32]
+					"\xe9XXXX" // JMP rel32
 					// ASSIGN_ZERO:
 					"\x31\xc0" // XOR EAX, EAX
-					"\xff\x25XXXX" // JMP [i32]
+					"\xe9XXXX" // JMP rel32
 					;
-				store_i16(ofs, '\xff\x25'); // jmp (i32)
-				jmp = reinterpret_cast<uint32_t>(cursor);
-				store_i32(ofs + 2, &jmp);
+
+				char injection[6];
+				injection[0] = '\xe9'; // jmp rel32
+				store_i32(injection + 1, CalcNearJmp(ofs + 1, reinterpret_cast<i32>(cursor)));
+				injection[5] = '\x90'; // nop
+				rp.emplace(ofs, injection, sizeof(injection));
+
 				memcpy(cursor, code_put, sizeof(code_put) - 1);
-				ret = ofs + 0x18;
+				auto ret = ofs + 0x18;
 				store_i8(cursor + 2, esp_add);
-				store_i32(cursor + 0x1d, &ret);
-				store_i32(cursor + 0x25, &ret);
+				store_i32(cursor + 0x1c, CalcNearJmp(reinterpret_cast<i32>(cursor + 0x1c), ret));
+				store_i32(cursor + 0x23, CalcNearJmp(reinterpret_cast<i32>(cursor + 0x23), ret));
 				cursor += sizeof(code_put) - 1;
 			};
 
-			apply(GLOBAL::exedit_base + OFS::ExEdit::ConvertFilter2Exo_TrackScaleJudge_Overwrite1, jmp1, ret1, 0xc);
-			apply(GLOBAL::exedit_base + OFS::ExEdit::ConvertFilter2Exo_TrackScaleJudge_Overwrite2, jmp2, ret2, 0xc);
-			apply(GLOBAL::exedit_base + OFS::ExEdit::ConvertFilter2Exo_TrackScaleJudge_Overwrite3, jmp3, ret3, 0x18);
+			apply(GLOBAL::exedit_base + OFS::ExEdit::ConvertFilter2Exo_TrackScaleJudge_Overwrite1, 0xc, rp1);
+			apply(GLOBAL::exedit_base + OFS::ExEdit::ConvertFilter2Exo_TrackScaleJudge_Overwrite2, 0xc, rp2);
+			apply(GLOBAL::exedit_base + OFS::ExEdit::ConvertFilter2Exo_TrackScaleJudge_Overwrite3, 0x18, rp3);
+
+			rp1->switching(enabled);
+			rp2->switching(enabled);
+			rp3->switching(enabled);
 		}
+
+
+		void switching(bool flag) {
+			enabled = flag;
+			rp1->switching(enabled);
+			rp2->switching(enabled);
+			rp3->switching(enabled);
+		}
+
+		bool is_enabled() { return enabled; }
+		bool is_enabled_i() { return enabled; }
+
+
+		void switch_load(ConfigReader& cr) {
+			cr.regist(key, [this](json_value_s* value) {
+				ConfigReader::load_variable(value, enabled);
+			});
+		}
+
+		void switch_store(ConfigWriter& cw) {
+			cw.append(key, enabled);
+		}
+
+
 	} exo_aviutlfilter;
 } // namespace patch
 #endif // ifdef PATCH_SWITCH_EXO_AVIUTL_FILTER

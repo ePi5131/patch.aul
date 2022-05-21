@@ -1,5 +1,5 @@
 /*
-	This program is free software: you can redistribute it and/or modify
+    This program is free software: you can redistribute it and/or modify
     it under the terms of the GNU Lesser General Public License as published by
     the Free Software Foundation, either version 3 of the License, or
     (at your option) any later version.
@@ -41,8 +41,12 @@
 #include "cryptostring.hpp"
 #include "util.hpp"
 #include "debug_log.hpp"
+#include "config_rw.hpp"
 
-inline class CLManager {
+namespace patch::fast {
+
+inline class cl_t {
+#pragma region clprogram
     inline static auto program_str = make_cryptostring(R"(
 kernel void PolorTransform(global short* dst, global short* src, int src_w, int src_h, int exedit_buffer_line, int center, int radius, float angle, float uzu, float uzu_a) {
     int x = get_global_id(0);
@@ -243,24 +247,20 @@ kernel void RadiationalBlur(
     int range = (Range * c_dist_times8) / 1000;
 
     if (pixel_range < c_dist_times8) {
-        range = (pixel_range * range) / c_dist_times8;
+        range = pixel_range * Range / 1000;
         c_dist_times8 = pixel_range;
     }
-    else if (c_dist_times8 < 9) {
-        if (c_dist_times8 < 5) {
-            if (2 < c_dist_times8) {
-                c_dist_times8 *= 2;
-                range *= 2;
-            }
-        }
-        else {
-            c_dist_times8 *= 4;
-            range *= 4;
-        }
-    }
-    else {
+    else if (8 < c_dist_times8) {
         c_dist_times8 *= 8;
         range *= 8;
+    }
+    else if (4 < c_dist_times8) {
+        c_dist_times8 *= 4;
+        range *= 4;
+    }
+    else if (2 < c_dist_times8) {
+        c_dist_times8 *= 2;
+        range *= 2;
     }
     if ((c_dist_times8 < 2) || (range < 2)) {
         if (x_detail < 0x8000 || y_detail < 0x8000 || src_w <= x || src_h <= y) {
@@ -322,27 +322,242 @@ kernel void RadiationalBlur(
         }
     }
 }
+
+
+kernel void Flash(global short* dst, global short* src, int src_w, int src_h, int exedit_buffer_line,
+    int g_cx,
+    int g_cy,
+    int g_range,
+    int g_pixel_range,
+    int g_temp_x,
+    int g_temp_y,
+    int g_r_intensity
+) {
+
+    int xi = get_global_id(0);
+    int yi = get_global_id(1);
+
+    int x = xi + g_temp_x;
+    int y = yi + g_temp_y;
+
+    int pixel_itr = xi + yi * exedit_buffer_line;
+
+    int cx = g_cx - x;
+    int cy = g_cy - y;
+    int c_dist_times8 = (int)round(sqrt((float)(cx * cx + cy * cy)) * 8.0f);
+    int range = g_range * c_dist_times8 / 1000;
+
+    if (g_pixel_range < c_dist_times8) {
+        range = g_pixel_range * g_range / 1000;
+        c_dist_times8 = g_pixel_range;
+    } else if (8 < c_dist_times8) {
+        c_dist_times8 *= 8;
+        range *= 8;
+    } else if (4 < c_dist_times8) {
+        c_dist_times8 *= 4;
+        range *= 4;
+    } else if (2 < c_dist_times8) {
+        c_dist_times8 *= 2;
+        range *= 2;
+    }
+
+    int sum_y, sum_cb, sum_cr;
+
+    if (2 <= c_dist_times8 && 2 <= range) {
+        sum_y = sum_cb = sum_cr = 0;
+        for (int i = 0; i < range; i++) {
+            int x_itr = x + i * cx / c_dist_times8;
+            int y_itr = y + i * cy / c_dist_times8;
+
+            if (0 <= x_itr && 0 <= y_itr && x_itr < src_w && y_itr < src_h) {
+                short4 itr = vload4(x_itr + y_itr * exedit_buffer_line, src);
+                if (itr.w != 0) {
+                    if (itr.w < 4096) {
+                        sum_y += itr.x * itr.w / 4096;
+                        sum_cb += itr.y * itr.w / 4096;
+                        sum_cr += itr.z * itr.w / 4096;
+                    } else {
+                        sum_y += itr.x;
+                        sum_cb += itr.y;
+                        sum_cr += itr.z;
+                    }
+                }
+            }
+        }
+        sum_y /= range;
+        sum_cb /= range;
+        sum_cr /= range;
+    } else {
+        if (x < 0 || y < 0 || src_w <= x || src_h <= y) {
+            vstore4((short4)(0, 0, 0, 0), pixel_itr, dst);
+            return;
+        } else {
+            short4 itr = vload4(x + y * exedit_buffer_line, src);
+            sum_y = itr.x * itr.w / 4096;
+            sum_cb = itr.y * itr.w / 4096;
+            sum_cr = itr.z * itr.w / 4096;
+        }
+    }
+
+    int ya = sum_y - g_r_intensity;
+    if (ya < 1) {
+        vstore4((short4)(0, 0, 0, 0), pixel_itr, dst);
+    } else {
+        sum_cb -= g_r_intensity * sum_cb / sum_y;
+        sum_cr -= g_r_intensity * sum_cr / sum_y;
+        if (ya < 4096) {
+            vstore4(
+                (short4)(
+                    4096,
+                    sum_cb * 4096 / ya,
+                    sum_cr * 4096 / ya,
+                    ya
+                    ),
+                pixel_itr, dst
+            );
+        } else {
+            vstore4(
+                (short4)(
+                    ya,
+                    sum_cb,
+                    sum_cr,
+                    4096
+                    ),
+                pixel_itr, dst
+            );
+        }
+    }
+}
+kernel void FlashColor(global short* dst, global short* src, int src_w, int src_h, int exedit_buffer_line,
+    int g_cx,
+    int g_cy,
+    int g_range,
+    int g_pixel_range,
+    int g_temp_x,
+    int g_temp_y,
+    int g_r_intensity,
+    short g_color_y,
+    short g_color_cb,
+    short g_color_cr
+) {
+
+    int xi = get_global_id(0);
+    int yi = get_global_id(1);
+
+    int x = xi + g_temp_x;
+    int y = yi + g_temp_y;
+
+    int pixel_itr = xi + yi * exedit_buffer_line;
+
+    int cx = g_cx - x;
+    int cy = g_cy - y;
+    int c_dist_times8 = (int)round(sqrt((float)(cx * cx + cy * cy)) * 8.0f);
+    int range = g_range * c_dist_times8 / 1000;
+    if (g_pixel_range < c_dist_times8) {
+        range = g_pixel_range * g_range / 1000;
+        c_dist_times8 = g_pixel_range;
+    } else if (8 < c_dist_times8) {
+        c_dist_times8 *= 8;
+        range *= 8;
+    } else if (4 < c_dist_times8) {
+        c_dist_times8 *= 4;
+        range *= 4;
+    } else if (2 < c_dist_times8) {
+        c_dist_times8 *= 2;
+        range *= 2;
+    }
+    int itr_y, itr_cb, itr_cr;
+
+    if (2 <= c_dist_times8 && 2 <= range) {
+        int sum_a = 0;
+        for (int i = 0; i < range; i++) {
+            int x_itr = x + i * cx / c_dist_times8;
+            int y_itr = y + i * cy / c_dist_times8;
+
+            if (0 <= x_itr && 0 <= y_itr && x_itr < src_w && y_itr < src_h) {
+                short4 itr = vload4(x_itr + y_itr * exedit_buffer_line, src);
+                int itr_a = itr.w;
+                if (itr_a != 0) {
+                    if (itr_a < 4096) {
+                        sum_a += itr_a;
+                    } else {
+                        sum_a += 4096;
+                    }
+                }
+            }
+        }
+        sum_a /= range;
+        itr_y = g_color_y * sum_a / 4096;
+        itr_cb = g_color_cb * sum_a / 4096;
+        itr_cr = g_color_cr * sum_a / 4096;
+    } else {
+        if (x < 0 || y < 0 || src_w <= x || src_h <= y) {
+            vstore4((short4)(0, 0, 0, 0), pixel_itr, dst);
+            return;
+        } else {
+            short4 itr = vload4(x + y * exedit_buffer_line, src);
+            int itr_a = itr.w;
+            itr_y = g_color_y * itr_a / 4096;
+            itr_cb = g_color_cb * itr_a / 4096;
+            itr_cr = g_color_cr * itr_a / 4096;
+        }
+    }
+
+    int ya = itr_y - g_r_intensity;
+    if (ya < 1) {
+        vstore4((short4)(0, 0, 0, 0), pixel_itr, dst);
+    } else {
+        itr_cb -= g_r_intensity * itr_cb / itr_y;
+        itr_cr -= g_r_intensity * itr_cr / itr_y;
+        if (ya < 4096) {
+            vstore4(
+                (short4)(
+                    4096,
+                    itr_cb * 4096 / ya,
+                    itr_cr * 4096 / ya,
+                    ya
+                    ),
+                pixel_itr, dst
+            );
+        } else {
+            vstore4(
+                (short4)(
+                    ya,
+                    itr_cb,
+                    itr_cr,
+                    4096
+                    ),
+                pixel_itr, dst
+            );
+        }
+    }
+}
 )");
+#pragma endregion
 
-	template<size_t i, class Head>
-	static void KernelSetArg(cl::Kernel& kernel, Head head) {
-		kernel.setArg(i, head);
-	}
+    template<size_t i, class Head>
+    static void KernelSetArg(cl::Kernel& kernel, Head head) {
+        kernel.setArg(i, head);
+    }
 
-	template<size_t i, class Head, class... Tail>
-	static void KernelSetArg(cl::Kernel& kernel, Head head, Tail... tail) {
-		kernel.setArg(i, head);
-		KernelSetArg<i + 1>(kernel, tail...);
-	}
+    template<size_t i, class Head, class... Tail>
+    static void KernelSetArg(cl::Kernel& kernel, Head head, Tail... tail) {
+        kernel.setArg(i, head);
+        KernelSetArg<i + 1>(kernel, tail...);
+    }
+
+    bool enabled = true;
+    bool enabled_i;
+    inline static const char key[] = "fast.cl";
 
 public:
     cl::Platform platform;
-	std::vector<cl::Device> devices;
-	cl::Context context;
+    std::vector<cl::Device> devices;
+    cl::Context context;
 
-	std::byte program_mem[sizeof(cl::Program)];
+    std::byte program_mem[sizeof(cl::Program)];
     bool program_opt;
-	cl::CommandQueue queue;
+    cl::CommandQueue queue;
 
     HMODULE CLLib;
 
@@ -352,8 +567,8 @@ public:
         Failed
     } state;
 
-	CLManager() :state(State::NotYet), CLLib(NULL) {}
-    ~CLManager() {
+    cl_t() :state(State::NotYet), CLLib(NULL) {}
+    ~cl_t() {
         FreeLibrary(CLLib);
         if (program_opt) {
             auto program = reinterpret_cast<cl::Program*>(program_mem);
@@ -361,25 +576,20 @@ public:
         }
     }
 
-	bool init() {
-        /*
-        CLLib = LoadLibraryW(L"OpenCL.dll");
-        if (CLLib == NULL) {
-            debug_log("OpenCL not available");
-            state = State::Failed;
-            return false;
-        }
-        */
+    bool init() {
+        enabled_i = enabled;
 
-        if(![]() {
+        if (!enabled_i)return true;
+
+        if (![]() {
             __try {
                 auto load_ret = __HrLoadAllImportsForDll("OpenCL.dll");
-                if (FAILED(load_ret)) {
-                    [load_ret]() {
-                        debug_log("OpenCL not available {}", std::format("delay load failed {}", load_ret));
-                    }();
-                    return false;
-                }
+                    if (FAILED(load_ret)) {
+                        [load_ret]() {
+                            debug_log("OpenCL not available {}", "delay load failed {}"_fmt(load_ret));
+                        }();
+                        return false;
+                    }
                 return true;
             }
             __except ([](int code) {
@@ -394,21 +604,21 @@ public:
                 debug_log("OpenCL not available {}\n", "delay load exception");
                 return false;
             }
-        }()){
+        }()) {
             state = State::Failed;
             return false;
         }
-        
 
-        switch(state) {
+
+        switch (state) {
         case State::NotYet:
-		    try {
+            try {
                 cl::Platform::get(&platform);
                 platform.getDevices(CL_DEVICE_TYPE_ALL, &devices);
-			    context = cl::Context(devices);
-			    new (&program_mem[0]) cl::Program(context, program_str.get(), true);
+                context = cl::Context(devices);
+                new (&program_mem[0]) cl::Program(context, program_str.get(), true);
                 program_opt = true;
-			    //program.build(devices);
+                //program.build(devices);
                 program_str.re_encrypt();
 
                 struct DeviceInfo {
@@ -436,21 +646,21 @@ public:
                     device_itr++;
                 }
 
-			    queue = cl::CommandQueue(context, devices[0]);
-		    }
-		    catch (const cl::Error& err) {
+                queue = cl::CommandQueue(context, devices[0]);
+            }
+            catch (const cl::Error& err) {
                 program_str.re_encrypt();
-                
-			    if (err.err() == CL_BUILD_PROGRAM_FAILURE) {
+
+                if (err.err() == CL_BUILD_PROGRAM_FAILURE) {
                     try {
                         if (program_opt) {
                             auto program = reinterpret_cast<cl::Program*>(program_mem);
-				            if (auto status = program->getBuildInfo<CL_PROGRAM_BUILD_STATUS>(devices[0]); status == CL_BUILD_ERROR) {
+                            if (auto status = program->getBuildInfo<CL_PROGRAM_BUILD_STATUS>(devices[0]); status == CL_BUILD_ERROR) {
                                 debug_log(
                                     "OpenCL Error (CL_BUILD_PROGRAM_FAILURE : CL_BUILD_ERROR)\n{}",
                                     program->getBuildInfo<CL_PROGRAM_BUILD_LOG>(devices[0]).c_str()
                                 );
-				            }
+                            }
                             else {
                                 debug_log("OpenCL Error (CL_BUILD_PROGRAM_FAILURE)\nstatus: {}", status);
                             }
@@ -465,11 +675,11 @@ public:
                         state = State::Failed;
                         return false;
                     }
-			    }
+                }
                 debug_log("OpenCL Error\n({}) {}", err.err(), err.what());
                 state = State::Failed;
                 return false;
-		    }
+            }
             state = State::OK;
             [[fallthrough]];
         case State::OK:
@@ -477,7 +687,7 @@ public:
         default:
             return false;
         }
-	}
+    }
 
     template<class... Args>
     cl::Kernel readyKernel(std::string_view name, Args&&... args) {
@@ -487,6 +697,24 @@ public:
         return kernel;
     }
 
-} cl_manager;
+    void switching(bool flag) {
+        enabled = flag;
+    }
+
+    bool is_enabled() { return enabled; }
+    bool is_enabled_i() { return enabled_i; }
+    
+	void switch_load(ConfigReader& cr) {
+		cr.regist(key, [this](json_value_s* value) {
+			ConfigReader::load_variable(value, enabled);
+		});
+	}
+
+	void switch_store(ConfigWriter& cw) {
+		cw.append(key, enabled);
+	}
+} cl;
+
+} // namespace patch::fast
 
 #endif

@@ -17,7 +17,7 @@
 #ifdef PATCH_SWITCH_FAST_RADIATIONALBLUR
 
 #include "debug_log.hpp"
-#include "mycl.hpp"
+#include "patch_fast_cl.hpp"
 
 //#define PATCH_STOPWATCH
 #include "stopwatch.hpp"
@@ -117,13 +117,13 @@ namespace patch::fast {
 
             try {
                 const auto src_size = exedit_buffer_line * efpip->obj_h * sizeof(ExEdit::PixelYCA);
-                cl::Buffer clmem_src(cl_manager.context, CL_MEM_READ_ONLY, src_size);
-                cl_manager.queue.enqueueWriteBuffer(clmem_src, CL_TRUE, 0, src_size, efpip->obj_edit);
+                cl::Buffer clmem_src(cl.context, CL_MEM_READ_ONLY, src_size);
+                cl.queue.enqueueWriteBuffer(clmem_src, CL_TRUE, 0, src_size, efpip->obj_edit);
 
                 const auto dst_size = exedit_buffer_line * dst_h * sizeof(ExEdit::PixelYCA);
-                cl::Buffer clmem_dst(cl_manager.context, CL_MEM_WRITE_ONLY, dst_size);
+                cl::Buffer clmem_dst(cl.context, CL_MEM_WRITE_ONLY, dst_size);
 
-                auto kernel = cl_manager.readyKernel(
+                auto kernel = cl.readyKernel(
                     "RadiationalBlur",
                     clmem_dst,
                     clmem_src,
@@ -139,9 +139,9 @@ namespace patch::fast {
                     result_x_max,
                     result_y_max
                 );
-                cl_manager.queue.enqueueNDRangeKernel(kernel, { 0,0 }, { (size_t)result_x_max - g_cx ,(size_t)result_y_max - g_cy });
+                cl.queue.enqueueNDRangeKernel(kernel, { 0,0 }, { (size_t)result_x_max - g_cx ,(size_t)result_y_max - g_cy });
 
-                cl_manager.queue.enqueueReadBuffer(clmem_dst, CL_TRUE, 0, dst_size, efpip->obj_temp);
+                cl.queue.enqueueReadBuffer(clmem_dst, CL_TRUE, 0, dst_size, efpip->obj_temp);
             }
             catch (const cl::Error& err) {
                 debug_log("OpenCL Error\n({}) {}", err.err(), err.what());

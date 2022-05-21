@@ -35,6 +35,7 @@
 #include "global.hpp"
 #include "util.hpp"
 #include "debug_log.hpp"
+#include "config_rw.hpp"
 
 namespace patch {
 
@@ -58,8 +59,16 @@ namespace patch {
 		inline static const char classname[] = "patchaul_splash";
 
 		static LRESULT CALLBACK SplashWndProc(HWND hwnd, UINT message, WPARAM wparam, LPARAM lparam);
+
+		inline static const char key[] = "splash";
+
+		bool enabled = false;
+		bool enabled_i;
+
 	public:
-		void operator()() {
+		void init() {
+			enabled_i = enabled;
+
 			WNDCLASSA winc{
 				.style = 0,
 				.lpfnWndProc = SplashWndProc,
@@ -73,12 +82,46 @@ namespace patch {
 				.lpszClassName = classname
 			};
 			RegisterClassA(&winc);
+
+			{
+				// 0x02e70 の Init の ret にスプラッシュウィンドウを閉じる処理を仕込む
+
+				OverWriteOnProtectHelper h(GLOBAL::aviutl_base + 0x041af, 0x21);
+				store_i16(GLOBAL::aviutl_base + 0x041af, '\xeb\x11'); // jmp near +0x11
+
+				store_i16(GLOBAL::aviutl_base + 0x041c2, '\x50\xb9'); // push eax | mov ecx, (i32)
+				store_i32(GLOBAL::aviutl_base + 0x041c4, &InitEnd);
+
+				store_i16(GLOBAL::aviutl_base + 0x041c8, '\xff\xd1'); // call ecx
+
+				store_i32(GLOBAL::aviutl_base + 0x041ca, '\x58\x8b\xe5\x5d'); // pop eax | mov esp, ebp | pop ebp
+				store_i8(GLOBAL::aviutl_base + 0x041ce, '\xc3'); // ret
+			}
 		}
 		~splash_t() {
 			finish();
 			
 			UnregisterClassA(classname, GLOBAL::patchaul_hinst);
 		}
+
+
+		void switching(bool flag) {
+			enabled = flag;
+		}
+
+		bool is_enabled() { return enabled; }
+		bool is_enabled_i() { return enabled; }
+		
+		void switch_load(ConfigReader& cr) {
+			cr.regist(key, [this](json_value_s* value) {
+				ConfigReader::load_variable(value, enabled);
+			});
+		}
+
+		void switch_store(ConfigWriter& cw) {
+			cw.append(key, enabled);
+		}
+
 		void start() {
 			finish();
 
@@ -131,32 +174,6 @@ namespace patch {
 			update_state.store(true);
 		}
 
-		void init_injection() {
-			{
-				// 0x02e70 の Init の ret にスプラッシュウィンドウを閉じる処理を仕込む
-
-				OverWriteOnProtectHelper h(GLOBAL::aviutl_base + 0x041af, 0x21);
-				store_i16(GLOBAL::aviutl_base + 0x041af, '\xeb\x11'); // jmp near +0x11
-
-				store_i16(GLOBAL::aviutl_base + 0x041c2, '\x50\xb9'); // push eax | mov ecx, (i32)
-				store_i32(GLOBAL::aviutl_base + 0x041c4, &InitEnd);
-
-				store_i16(GLOBAL::aviutl_base + 0x041c8, '\xff\xd1'); // call ecx
-
-				store_i32(GLOBAL::aviutl_base + 0x041ca, '\x58\x8b\xe5\x5d'); // pop eax | mov esp, ebp | pop ebp
-				store_i8(GLOBAL::aviutl_base + 0x041ce, '\xc3'); // ret
-			}
-		}
-
-		void revert_injection() {
-			{
-				OverWriteOnProtectHelper h(GLOBAL::aviutl_base + 0x041af, 0x21);
-				store_i16(GLOBAL::aviutl_base + 0x041af, '\x8b\xe5'); // mov esp, ebp
-				store_i32(GLOBAL::aviutl_base + 0x041c2, '\x8b\xe5\x5d\xc3'); // mov esp, ebp | pop ebp | ret
-				memset((void*)(GLOBAL::aviutl_base + 0x041c6), 0xcc, 0x8);
-			}
-
-		}
 	} splash;
 	
 } // namespace patch

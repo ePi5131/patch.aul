@@ -22,7 +22,7 @@
 #include "global.hpp"
 #include "offset_address.hpp"
 #include "util_int.hpp"
-#include "mycl.hpp"
+#include "patch_fast_cl.hpp"
 #include "debug_log.hpp"
 
 //#define PATCH_STOPWATCH
@@ -71,13 +71,13 @@ namespace patch::fast {
             }
             try {
                 const auto src_size = exedit_buffer_line * src_h * sizeof(ExEdit::PixelYCA);
-                cl::Buffer clmem_src(cl_manager.context, CL_MEM_READ_ONLY, src_size);
-                cl_manager.queue.enqueueWriteBuffer(clmem_src, CL_TRUE, 0, src_size, efpip->obj_edit);
+                cl::Buffer clmem_src(cl.context, CL_MEM_READ_ONLY, src_size);
+                cl.queue.enqueueWriteBuffer(clmem_src, CL_TRUE, 0, src_size, efpip->obj_edit);
 
                 const auto dst_size = exedit_buffer_line * g_output_size * 8;
-                cl::Buffer clmem_dst(cl_manager.context, CL_MEM_WRITE_ONLY, exedit_buffer_line * g_output_size * 8);
+                cl::Buffer clmem_dst(cl.context, CL_MEM_WRITE_ONLY, exedit_buffer_line * g_output_size * 8);
 
-                auto kernel = cl_manager.readyKernel(
+                auto kernel = cl.readyKernel(
                     "PolorTransform",
                     clmem_dst,
                     clmem_src,
@@ -90,9 +90,9 @@ namespace patch::fast {
                     static_cast<float>(g_uzu),
                     static_cast<float>(g_uzu_a)
                 );
-                cl_manager.queue.enqueueNDRangeKernel(kernel, { 0,0 }, { (size_t)g_output_size ,(size_t)g_output_size });
+                cl.queue.enqueueNDRangeKernel(kernel, { 0,0 }, { (size_t)g_output_size ,(size_t)g_output_size });
 
-                cl_manager.queue.enqueueReadBuffer(clmem_dst, CL_TRUE, 0, dst_size, efpip->obj_temp);
+                cl.queue.enqueueReadBuffer(clmem_dst, CL_TRUE, 0, dst_size, efpip->obj_temp);
             }
             catch (const cl::Error& err) {
                 debug_log("OpenCL Error\n({}) {}", err.err(), err.what());
