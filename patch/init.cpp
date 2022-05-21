@@ -83,6 +83,10 @@ void init_t::InitAtPatchLoaded() {
 	patch::sysinfo_info_write();
 #endif
 
+#ifdef PATCH_SWITCH_ACCESS_KEY
+	patch::access_key.init();
+#endif
+
 }
 
 void init_t::InitAtExeditLoad() {

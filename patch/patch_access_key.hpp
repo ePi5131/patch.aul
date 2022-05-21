@@ -91,7 +91,7 @@ namespace patch {
 		bool is_enabled() { return enabled; }
 		bool is_enabled_i() { return enabled_i; }
 		
-		bool init() {
+		void init() {
 			enabled_i = enabled;
 		}
 

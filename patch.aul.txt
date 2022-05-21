@@ -1,4 +1,4 @@
-patch.aul r23
+patch.aul r24
 Copyright (c) 2021-2022 ePi
 https://scrapbox.io/ePi5131/patch.aul
 
@@ -181,7 +181,7 @@ https://scrapbox.io/ePi5131/patch.aul
 Lua追加要素詳細
     _PATCH
         patch.aulのバージョン情報
-        現在は "patch.aul r23" という文字列が格納されている
+        現在は "patch.aul r24" という文字列が格納されている
 
     obj.randex(seed,frame)
         seed : integer
@@ -303,3 +303,6 @@ Lua追加要素詳細
 
     r23
         redoの既定値がfalseになっていたのを修正
+
+    r24
+        アクセスキーの設定を有効にしても機能が有効化されないのを修正
