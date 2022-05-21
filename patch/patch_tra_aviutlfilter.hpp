@@ -37,7 +37,7 @@ namespace patch {
 
 			if (!enabled_i)return;
 
-			auto cursor = GLOBAL::executable_memory_cursor;
+			auto& cursor = GLOBAL::executable_memory_cursor;
 
             OverWriteOnProtectHelper h(GLOBAL::exedit_base + 0x06577a, 6);
             h.store_i16(0, '\x90\xe9');

@@ -74,6 +74,7 @@
     <ClInclude Include="patch_sysinfo_write.hpp" />
     <ClInclude Include="patch_text_op_size.hpp" />
     <ClInclude Include="patch_theme_cc.hpp" />
+    <ClInclude Include="patch_tra_aviutlfilter.hpp" />
     <ClInclude Include="patch_undo.hpp" />
     <ClInclude Include="restorable_patch.hpp" />
     <ClInclude Include="resource.h" />
