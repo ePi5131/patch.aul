@@ -1,4 +1,4 @@
-patch.aul r22
+patch.aul r23
 Copyright (c) 2021-2022 ePi
 https://scrapbox.io/ePi5131/patch.aul
 
@@ -181,7 +181,7 @@ https://scrapbox.io/ePi5131/patch.aul
 Lua追加要素詳細
     _PATCH
         patch.aulのバージョン情報
-        現在は "patch.aul r22" という文字列が格納されている
+        現在は "patch.aul r23" という文字列が格納されている
 
     obj.randex(seed,frame)
         seed : integer
@@ -300,3 +300,6 @@ Lua追加要素詳細
         上のオブジェクトでクリッピングの変更を元に戻せない問題の修正
         テンキーによるオブジェクトへの操作を元に戻せない問題の修正
         拡張編集以外のフィルタのトラックバーにトラックバー変化方法スクリプトを適用していると例外になる問題の修正
+
+    r23
+        redoの既定値がfalseになっていたのを修正
