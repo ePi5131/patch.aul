@@ -33,7 +33,7 @@ namespace patch {
 		// index
 		static int __cdecl lua_getvalueex_main(lua_State* L);
 
-		bool enabled;
+		bool enabled = true;
 		bool enabled_i;
 		inline static const char key[] = "lua.getvalue";
 

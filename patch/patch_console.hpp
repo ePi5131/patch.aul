@@ -54,7 +54,7 @@ namespace patch {
 		inline static const char key_visible[] = "visible";
 		inline static const char key_rect[] = "rect";
 
-		bool visible = true;
+		bool visible = false;
 		std::optional<RECT> rect;
 
 	public:

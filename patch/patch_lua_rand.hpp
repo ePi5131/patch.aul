@@ -26,7 +26,7 @@ namespace patch {
     inline class lua_rand_t {
         static int l_rand_overwrite(lua_State* L);
 
-        bool enabled;
+        bool enabled = true;
         bool enabled_i;
         inline static const char key[] = "lua.rand";
 

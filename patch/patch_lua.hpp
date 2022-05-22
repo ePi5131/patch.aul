@@ -120,7 +120,7 @@ namespace patch {
         bool env_i;
         inline static const char key_env[] = "lua.env";
 
-        bool path = true;
+        bool path = false;
         bool path_i;
         inline static const char key_path[] = "lua.path";
 
