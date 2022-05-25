@@ -264,7 +264,9 @@ BOOL __cdecl init_t::func_WndProcWrap(HWND hwnd, UINT message, WPARAM wparam, LP
 		case AviUtl::FilterPlugin::WindowMessage::Command:
 			#ifdef PATCH_SWITCH_UNDO_REDO
 			if (wparam == PATCH_EXEDITMENU_REDO) {
-				patch::redo.run_redo();
+				if (patch::redo.is_enabled_i()) {
+					patch::redo.run_redo();
+				}
 				return TRUE;
 			}
 			#endif

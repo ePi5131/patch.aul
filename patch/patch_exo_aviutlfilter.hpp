@@ -79,10 +79,10 @@ namespace patch {
 					"\x83\xc4\x0c" // ADD ESP 0CH
 					"\x8a\x46\x03" // MOV AL, BYTE PTR [ESI + 3H]
 					"\xa8\x04" // TEST AL, 04H
-					"\x74\x17" // JZ ASSIGN_ZERO
+					"\x74\x16" // JZ ASSIGN_ZERO
 					"\x8b\x86\xcc\x00\x00\x00" // MOV EAX, DWORD PTR [ESI + CCH] ; filter_param_ptr->track_scale
 					"\x85\xc0" // TEST EAX, EAX
-					"\x74\x0d" // JZ ASSIGN_ZERO
+					"\x74\x0c" // JZ ASSIGN_ZERO
 					"\x8b\x4c\x24\x2c" // MOV ECX, DWORD PTR [ESP + 2CH] ; count
 					"\x8b\x04\x88" // MOV EAX, DWORD PTR [EAX + ECX * 4] ; track_scale[count]
 					"\xe9XXXX" // JMP rel32

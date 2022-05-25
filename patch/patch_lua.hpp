@@ -188,10 +188,10 @@ namespace patch {
                 ConfigReader::load_variable(value, enabled);
             });
             cr.regist(key_env, [this](json_value_s* value) {
-                ConfigReader::load_variable(value, enabled);
+                ConfigReader::load_variable(value, env);
             });
             cr.regist(key_path, [this](json_value_s* value) {
-                ConfigReader::load_variable(value, enabled);
+                ConfigReader::load_variable(value, path);
             });
         }
 
