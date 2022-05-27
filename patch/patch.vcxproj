@@ -64,7 +64,6 @@
     <ClInclude Include="patch_lua_getvalueex.hpp" />
     <ClInclude Include="patch_lua_rand.hpp" />
     <ClInclude Include="patch_lua_randex.hpp" />
-    <ClInclude Include="patch_override_debugstring.hpp" />
     <ClInclude Include="patch_redo.hpp" />
     <ClInclude Include="patch_scroll_objdlg.hpp" />
     <ClInclude Include="patch_setting_dialog_wndproc_override.hpp" />
@@ -107,7 +106,7 @@
     <ClCompile Include="patch_lua_getvalueex.cpp" />
     <ClCompile Include="patch_lua_rand.cpp" />
     <ClCompile Include="patch_lua_randex.cpp" />
-    <ClCompile Include="patch_override_debugstring.cpp" />
+    <ClCompile Include="patch_console.cpp" />
     <ClCompile Include="patch_redo.cpp" />
     <ClCompile Include="patch_setting_dialog_wndproc_override.cpp" />
     <ClCompile Include="patch_splash.cpp" />
@@ -219,6 +218,7 @@ copy /Y "$(SolutionDir)COPYING.LESSER" "$(SolutionDir)pack\COPYING.LESSER"</Comm
       <AdditionalIncludeDirectories>%BOOST_1_78_0_DIR%;%AVIUTL_EXEDIT_SDK_DIR%;%WINWRAP_DIR%;%CUDA_PATH%\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <AdditionalOptions>/source-charset:utf-8 %(AdditionalOptions)</AdditionalOptions>
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
+      <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -253,6 +253,7 @@ copy /Y "$(SolutionDir)COPYING.LESSER" "$(SolutionDir)pack\COPYING.LESSER"</Comm
       <AdditionalIncludeDirectories>%BOOST_1_78_0_DIR%;%AVIUTL_EXEDIT_SDK_DIR%;%WINWRAP_DIR%;%CUDA_PATH%\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <AdditionalOptions>/source-charset:utf-8 %(AdditionalOptions)</AdditionalOptions>
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
+      <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>

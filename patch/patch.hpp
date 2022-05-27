@@ -24,7 +24,6 @@
 #include "patch_exo_specialcolorconv.hpp"
 #include "patch_lua.hpp"
 #include "patch_console.hpp"
-#include "patch_override_debugstring.hpp"
 #include "patch_exception_log.hpp"
 #include "patch_aviutl_wndproc_override.hpp"
 #include "patch_sysinfo_write.hpp"

@@ -120,8 +120,8 @@ void init_t::InitAtExeditLoad() {
 	patch::exo_specialcolorconv.init();
 #endif
 
-#ifdef PATCH_SWITCH_DEBUGSTRING
-	patch::override_debugstring();
+#ifdef PATCH_SWITCH_CONSOLE
+	patch::console.init_at_exedit_init();
 #endif
 
 #ifdef PATCH_SWITCH_TEXT_OP_SIZE

@@ -95,9 +95,6 @@
     <ClInclude Include="patch_lua_randex.hpp">
       <Filter>feature</Filter>
     </ClInclude>
-    <ClInclude Include="patch_override_debugstring.hpp">
-      <Filter>feature</Filter>
-    </ClInclude>
     <ClInclude Include="patch_scroll_objdlg.hpp">
       <Filter>feature</Filter>
     </ClInclude>
@@ -212,7 +209,7 @@
     <ClCompile Include="patch_lua_randex.cpp">
       <Filter>feature</Filter>
     </ClCompile>
-    <ClCompile Include="patch_override_debugstring.cpp">
+    <ClCompile Include="patch_console.cpp">
       <Filter>feature</Filter>
     </ClCompile>
     <ClCompile Include="patch_splash.cpp">

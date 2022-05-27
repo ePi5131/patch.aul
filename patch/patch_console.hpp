@@ -57,8 +57,14 @@ namespace patch {
 		bool visible = false;
 		std::optional<RECT> rect;
 
+		static void __stdcall debug_print_override(LPCSTR lpOutputString);
+		static void __stdcall exedit_lua_error_override(LPCSTR lpOutputString);
+
+		inline static constexpr auto* debug_print_override_ptr = &debug_print_override;
+		inline static constexpr auto* exedit_lua_error_override_ptr = &exedit_lua_error_override;
+
+
 	public:
-		friend class override_debugstring_t;
 		friend class aviutl_wndproc_override_t;
 		void exit() {
 			writeConsole("bye");
@@ -104,6 +110,17 @@ namespace patch {
 			setConsoleTextAttribute(FOREGROUND_RED | FOREGROUND_GREEN | FOREGROUND_BLUE);
 
 			valid = true;
+		}
+
+		void init_at_exedit_init() {
+#ifdef PATCH_SWITCH_DEBUGSTRING
+			if (debug_string) {
+				OverWriteOnProtectHelper(GLOBAL::exedit_base + OFS::ExEdit::OutputDebugString_calling_err1, 4).store_i32(0, &exedit_lua_error_override_ptr);
+				OverWriteOnProtectHelper(GLOBAL::exedit_base + OFS::ExEdit::OutputDebugString_calling_err2, 4).store_i32(0, &exedit_lua_error_override_ptr);
+				OverWriteOnProtectHelper(GLOBAL::exedit_base + OFS::ExEdit::OutputDebugString_calling_err3, 4).store_i32(0, &exedit_lua_error_override_ptr);
+				OverWriteOnProtectHelper(GLOBAL::exedit_base + OFS::ExEdit::OutputDebugString_calling_dbg, 4).store_i32(0, &debug_print_override_ptr);
+			}
+#endif
 		}
 
 		void switching(bool flag) {

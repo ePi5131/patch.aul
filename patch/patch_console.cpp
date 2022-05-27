@@ -13,7 +13,7 @@
     along with this program.  If not, see <https://www.gnu.org/licenses/>.
 */
 
-#include "patch_override_debugstring.hpp"
+#include "patch_console.hpp"
 #ifdef PATCH_SWITCH_DEBUGSTRING
 
 #include <chrono>
@@ -22,7 +22,7 @@
 
 namespace patch {
 
-	void __stdcall override_debugstring_t::debug_print_override(LPCSTR lpOutputString) {
+	void __stdcall console_t::debug_print_override(LPCSTR lpOutputString) {
 		if (!lpOutputString)return;
 		console.setConsoleTextAttribute(FOREGROUND_BLUE | FOREGROUND_INTENSITY);
 		if (console.debug_string_time) console.writeConsole("[{}]\t"_fmt(get_local_time_string()));
@@ -31,7 +31,7 @@ namespace patch {
 		console.writeConsole("\n");
 	}
 
-	void __stdcall override_debugstring_t::exedit_lua_error_override(LPCSTR lpOutputString) {
+	void __stdcall console_t::exedit_lua_error_override(LPCSTR lpOutputString) {
 		if (!lpOutputString)return;
 		console.setConsoleTextAttribute(FOREGROUND_RED | FOREGROUND_INTENSITY);
 		if (console.debug_string_time) console.writeConsole("[{}]\t"_fmt(get_local_time_string()));
