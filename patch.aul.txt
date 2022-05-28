@@ -8,6 +8,7 @@ https://scrapbox.io/ePi5131/patch.aul
 要求環境
     AviUtl version 1.10
     拡張編集 version 0.92
+    Visual C++ 再頒布可能パッケージ 2015-2022 X86
 
 推奨環境
     OpenCLを使用可能なデバイス
