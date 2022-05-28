@@ -161,6 +161,10 @@ void init_t::InitAtExeditLoad() {
 			patch::fast_exeditwindow.init();
 		#endif
 
+		#ifdef PATCH_SWITCH_FAST_TEXT
+			patch::fast::text.init();
+		#endif
+
 		#ifdef PATCH_SWITCH_CL
 			if (patch::fast::cl.init()) {
 				if (patch::fast::cl.is_enabled_i()) {
@@ -226,7 +230,32 @@ HMODULE WINAPI init_t::LoadLibraryAWrap(LPCSTR lpLibFileName) {
 #endif
 		InitAtExeditLoad();
 	}
-	else {
+	else if (lstrcmpiA(filename, "Boost.auf") == 0) {
+		if (auto ptr = search_import(ret, cstr_kernel32_dll.get(), cstr_GetModuleHandleA.get())) {
+			OverWriteOnProtectHelper(ptr, 4).store_i32(0, &init_t::Boost_GetModuleHandleA_Wrap);
+		}
+		if (auto ptr = search_import(ret, cstr_kernel32_dll.get(), cstr_GetModuleHandleW.get())) {
+			OverWriteOnProtectHelper(ptr, 4).store_i32(0, &init_t::Boost_GetModuleHandleW_Wrap);
+		}
+		if (auto ptr = search_import(ret, cstr_kernel32_dll.get(), cstr_LoadLibraryA.get())) {
+			OverWriteOnProtectHelper(ptr, 4).store_i32(0, &init_t::Boost_LoadLibraryA_Wrap);
+		}
+		if (auto ptr = search_import(ret, cstr_kernel32_dll.get(), cstr_LoadLibraryW.get())) {
+			OverWriteOnProtectHelper(ptr, 4).store_i32(0, &init_t::Boost_LoadLibraryW_Wrap);
+		}
+		if (auto ptr = search_import(ret, cstr_kernel32_dll.get(), cstr_Module32First.get())) {
+			OverWriteOnProtectHelper(ptr, 4).store_i32(0, &init_t::Boost_Module32First_Wrap);
+		}
+		if (auto ptr = search_import(ret, cstr_kernel32_dll.get(), cstr_Module32FirstW.get())) {
+			OverWriteOnProtectHelper(ptr, 4).store_i32(0, &init_t::Boost_Module32FirstW_Wrap);
+		}
+		if (auto ptr = search_import(ret, cstr_kernel32_dll.get(), cstr_Module32Next.get())) {
+			OverWriteOnProtectHelper(ptr, 4).store_i32(0, &init_t::Boost_Module32Next_Wrap);
+		}
+		if (auto ptr = search_import(ret, cstr_kernel32_dll.get(), cstr_Module32NextW.get())) {
+			OverWriteOnProtectHelper(ptr, 4).store_i32(0, &init_t::Boost_Module32NextW_Wrap);
+		}
+	} else {
 		static std::set<std::string> list = {
 			"bakusoku.auf",
 			"eclipse_fast.auf",
@@ -295,4 +324,68 @@ BOOL __cdecl init_t::func_procWrap(AviUtl::FilterPlugin* fp, AviUtl::FilterProcI
 		patch::alpha_bg.func_proc(fp, fpip);
 	#endif
 	return original_func_proc(fp, fpip);
+}
+
+HMODULE WINAPI init_t::Boost_GetModuleHandleA_Wrap(LPCSTR lpModuleName) {
+	auto filename = PathFindFileNameA(lpModuleName);
+	if (lstrcmpiA(filename, "patch.aul") == 0) {
+		return NULL;
+	}
+	return GetModuleHandleA(lpModuleName);
+}
+
+HMODULE WINAPI init_t::Boost_GetModuleHandleW_Wrap(LPCWSTR lpModuleName) {
+	auto filename = PathFindFileNameW(lpModuleName);
+	if (lstrcmpiW(filename, L"patch.aul") == 0) {
+		return NULL;
+	}
+	return GetModuleHandleW(lpModuleName);
+}
+
+HMODULE WINAPI init_t::Boost_LoadLibraryA_Wrap(LPCSTR lpLibFileName) {
+	auto filename = PathFindFileNameA(lpLibFileName);
+	if (lstrcmpiA(filename, "patch.aul") == 0) {
+		return NULL;
+	}
+	return LoadLibraryA(lpLibFileName);
+}
+
+HMODULE WINAPI init_t::Boost_LoadLibraryW_Wrap(LPCWSTR lpLibFileName) {
+	auto filename = PathFindFileNameW(lpLibFileName);
+	if (lstrcmpiW(filename, L"patch.aul") == 0) {
+		return NULL;
+	}
+	return LoadLibraryW(lpLibFileName);
+}
+
+BOOL WINAPI init_t::Boost_Module32First_Wrap(HANDLE hSnapshot, LPMODULEENTRY32 lpme) {
+	auto ret = Module32First(hSnapshot, lpme);
+	if (ret && lstrcmpiA(lpme->szModule, "patch.aul") == 0) {
+		return Module32Next(hSnapshot, lpme);
+	}
+	return ret;
+}
+
+BOOL WINAPI init_t::Boost_Module32FirstW_Wrap(HANDLE hSnapshot, LPMODULEENTRY32W lpme) {
+	auto ret = Module32FirstW(hSnapshot, lpme);
+	if (ret && lstrcmpiW(lpme->szModule, L"patch.aul") == 0) {
+		return Module32NextW(hSnapshot, lpme);
+	}
+	return ret;
+}
+
+BOOL WINAPI init_t::Boost_Module32Next_Wrap(HANDLE hSnapshot, LPMODULEENTRY32 lpme) {
+	auto ret = Module32Next(hSnapshot, lpme);
+	if (ret && lstrcmpiA(lpme->szModule, "patch.aul") == 0) {
+		return Module32Next(hSnapshot, lpme);
+	}
+	return ret;
+}
+
+BOOL WINAPI init_t::Boost_Module32NextW_Wrap(HANDLE hSnapshot, LPMODULEENTRY32W lpme) {
+	auto ret = Module32NextW(hSnapshot, lpme);
+	if (ret && lstrcmpiW(lpme->szModule, L"patch.aul") == 0) {
+		return Module32NextW(hSnapshot, lpme);
+	}
+	return ret;
 }

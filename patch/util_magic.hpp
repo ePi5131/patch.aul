@@ -33,7 +33,8 @@ class OverWriteOnProtectHelper {
 	uintptr_t m_address, m_size;
 	DWORD m_oldProtect;
 public:
-	OverWriteOnProtectHelper(uintptr_t address, uintptr_t size) noexcept : m_address(address), m_size(size) {
+	template<class T>
+	OverWriteOnProtectHelper(T address, uintptr_t size) noexcept : m_address((uintptr_t)address), m_size(size) {
 		VirtualProtect(reinterpret_cast<LPVOID>(m_address), m_size, PAGE_EXECUTE_READWRITE, &m_oldProtect);
 	}
 	~OverWriteOnProtectHelper() noexcept {

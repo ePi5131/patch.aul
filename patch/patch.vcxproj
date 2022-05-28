@@ -57,6 +57,7 @@
     <ClInclude Include="patch_fast_polortransform.hpp" />
     <ClInclude Include="patch_fast_radiationalblur.hpp" />
     <ClInclude Include="patch_fast_setting_dialog.hpp" />
+    <ClInclude Include="patch_fast_text.hpp" />
     <ClInclude Include="patch_font_dialog.hpp" />
     <ClInclude Include="patch_helpful_msgbox.hpp" />
     <ClInclude Include="patch_ignore_media_param_reset.hpp" />
@@ -78,6 +79,7 @@
     <ClInclude Include="restorable_patch.hpp" />
     <ClInclude Include="resource.h" />
     <ClInclude Include="stopwatch.hpp" />
+    <ClInclude Include="timer.hpp" />
     <ClInclude Include="util.hpp" />
     <ClInclude Include="util_int.hpp" />
     <ClInclude Include="util_magic.hpp" />
@@ -101,6 +103,7 @@
     <ClCompile Include="patch_fast_polortransform.cpp" />
     <ClCompile Include="patch_fast_radiationalblur.cpp" />
     <ClCompile Include="patch_fast_setting_dialog.cpp" />
+    <ClCompile Include="patch_fast_text.cpp" />
     <ClCompile Include="patch_helpful_msgbox.cpp" />
     <ClCompile Include="patch_lua.cpp" />
     <ClCompile Include="patch_lua_getvalueex.cpp" />
@@ -218,7 +221,6 @@ copy /Y "$(SolutionDir)COPYING.LESSER" "$(SolutionDir)pack\COPYING.LESSER"</Comm
       <AdditionalIncludeDirectories>%BOOST_1_78_0_DIR%;%AVIUTL_EXEDIT_SDK_DIR%;%WINWRAP_DIR%;%CUDA_PATH%\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <AdditionalOptions>/source-charset:utf-8 %(AdditionalOptions)</AdditionalOptions>
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
-      <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -253,7 +255,6 @@ copy /Y "$(SolutionDir)COPYING.LESSER" "$(SolutionDir)pack\COPYING.LESSER"</Comm
       <AdditionalIncludeDirectories>%BOOST_1_78_0_DIR%;%AVIUTL_EXEDIT_SDK_DIR%;%WINWRAP_DIR%;%CUDA_PATH%\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <AdditionalOptions>/source-charset:utf-8 %(AdditionalOptions)</AdditionalOptions>
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
-      <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>

@@ -1,4 +1,4 @@
-patch.aul r27
+patch.aul r28
 Copyright (c) 2021-2022 ePi
 https://scrapbox.io/ePi5131/patch.aul
 
@@ -25,9 +25,12 @@ https://scrapbox.io/ePi5131/patch.aul
     ・メニュー文字列を実態に即したものに変更
     ・動画ファイル と 音声ファイル で中間点を打っていないときでもファイルを再参照しても再生位置などの情報を変更しない
     ・拡張編集以外のフィルタ(例:拡張色調補正)を使ったプロジェクトをオブジェクトファイルに出力できないことがある
-    ・極座標変換と放射ブラーの高速化
+    ・極座標変換/放射ブラー/閃光の高速化
         OpenCLを使用します
         わずかにオリジナルと結果が変わってしまいます (floatとdoubleの差です)
+        また、アーティファクトを解消することもあります
+    ・テキストの軽量化
+        キャッシュをとります
     ・Luaの環境が分かれてしまうことがある
     ・package.path,package.cpathはどんなときでもscriptフォルダを含めるように
     ・obj.randでs=-2^31,e=2^31-1とすると例外になる
@@ -140,7 +143,10 @@ https://scrapbox.io/ePi5131/patch.aul
         "shift" : true ; Ctrl+Shift+Z によるやり直し操作を有効化するか (既定値: true)
     },
     "fast_exeditwindow" : { ; 拡張編集ウィンドウの描画の最適化 について
-        "step" : 0 ; ; グラデーション描画の方法 (負数でパッチ無効,0でグラデーションのパッチ,正数でその分割数の単色矩形 既定値: 0),
+        "step" : 0 ; グラデーション描画の方法 (負数でパッチ無効,0でグラデーションのパッチ,正数でその分割数の単色矩形 既定値: 0),
+    },
+    "fast_text" : { ; テキストの軽量化について
+        "release_time" : 120 ; キャッシュデータの寿命[秒]
     },
 	"switch" : { ; どのパッチを有効にするかを選択するものです trueなら有効、falseなら無効
 		"access_key" : boolean, ; アクセスキーを付加するか (既定値: false)
@@ -169,8 +175,9 @@ https://scrapbox.io/ePi5131/patch.aul
 		"lua.rand" : boolean, ; rand関数で例外になるパターンを潰す (既定値: true)
 		"lua.randex" : boolean, ; 正確な乱数を提供するrandexクラスの追加 (既定値: true)
 		"fast" : boolean, ; fast.*配下のスイッチの主電源 (既定値: true)
-		"fast.exeditwindow" : boolean, ; 拡張編集ウィンドウの描画の最適化 (既定値: true),
-		"fast.settingdialog" boolean, ; 設定ダイアログの描画の最適化 (既定値: true),
+		"fast.exeditwindow" : boolean, ; 拡張編集ウィンドウの描画の最適化 (既定値: true)
+		"fast.settingdialog" : boolean, ; 設定ダイアログの描画の最適化 (既定値: true)
+        "fast.text" : boolean, ; テキストの軽量化 (既定値: true)
 		"fast.cl" : boolean, ; fast.*でOpenCLが必要なオプションに必要なオプション (既定値: true)
 		"fast.radiationalblur" : boolean, ; fast.clが前提 放射ブラーの高速化 (既定値: true)
 		"fast.polortransform" : boolean, ; fast.clが前提 極座標変換の高速化 (既定値: true)
@@ -180,7 +187,7 @@ https://scrapbox.io/ePi5131/patch.aul
 Lua追加要素詳細
     _PATCH
         patch.aulのバージョン情報
-        現在は "patch.aul r27" という文字列が格納されている
+        現在は "patch.aul r28" という文字列が格納されている
 
     obj.randex(seed,frame)
         seed : integer
@@ -317,3 +324,7 @@ Lua追加要素詳細
     r27
         コンソールへのLua関連の出力が動作していなかったのを修正
         ランタイムライブラリを不要にした
+
+    r28
+        テキストの軽量化を追加
+        ランタイムライブラリを不要にしたのを取り消し

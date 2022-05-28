@@ -177,6 +177,10 @@
     <ClInclude Include="patch_tra_aviutlfilter.hpp">
       <Filter>feature</Filter>
     </ClInclude>
+    <ClInclude Include="patch_fast_text.hpp">
+      <Filter>feature\fast</Filter>
+    </ClInclude>
+    <ClInclude Include="timer.hpp" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="init.cpp" />
@@ -246,6 +250,9 @@
       <Filter>feature</Filter>
     </ClCompile>
     <ClCompile Include="patch_fast_flash.cpp">
+      <Filter>feature\fast</Filter>
+    </ClCompile>
+    <ClCompile Include="patch_fast_text.cpp">
       <Filter>feature\fast</Filter>
     </ClCompile>
   </ItemGroup>

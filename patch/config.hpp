@@ -146,6 +146,9 @@ public:
 			    #ifdef PATCH_SWITCH_FAST_SETTINGDIALOG
                     patch::fast_setting_dialog.switch_load(cr);
 			    #endif
+                #ifdef PATCH_SWITCH_FAST_TEXT
+                    patch::fast::text.switch_load(cr);
+                #endif
 
                 #ifdef PATCH_SWITCH_CL
                     patch::fast::cl.switch_load(cr);
@@ -190,6 +193,13 @@ public:
         cr.regist("fast_exeditwindow", [](json_value_s* value) {
             ConfigReader cr(value);
             patch::fast_exeditwindow.config_load(cr);
+            cr.load();
+        });
+#endif
+#ifdef PATCH_SWITCH_FAST_TEXT
+        cr.regist("fast_text", [](json_value_s* value) {
+            ConfigReader cr(value);
+            patch::fast::text.config_load(cr);
             cr.load();
         });
 #endif
@@ -264,6 +274,20 @@ public:
             fast_exeditwindow.write(ss);
 
             cw.append("fast_exeditwindow", ss.str());
+            --level;
+        }
+#endif
+
+#ifdef PATCH_SWITCH_FAST_TEXT
+        {
+            ConfigWriter fast_text(++level);
+
+            patch::fast::text.config_store(fast_text);
+
+            std::stringstream ss;
+            fast_text.write(ss);
+
+            cw.append("fast_text", ss.str());
             --level;
         }
 #endif
@@ -361,6 +385,9 @@ public:
 			    #ifdef PATCH_SWITCH_FAST_SETTINGDIALOG
                     patch::fast_setting_dialog.switch_store(switch_);
 			    #endif
+                #ifdef PATCH_SWITCH_FAST_TEXT
+                    patch::fast::text.switch_store(switch_);
+                #endif
 
                 #ifdef PATCH_SWITCH_CL
                     patch::fast::cl.switch_store(switch_);

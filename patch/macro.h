@@ -93,7 +93,7 @@
 #endif //define PATCH_SWITCH_FAST
 
 #else // ifdef PATCH_INTERNAL
-#define PATCH_VERSION_STR "r27"
+#define PATCH_VERSION_STR "r28"
 
 #define PATCH_SWITCH_EXCEPTION_LOG
 #define PATCH_SWITCH_SYSINFO_MODIFY
@@ -141,6 +141,7 @@
 	
 	#define PATCH_SWITCH_FAST_SETTINGDIALOG fast_settingdialog
 	#define PATCH_SWITCH_FAST_EXEDITWINDOW fast_exeditwindow
+	#define PATCH_SWITCH_FAST_TEXT fast_text
 
 	#define PATCH_SWITCH_CL cl
 	#ifdef PATCH_SWITCH_CL

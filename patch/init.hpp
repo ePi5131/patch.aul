@@ -43,6 +43,16 @@ public:
 	static BOOL WINAPI EnumResourceLanguagesA_Wrap(HMODULE hModule, LPCSTR lpType, LPCSTR lpName, ENUMRESLANGPROCA lpEnumFunc, LONG_PTR lParam);
 	static HMODULE WINAPI LoadLibraryAWrap(LPCSTR lpLibFileName);
 
+	static HMODULE WINAPI Boost_GetModuleHandleA_Wrap(LPCSTR lpModuleName);
+	static HMODULE WINAPI Boost_GetModuleHandleW_Wrap(LPCWSTR lpModuleName);
+	static HMODULE WINAPI Boost_LoadLibraryA_Wrap(LPCSTR lpLibFileName);
+	static HMODULE WINAPI Boost_LoadLibraryW_Wrap(LPCWSTR lpLibFileName);
+	static BOOL WINAPI Boost_Module32First_Wrap(HANDLE hSnapshot, LPMODULEENTRY32 lpme);
+	static BOOL WINAPI Boost_Module32FirstW_Wrap(HANDLE hSnapshot, LPMODULEENTRY32W lpme);
+	static BOOL WINAPI Boost_Module32Next_Wrap(HANDLE hSnapshot, LPMODULEENTRY32 lpme);
+	static BOOL WINAPI Boost_Module32NextW_Wrap(HANDLE hSnapshot, LPMODULEENTRY32W lpme);
+
+
 	// DllMain呼び出しのタイミングでやる処理
 	// できるだけ少なくしたい
 	static void InitAtDllMain();
