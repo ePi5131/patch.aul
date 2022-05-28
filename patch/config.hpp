@@ -149,7 +149,10 @@ public:
                 #ifdef PATCH_SWITCH_FAST_TEXT
                     patch::fast::text.switch_load(cr);
                 #endif
-
+                #ifdef PATCH_SWITCH_FAST_BORDER
+                    patch::fast::Border.switch_load(cr);
+                #endif
+		
                 #ifdef PATCH_SWITCH_CL
                     patch::fast::cl.switch_load(cr);
                     
@@ -388,7 +391,10 @@ public:
                 #ifdef PATCH_SWITCH_FAST_TEXT
                     patch::fast::text.switch_store(switch_);
                 #endif
-
+                #ifdef PATCH_SWITCH_FAST_BORDER
+                    patch::fast::Border.switch_store(switch_);
+                #endif
+		
                 #ifdef PATCH_SWITCH_CL
                     patch::fast::cl.switch_store(switch_);
                     
