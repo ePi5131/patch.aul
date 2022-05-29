@@ -198,13 +198,13 @@
       <AdditionalLibraryDirectories>%CUDA_PATH%\lib\Win32</AdditionalLibraryDirectories>
     </Link>
     <PostBuildEvent>
-      <Command>copy /Y "$(TargetPath)" "$(SolutionDir)test\$(TargetFileName)"
-copy /Y "$(TargetPath)" "$(SolutionDir)pack\$(TargetFileName)"
-copy /Y "$(SolutionDir)patch.aul.txt" "$(SolutionDir)pack\patch.aul.txt"
-copy /Y "$(SolutionDir)credits.md" "$(SolutionDir)pack\credits.md"
-copy /Y "$(SolutionDir)LICENSE" "$(SolutionDir)pack\LICENSE"
-copy /Y "$(SolutionDir)COPYING" "$(SolutionDir)pack\COPYING"
-copy /Y "$(SolutionDir)COPYING.LESSER" "$(SolutionDir)pack\COPYING.LESSER"</Command>
+      <Command>xcopy /Y "$(TargetPath)" "$(SolutionDir)test\"
+xcopy /Y "$(TargetPath)" "$(SolutionDir)pack\"
+xcopy /Y "$(SolutionDir)patch.aul.txt" "$(SolutionDir)pack\"
+xcopy /Y "$(SolutionDir)credits.md" "$(SolutionDir)pack\"
+xcopy /Y "$(SolutionDir)LICENSE" "$(SolutionDir)pack\"
+xcopy /Y "$(SolutionDir)COPYING" "$(SolutionDir)pack\"
+xcopy /Y "$(SolutionDir)COPYING.LESSER" "$(SolutionDir)pack\"</Command>
     </PostBuildEvent>
     <ResourceCompile>
       <AdditionalOptions>/c 65001 %(AdditionalOptions)</AdditionalOptions>
