@@ -14,8 +14,7 @@
 */
 
 #pragma once
-#include "macro.h"
-#ifdef PATCH_SWITCH_FAST_RADIATIONALBLUR
+#include "macro.h"#ifdef PATCH_SWITCH_FAST_RADIATIONALBLUR
 #include <exedit.hpp>
 #include "util_magic.hpp"
 #include "offset_address.hpp"
@@ -26,16 +25,52 @@ namespace patch::fast {
 	// init at exedit load
 	// 放射ブラーの高速化
 	inline class RadiationalBlur_t {
-		static BOOL func_proc(ExEdit::Filter* efp, ExEdit::FilterProcInfo* efpip);
+
+		static BOOL media_mt_func(AviUtl::MultiThreadFunc original_func_ptr, ExEdit::Filter* efp, ExEdit::FilterProcInfo* efpip);
+		static BOOL filter_mt_func(AviUtl::MultiThreadFunc original_func_ptr, ExEdit::Filter* efp, ExEdit::FilterProcInfo* efpip);
+		static BOOL filter_mt_far_func(AviUtl::MultiThreadFunc original_func_ptr, ExEdit::Filter* efp, ExEdit::FilterProcInfo* efpip);
 
 		bool enabled = true;
 		bool enabled_i;
 		inline static const char key[] = "fast.radiationalblur";
 	public:
+		struct efRadiationalBlur_var { // d75a8
+			int blur_cx; // ブラーの中心位置
+			int blur_cy;
+			int w;
+			int h;
+			int pixel_range;
+			int obj_cx;
+			int range;
+			int obj_cy;
+		};
+
 		void init() {
 			enabled_i = enabled;
 			if (!enabled_i)return;
-			store_i32(GLOBAL::exedit_base + OFS::ExEdit::efRadiationalBlur_func_proc_ptr, &func_proc);
+			{   // Media object
+				OverWriteOnProtectHelper h(GLOBAL::exedit_base + 0x00b5c1, 6);
+				h.store_i16(0, '\x90\xe8'); // nop; call (rel32)
+				h.replaceNearJmp(2, &media_mt_func);
+			}
+
+			{   // Filter object
+				OverWriteOnProtectHelper h(GLOBAL::exedit_base + 0x00bb39, 6);
+				h.store_i16(0, '\x90\xe8'); // nop; call (rel32)
+				h.replaceNearJmp(2, &filter_mt_func);
+			}
+			{   // Filter object
+				OverWriteOnProtectHelper h(GLOBAL::exedit_base + 0x00bb4f, 6);
+				h.store_i16(0, '\x90\xe8'); // nop; call (rel32)
+				h.replaceNearJmp(2, &filter_mt_far_func);
+			}
+
+			{   // SceneChange
+				OverWriteOnProtectHelper h(GLOBAL::exedit_base + 0x00c1ec, 6);
+				h.store_i16(0, '\x90\xe8'); // nop; call (rel32)
+				h.replaceNearJmp(2, &filter_mt_func);
+			}
+
 		}
 
 		void switching(bool flag) { enabled = flag; }
