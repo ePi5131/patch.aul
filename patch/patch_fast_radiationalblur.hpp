@@ -14,7 +14,8 @@
 */
 
 #pragma once
-#include "macro.h"#ifdef PATCH_SWITCH_FAST_RADIATIONALBLUR
+#include "macro.h"
+#ifdef PATCH_SWITCH_FAST_RADIATIONALBLUR
 #include <exedit.hpp>
 #include "util_magic.hpp"
 #include "offset_address.hpp"
