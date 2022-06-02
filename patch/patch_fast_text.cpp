@@ -77,7 +77,7 @@ namespace patch::fast {
 
 		auto itr = text.map.find(lfw);
 		if (itr == text.map.end()) {
-			return GetGlyphOutlineW(hdc, uChar, fuFormat, lpgm, cjBuffer, pvBuffer, lpmat2);
+			return ::GetGlyphOutlineW(hdc, uChar, fuFormat, lpgm, cjBuffer, pvBuffer, lpmat2);
 		}
 		auto& glyph = itr->second.glyph_map;
 
