@@ -69,6 +69,9 @@ namespace patch {
         bool enabled_i;
         inline static const char key[] = "lua.randex";
     public:
+        void init() {
+            enabled_i = enabled;
+        }
 
         static void require(lua_State* L) {
             luaL_newmetatable(L, "randex");

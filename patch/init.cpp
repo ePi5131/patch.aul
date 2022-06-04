@@ -313,6 +313,19 @@ BOOL __cdecl init_t::func_initWrap(AviUtl::FilterPlugin* fp) {
 
 #ifdef PATCH_SWITCH_LUA
 	patch::lua.init();
+
+	#ifdef PATCH_SWITCH_LUA_RAND
+		patch::lua_rand.init();
+	#endif
+
+	#ifdef PATCH_SWITCH_LUA_RANDEX
+		patch::lua_randex.init();
+	#endif
+
+	#ifdef PATCH_SWITCH_LUA_GETVALUE
+		patch::lua_getvalueex.init();
+	#endif
+
 #endif
 	
 	return TRUE;
