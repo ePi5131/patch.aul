@@ -162,6 +162,9 @@ public:
                     #ifdef PATCH_SWITCH_FAST_FLASH
                         patch::fast::Flash.switch_load(cr);
                     #endif
+                    #ifdef PATCH_SWITCH_FAST_DIRECTIONALBLUR
+                        patch::fast::DirectionalBlur.switch_load(cr);
+                    #endif
                 #endif
 		    #endif
 
@@ -400,6 +403,9 @@ public:
 				    #endif
                     #ifdef PATCH_SWITCH_FAST_FLASH
                         patch::fast::Flash.switch_store(switch_);
+                    #endif
+                    #ifdef PATCH_SWITCH_FAST_DIRECTIONALBLUR
+                        patch::fast::DirectionalBlur.switch_store(switch_);
                     #endif
                 #endif
 		    #endif
