@@ -161,7 +161,7 @@ public:
 	}
 
 	template<class... T, std::enable_if_t<sizeof...(T) == 32, std::nullptr_t> = nullptr>
-	SHA256(T&&... list) noexcept : data{ (std::byte)std::forward<T>(list)... } {}
+	constexpr SHA256(T&&... list) noexcept : data{ (std::byte)std::forward<T>(list)... } {}
 
 	static std::optional<SHA256> make_opt(std::string_view filename) {
 		try {
