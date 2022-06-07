@@ -266,7 +266,7 @@ HMODULE WINAPI init_t::LoadLibraryAWrap(LPCSTR lpLibFileName) {
 		if (hash == r940_hash) {
 			auto ret = patch_resource_message_w(PATCH_RS_PATCH_OLD_LSW, MB_ICONEXCLAMATION | MB_YESNO);
 			if (ret == IDYES) {
-				static cryptostring lsw_url(L"https://github.com/Mr-Ojii/L-SMASH-Works-Auto-Builds/releases");
+				static cryptostring lsw_url(L"https://scrapbox.io/aviutl/L-SMASH_Works");
 				web_confirm(lsw_url.get());
 			}
 		}
