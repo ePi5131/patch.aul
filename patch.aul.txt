@@ -1,4 +1,4 @@
-patch.aul r30
+patch.aul r31
 Copyright (c) 2021-2022 ePi
 https://scrapbox.io/ePi5131/patch.aul
 
@@ -188,7 +188,7 @@ https://scrapbox.io/ePi5131/patch.aul
 Lua追加要素詳細
     _PATCH
         patch.aulのバージョン情報
-        現在は "patch.aul r30" という文字列が格納されている
+        現在は "patch.aul r31" という文字列が格納されている
 
     obj.randex(seed,frame)
         seed : integer
@@ -335,3 +335,6 @@ Lua追加要素詳細
 
     r30
         lua.rand,randex,getvalueが機能していなかったのを修正
+
+    r31
+        RePOPnビルドL-SMASH Works r940を導入していると警告を表示する機能を追加

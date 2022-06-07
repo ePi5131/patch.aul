@@ -20,6 +20,7 @@
 
 #include "cryptostring.hpp"
 #include "util_others.hpp"
+#include "util_resource.hpp"
 
 #include "config.hpp"
 
@@ -57,7 +58,7 @@ void init_t::InitAtPatchLoaded() {
 	
 	InjectFunction_fastcall(GLOBAL::aviutl_base + OFS::AviUtl::InitAuf, InitAufBefore, 10);
 
-	ExchangeFunction((HMODULE)GLOBAL::aviutl_base, cstr_kernel32_dll.get(), cstr_LoadLibraryA.get(), LoadLibraryAWrap);
+	ExchangeFunction(GLOBAL::aviutl_hmod, cstr_kernel32_dll.get(), cstr_LoadLibraryA.get(), LoadLibraryAWrap);
 
 	overwrite_resource();
 
@@ -230,6 +231,7 @@ HMODULE WINAPI init_t::LoadLibraryAWrap(LPCSTR lpLibFileName) {
 #endif
 		InitAtExeditLoad();
 	}
+#ifdef PATCH_SWITCH_CANCEL_BOOST_CONFLICT
 	else if (lstrcmpiA(filename, "Boost.auf") == 0) {
 		if (auto ptr = search_import(ret, cstr_kernel32_dll.get(), cstr_GetModuleHandleA.get())) {
 			OverWriteOnProtectHelper(ptr, 4).store_i32(0, &init_t::Boost_GetModuleHandleA_Wrap);
@@ -255,7 +257,22 @@ HMODULE WINAPI init_t::LoadLibraryAWrap(LPCSTR lpLibFileName) {
 		if (auto ptr = search_import(ret, cstr_kernel32_dll.get(), cstr_Module32NextW.get())) {
 			OverWriteOnProtectHelper(ptr, 4).store_i32(0, &init_t::Boost_Module32NextW_Wrap);
 		}
-	} else {
+	}
+#endif
+#ifdef PATCH_SWITCH_WARNING_OLD_LSW
+	else if (lstrcmpiA(filename, "lwcolor.auc") == 0) {
+		static const SHA256 r940_hash(0xc7, 0xe2, 0x51, 0xde, 0xd2, 0xf8, 0x21, 0xcb, 0x1b, 0xc6, 0xb1, 0x9a, 0x66, 0x43, 0xd3, 0x0d, 0xa4, 0xeb, 0xd6, 0x97, 0x1e, 0x34, 0x1a, 0xb2, 0x11, 0xd9, 0x41, 0x1d, 0xcc, 0xbf, 0x9a, 0x18);
+		SHA256 hash(lpLibFileName);
+		if (hash == r940_hash) {
+			auto ret = patch_resource_message_w(PATCH_RS_PATCH_OLD_LSW, MB_ICONEXCLAMATION | MB_YESNO);
+			if (ret == IDYES) {
+				static cryptostring lsw_url(L"https://github.com/Mr-Ojii/L-SMASH-Works-Auto-Builds/releases");
+				web_confirm(lsw_url.get());
+			}
+		}
+	}
+#endif
+	else {
 		static std::set<std::string> list = {
 			"bakusoku.auf",
 			"eclipse_fast.auf",
@@ -339,6 +356,7 @@ BOOL __cdecl init_t::func_procWrap(AviUtl::FilterPlugin* fp, AviUtl::FilterProcI
 	return original_func_proc(fp, fpip);
 }
 
+#ifdef PATCH_SWITCH_CANCEL_BOOST_CONFLICT
 HMODULE WINAPI init_t::Boost_GetModuleHandleA_Wrap(LPCSTR lpModuleName) {
 	auto filename = PathFindFileNameA(lpModuleName);
 	if (lstrcmpiA(filename, "patch.aul") == 0) {
@@ -402,3 +420,4 @@ BOOL WINAPI init_t::Boost_Module32NextW_Wrap(HANDLE hSnapshot, LPMODULEENTRY32W 
 	}
 	return ret;
 }
+#endif

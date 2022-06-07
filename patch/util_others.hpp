@@ -21,7 +21,10 @@
 #include <concepts>
 
 #include <Windows.h>
+#include <CommCtrl.h>
 
+#include "global.hpp"
+#include "resource.h"
 #include "offset_address.hpp"
 
 inline HWND pid2hwnd(DWORD pid) {

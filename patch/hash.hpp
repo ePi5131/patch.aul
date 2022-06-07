@@ -160,6 +160,9 @@ public:
 #endif
 	}
 
+	template<class... T, std::enable_if_t<sizeof...(T) == 32, std::nullptr_t> = nullptr>
+	SHA256(T&&... list) noexcept : data{ (std::byte)std::forward<T>(list)... } {}
+
 	static std::optional<SHA256> make_opt(std::string_view filename) {
 		try {
 			return SHA256(filename);
@@ -183,3 +186,7 @@ public:
 		return ret;
 	}
 };
+
+inline bool operator==(const SHA256& a, const SHA256& b) {
+	return std::equal(std::begin(a.data), std::end(a.data), std::begin(b.data));
+}
