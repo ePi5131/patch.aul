@@ -17,7 +17,7 @@
 #include <optional>
 #include <bit>
 #include <concepts>
-#include <iterator>
+#include <type_traits>
 
 #include <boost/scope_exit.hpp>
 
@@ -162,7 +162,7 @@ public:
 #endif
 	}
 
-	template<std::integral... T> requires(sizeof...(T) == 32)
+	template<std::integral... T> requires(sizeof...(T) == std::extent_v<decltype(data)>)
 	constexpr SHA256(T&&... list) noexcept : data{ static_cast<std::byte>(std::forward<T>(list))... } {}
 
 	static std::optional<SHA256> make_opt(std::string_view filename) {
