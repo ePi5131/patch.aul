@@ -27,7 +27,6 @@
 
 //#define PATCH_STOPWATCH
 #include "stopwatch.hpp"
-static stopwatch_mem sw;
 
 namespace patch::fast {
 
@@ -35,9 +34,9 @@ namespace patch::fast {
     // AVX2が有効かどうかを判定する関数を追加してください
     // AVX2が無効の場合でも縁取り関連のバグ修正は行われるようになっています
     BOOL enable_avx2() {
-        return TRUE;
+        auto cpucmdset = get_CPUCmdSet();
+        return has_flag(cpucmdset, CPUCmdSet::F_AVX2);
     }
-
 
 
     void efBorder_horizontal_convolution_alpha_simd(int thread_id, int thread_num, void* param1, void* param2);
@@ -49,14 +48,15 @@ namespace patch::fast {
 
     BOOL Border_t::func_proc(ExEdit::Filter* efp, ExEdit::FilterProcInfo* efpip) {
         if constexpr (true) {
+            static stopwatch_mem sw{};
             sw.start();
 
-            efBorder_var& border = *(efBorder_var*)uintptr_t(reinterpret_cast<efBorder_var*>(GLOBAL::exedit_base + OFS::ExEdit::efBorder_var_ptr));
-            void*& ExEditMemory = *(void**)uintptr_t(GLOBAL::exedit_base + OFS::ExEdit::memory_ptr);
+            auto& border = *(reinterpret_cast<efBorder_var*>(GLOBAL::exedit_base + OFS::ExEdit::efBorder_var_ptr));
+            auto& ExEditMemory = *(void**)(GLOBAL::exedit_base + OFS::ExEdit::memory_ptr);
 
             if (efp->track[0] <= 0) return TRUE;
 
-            ExEdit::Exdata::efBorder* exdata = (ExEdit::Exdata::efBorder*)efp->exdata_ptr;
+            auto exdata = (ExEdit::Exdata::efBorder*)efp->exdata_ptr;
 
             int obj_w = efpip->obj_w;
             int obj_h = efpip->obj_h;
@@ -133,6 +133,13 @@ namespace patch::fast {
             sw.stop();
             return TRUE;
         }
+        else {
+            static stopwatch_mem sw{};
+            sw.start();
+            auto ret = ((decltype(ExEdit::Filter::func_proc))(GLOBAL::exedit_base + OFS::ExEdit::efBorder_func_proc_ptr))(efp, efpip);
+            sw.stop();
+            return ret;
+        }
     }
 
 
@@ -140,9 +147,9 @@ namespace patch::fast {
 #define ALPHA_TEMP_MAX 0xFFFF
 
     void efBorder_horizontal_convolution_alpha_simd(int thread_id, int thread_num, void* param1, void* param2) {
-        Border_t::efBorder_var& border = *(Border_t::efBorder_var*)uintptr_t(reinterpret_cast<Border_t::efBorder_var*>(GLOBAL::exedit_base + OFS::ExEdit::efBorder_var_ptr));
-        ExEdit::Filter* efp = (ExEdit::Filter*)param1;
-        ExEdit::FilterProcInfo* efpip = (ExEdit::FilterProcInfo*)param2;
+        auto& border = *reinterpret_cast<Border_t::efBorder_var*>(GLOBAL::exedit_base + OFS::ExEdit::efBorder_var_ptr);
+        auto efp = static_cast<ExEdit::Filter*>(param1);
+        auto efpip = static_cast<ExEdit::FilterProcInfo*>(param2);
 
         int begin_thread = efpip->obj_h * thread_id / thread_num;
         int end_thread = efpip->obj_h * (thread_id + 1) / thread_num;
@@ -247,9 +254,9 @@ namespace patch::fast {
     }
 
     void efBorder_horizontal_convolution_alpha_simd2(int thread_id, int thread_num, void* param1, void* param2) { // 51ae0
-        Border_t::efBorder_var& border = *(Border_t::efBorder_var*)uintptr_t(reinterpret_cast<Border_t::efBorder_var*>(GLOBAL::exedit_base + OFS::ExEdit::efBorder_var_ptr));
-        ExEdit::Filter* efp = (ExEdit::Filter*)param1;
-        ExEdit::FilterProcInfo* efpip = (ExEdit::FilterProcInfo*)param2;
+        auto& border = *reinterpret_cast<Border_t::efBorder_var*>(GLOBAL::exedit_base + OFS::ExEdit::efBorder_var_ptr);
+        auto efp = static_cast<ExEdit::Filter*>(param1);
+        auto efpip = static_cast<ExEdit::FilterProcInfo*>(param2);
 
         int begin_thread = efpip->obj_h * thread_id / thread_num;
         int end_thread = efpip->obj_h * (thread_id + 1) / thread_num;
@@ -339,9 +346,9 @@ namespace patch::fast {
     }
 
     void efBorder_vertical_convolution_alpha_and_put_color_simd(int thread_id, int thread_num, void* param1, void* param2) {
-        Border_t::efBorder_var& border = *(Border_t::efBorder_var*)uintptr_t(reinterpret_cast<Border_t::efBorder_var*>(GLOBAL::exedit_base + OFS::ExEdit::efBorder_var_ptr));
-        ExEdit::Filter* efp = (ExEdit::Filter*)param1;
-        ExEdit::FilterProcInfo* efpip = (ExEdit::FilterProcInfo*)param2;
+        auto& border = *reinterpret_cast<Border_t::efBorder_var*>(GLOBAL::exedit_base + OFS::ExEdit::efBorder_var_ptr);
+        auto efp = static_cast<ExEdit::Filter*>(param1);
+        auto efpip = static_cast<ExEdit::FilterProcInfo*>(param2);
 
         ExEdit::PixelYCA* pix;
         ExEdit::PixelYCA color = { border.color_y, border.color_cb, border.color_cr,0 };
@@ -453,9 +460,9 @@ namespace patch::fast {
     }
 
     void efBorder_vertical_convolution_alpha_and_put_color_simd2(int thread_id, int thread_num, void* param1, void* param2) {
-        Border_t::efBorder_var& border = *(Border_t::efBorder_var*)uintptr_t(reinterpret_cast<Border_t::efBorder_var*>(GLOBAL::exedit_base + OFS::ExEdit::efBorder_var_ptr));
-        ExEdit::Filter* efp = (ExEdit::Filter*)param1;
-        ExEdit::FilterProcInfo* efpip = (ExEdit::FilterProcInfo*)param2;
+        auto& border = *reinterpret_cast<Border_t::efBorder_var*>(GLOBAL::exedit_base + OFS::ExEdit::efBorder_var_ptr);
+        auto efp = static_cast<ExEdit::Filter*>(param1);
+        auto efpip = static_cast<ExEdit::FilterProcInfo*>(param2);
 
         ExEdit::PixelYCA* pix;
         ExEdit::PixelYCA color = { border.color_y, border.color_cb, border.color_cr,0 };
@@ -556,9 +563,9 @@ namespace patch::fast {
     }
 
     void efBorder_vertical_convolution_alpha_simd(int thread_id, int thread_num, void* param1, void* param2) {
-        Border_t::efBorder_var& border = *(Border_t::efBorder_var*)uintptr_t(reinterpret_cast<Border_t::efBorder_var*>(GLOBAL::exedit_base + OFS::ExEdit::efBorder_var_ptr));
-        ExEdit::Filter* efp = (ExEdit::Filter*)param1;
-        ExEdit::FilterProcInfo* efpip = (ExEdit::FilterProcInfo*)param2;
+        auto& border = *reinterpret_cast<Border_t::efBorder_var*>(GLOBAL::exedit_base + OFS::ExEdit::efBorder_var_ptr);
+        auto efp = static_cast<ExEdit::Filter*>(param1);
+        auto efpip = static_cast<ExEdit::FilterProcInfo*>(param2);
 
         unsigned short* mem1;
         unsigned short* mem2;
@@ -682,9 +689,9 @@ namespace patch::fast {
     }
 
     void efBorder_vertical_convolution_alpha_simd2(int thread_id, int thread_num, void* param1, void* param2) {
-        Border_t::efBorder_var& border = *(Border_t::efBorder_var*)uintptr_t(reinterpret_cast<Border_t::efBorder_var*>(GLOBAL::exedit_base + OFS::ExEdit::efBorder_var_ptr));
-        ExEdit::Filter* efp = (ExEdit::Filter*)param1;
-        ExEdit::FilterProcInfo* efpip = (ExEdit::FilterProcInfo*)param2;
+        auto& border = *reinterpret_cast<Border_t::efBorder_var*>(GLOBAL::exedit_base + OFS::ExEdit::efBorder_var_ptr);
+        auto efp = static_cast<ExEdit::Filter*>(param1);
+        auto efpip = static_cast<ExEdit::FilterProcInfo*>(param2);
 
         unsigned short* mem1;
         unsigned short* mem2;

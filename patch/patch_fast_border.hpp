@@ -57,7 +57,8 @@ namespace patch::fast {
 		void init() {
 			enabled_i = enabled;
 			if (!enabled_i)return;
-			store_i32(GLOBAL::exedit_base + OFS::ExEdit::efBorder_func_proc_ptr, &func_proc);
+
+			store_i32(GLOBAL::exedit_base + OFS::ExEdit::efBorder_func_proc_var_ptr, &func_proc);
 		}
 
 		void switching(bool flag) { enabled = flag; }
@@ -68,7 +69,7 @@ namespace patch::fast {
 		void switch_load(ConfigReader& cr) {
 			cr.regist(key, [this](json_value_s* value) {
 				ConfigReader::load_variable(value, enabled);
-				});
+			});
 		}
 
 		void switch_store(ConfigWriter& cw) {
