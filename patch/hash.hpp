@@ -16,6 +16,8 @@
 #pragma once
 #include <optional>
 #include <bit>
+#include <concepts>
+#include <iterator>
 
 #include <boost/scope_exit.hpp>
 
@@ -160,8 +162,8 @@ public:
 #endif
 	}
 
-	template<class... T, std::enable_if_t<sizeof...(T) == 32, std::nullptr_t> = nullptr>
-	constexpr SHA256(T&&... list) noexcept : data{ (std::byte)std::forward<T>(list)... } {}
+	template<std::integral... T> requires(sizeof...(T) == 32)
+	constexpr SHA256(T&&... list) noexcept : data{ static_cast<std::byte>(std::forward<T>(list))... } {}
 
 	static std::optional<SHA256> make_opt(std::string_view filename) {
 		try {
