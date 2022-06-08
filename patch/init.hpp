@@ -43,6 +43,7 @@ public:
 	static BOOL WINAPI EnumResourceLanguagesA_Wrap(HMODULE hModule, LPCSTR lpType, LPCSTR lpName, ENUMRESLANGPROCA lpEnumFunc, LONG_PTR lParam);
 	static HMODULE WINAPI LoadLibraryAWrap(LPCSTR lpLibFileName);
 
+#ifdef PATCH_SWITCH_CANCEL_BOOST_CONFLICT
 	static HMODULE WINAPI Boost_GetModuleHandleA_Wrap(LPCSTR lpModuleName);
 	static HMODULE WINAPI Boost_GetModuleHandleW_Wrap(LPCWSTR lpModuleName);
 	static HMODULE WINAPI Boost_LoadLibraryA_Wrap(LPCSTR lpLibFileName);
@@ -51,6 +52,7 @@ public:
 	static BOOL WINAPI Boost_Module32FirstW_Wrap(HANDLE hSnapshot, LPMODULEENTRY32W lpme);
 	static BOOL WINAPI Boost_Module32Next_Wrap(HANDLE hSnapshot, LPMODULEENTRY32 lpme);
 	static BOOL WINAPI Boost_Module32NextW_Wrap(HANDLE hSnapshot, LPMODULEENTRY32W lpme);
+#endif
 
 
 	// DllMain呼び出しのタイミングでやる処理

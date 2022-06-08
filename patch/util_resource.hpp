@@ -203,3 +203,70 @@ public:
 };
 
 inline std::vector<std::unique_ptr<patch_resource_message_class_base>> patch_resource_message_stack;
+
+inline void web_confirm(std::wstring_view url) {
+	enum ID : int {
+		Open,
+		Copy,
+		Cancel
+	};
+
+	auto r_main = resource_string_w(PATCH_RS_PATCH_WEB_CONFIRM);
+	auto r_open = resource_string_w(PATCH_RS_PATCH_WEB_CONFIRM_BUTTON_OPEN);
+	auto r_copy = resource_string_w(PATCH_RS_PATCH_WEB_CONFIRM_BUTTON_COPY);
+	auto r_cancel = resource_string_w(PATCH_RS_PATCH_WEB_CONFIRM_BUTTON_CANCEL);
+
+	TASKDIALOG_BUTTON vtdb[] = {
+		{ static_cast<int>(ID::Open), r_open->c_str() },
+		{ static_cast<int>(ID::Copy), r_copy->c_str() },
+		{ static_cast<int>(ID::Cancel), r_cancel->c_str() }
+	};
+
+	TASKDIALOGCONFIG tdc{
+		.cbSize = sizeof(TASKDIALOGCONFIG),
+		.hwndParent = NULL,
+		.hInstance = GLOBAL::patchaul_hinst,
+		.dwFlags = TDF_SIZE_TO_CONTENT,
+		.dwCommonButtons = 0,
+		.pszWindowTitle = L"patch.aul",
+		.pszMainIcon = TD_INFORMATION_ICON,
+		.pszMainInstruction = r_main->c_str(),
+		.pszContent = url.data(),
+		.cButtons = std::size(vtdb),
+		.pButtons = vtdb,
+		.nDefaultButton = static_cast<int>(ID::Open),
+		.cRadioButtons = 0,
+		.pRadioButtons = nullptr,
+		.nDefaultRadioButton = NULL,
+		.pszVerificationText = nullptr,
+		.pszExpandedInformation = nullptr,
+		.pszExpandedControlText = nullptr,
+		.pszCollapsedControlText = nullptr,
+		.pszFooterIcon = NULL,
+		.pszFooter = nullptr,
+		.pfCallback = nullptr,
+		.lpCallbackData = NULL,
+		.cxWidth = 0
+	};
+	int nButton;
+	TaskDialogIndirect(&tdc, &nButton, nullptr, nullptr);
+	switch (nButton) {
+		case ID::Open:
+			ShellExecuteW(NULL, L"open", url.data(), nullptr, nullptr, SW_SHOW);
+			break;
+		case ID::Copy: {
+			auto urla = string_convert_W2A(url);
+
+			HGLOBAL handle = GlobalAlloc(GHND | GMEM_SHARE, urla.size() + 1);
+			auto mem = static_cast<LPSTR>(GlobalLock(handle));
+			urla.copy(mem, urla.size());
+			GlobalUnlock(handle);
+
+			OpenClipboard(NULL);
+			EmptyClipboard();
+			SetClipboardData(CF_TEXT, handle);
+			CloseClipboard();
+			break;
+		}
+	}
+}

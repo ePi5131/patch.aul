@@ -38,6 +38,9 @@ namespace patch {
 		inline static const char key[] = "lua.getvalue";
 
 	public:
+		void init() {
+			enabled_i = enabled;
+		}
 
 		inline static void require(lua_State* L) {
 			lua_pushcfunction(L, &lua_getvalue_override);

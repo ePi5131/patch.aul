@@ -21,11 +21,14 @@
 #include <concepts>
 
 #include <Windows.h>
+#include <CommCtrl.h>
 
 #include <intrin.h>
 
 #include <aviutl/flag.hpp>
 
+#include "global.hpp"
+#include "resource.h"
 #include "offset_address.hpp"
 
 inline HWND pid2hwnd(DWORD pid) {
