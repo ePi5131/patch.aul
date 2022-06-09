@@ -43,13 +43,17 @@ namespace patch::fast {
 		void init() {
 			enabled_i = enabled;
 			if (!enabled_i)return;
-			OverWriteOnProtectHelper h(GLOBAL::exedit_base + OFS::ExEdit::efLensBlur_Media_mt_func_call, 6);
-			h.store_i16(0, '\x90\xe8'); // nop; call (rel32)
-			h.replaceNearJmp(2, &media_mt_func);
+			{
+				OverWriteOnProtectHelper h(GLOBAL::exedit_base + OFS::ExEdit::efLensBlur_Media_mt_func_call, 6);
+				h.store_i16(0, '\x90\xe8'); // nop; call (rel32)
+				h.replaceNearJmp(2, &media_mt_func);
+			}
 
-			OverWriteOnProtectHelper h(GLOBAL::exedit_base + OFS::ExEdit::efLensBlur_Filter_mt_func_call, 6);
-			h.store_i16(0, '\x90\xe8'); // nop; call (rel32)
-			h.replaceNearJmp(2, &filter_mt_func);
+			{
+				OverWriteOnProtectHelper h(GLOBAL::exedit_base + OFS::ExEdit::efLensBlur_Filter_mt_func_call, 6);
+				h.store_i16(0, '\x90\xe8'); // nop; call (rel32)
+				h.replaceNearJmp(2, &filter_mt_func);
+			}
 		}
 
 		void switching(bool flag) { enabled = flag; }
