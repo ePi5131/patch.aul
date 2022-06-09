@@ -162,6 +162,9 @@ public:
                     #ifdef PATCH_SWITCH_FAST_FLASH
                         patch::fast::Flash.switch_load(cr);
                     #endif
+				    #ifdef PATCH_SWITCH_FAST_LENSBLUR
+					    patch::fast::LensBlur.switch_load(cr);
+				    #endif
                 #endif
 		    #endif
 
@@ -401,6 +404,9 @@ public:
                     #ifdef PATCH_SWITCH_FAST_FLASH
                         patch::fast::Flash.switch_store(switch_);
                     #endif
+				    #ifdef PATCH_SWITCH_FAST_LENSBLUR
+					    patch::fast::LensBlur.switch_store(switch_);
+				    #endif
                 #endif
 		    #endif
 
