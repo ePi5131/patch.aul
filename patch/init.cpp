@@ -145,6 +145,10 @@ void init_t::InitAtExeditLoad() {
 	patch::helpful_msgbox.init();
 #endif
 
+#ifdef PATCH_SWITCH_OBJ_LENSBLUR
+	patch::LensBlur.init();
+#endif
+	
 	patch::setting_dialog();
 
 	#ifdef PATCH_SWITCH_FAST
