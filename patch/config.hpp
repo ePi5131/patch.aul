@@ -110,6 +110,9 @@ public:
 		    #ifdef PATCH_SWITCH_SETTINGDIALOG_MOVE
                 patch::setting_dialog_move.switch_load(cr);
 		    #endif
+                    #ifdef PATCH_SWITCH_OBJ_LENSBLUR
+                patch::LensBlur.switch_load(cr);
+                    #endif
                 
 		    #ifdef PATCH_SWITCH_UNDO
                 patch::undo.switch_load(cr);
@@ -349,6 +352,9 @@ public:
 		    #ifdef PATCH_SWITCH_SETTINGDIALOG_MOVE
                 patch::setting_dialog_move.switch_store(switch_);
 		    #endif
+                    #ifdef PATCH_SWITCH_OBJ_LENSBLUR
+                patch::LensBlur.switch_store(switch_);
+                    #endif
                 
 		    #ifdef PATCH_SWITCH_UNDO
                 patch::undo.switch_store(switch_);
