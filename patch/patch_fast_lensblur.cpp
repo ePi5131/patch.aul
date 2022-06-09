@@ -27,37 +27,40 @@ namespace patch::fast {
 
     BOOL LensBlur_t::media_mt_func(AviUtl::MultiThreadFunc original_func_ptr, ExEdit::Filter* efp, ExEdit::FilterProcInfo* efpip) {
         if constexpr (true) {
-            sw.start();
-            try {
-                const auto buf_size = efpip->obj_line * efpip->obj_h * sizeof(ExEdit::PixelYCA);
-                cl::Buffer clmem_src(cl.context, CL_MEM_READ_ONLY, buf_size);
-                cl.queue.enqueueWriteBuffer(clmem_src, CL_TRUE, 0, buf_size, efpip->obj_edit);
+            if (256 < efpip->obj_w * efpip->obj_h) {
+                sw.start();
+                try {
+                    const auto buf_size = efpip->obj_line * efpip->obj_h * sizeof(ExEdit::PixelYCA);
+                    cl::Buffer clmem_src(cl.context, CL_MEM_READ_ONLY, buf_size);
+                    cl.queue.enqueueWriteBuffer(clmem_src, CL_TRUE, 0, buf_size, efpip->obj_edit);
 
-                cl::Buffer clmem_dst(cl.context, CL_MEM_WRITE_ONLY, buf_size);
-                efLensBlur_var& lensblur = *(efLensBlur_var*)uintptr_t(reinterpret_cast<efLensBlur_var*>(GLOBAL::exedit_base + OFS::ExEdit::efLensBlur_var_ptr));
-                auto kernel = cl.readyKernel(
-                    "LensBlur_Media",
-                    clmem_dst,
-                    clmem_src,
-                    efpip->obj_w,
-                    efpip->obj_h,
-                    efpip->obj_line,
-                    lensblur.range,
-                    lensblur.rangep05_sqr,
-                    lensblur.range_t3m1,
-                    lensblur.rangem1_sqr
-                );
-                cl.queue.enqueueNDRangeKernel(kernel, { 0,0 }, { (size_t)efpip->obj_w ,(size_t)efpip->obj_h });
+                    cl::Buffer clmem_dst(cl.context, CL_MEM_WRITE_ONLY, buf_size);
+                    efLensBlur_var& lensblur = *(efLensBlur_var*)uintptr_t(reinterpret_cast<efLensBlur_var*>(GLOBAL::exedit_base + OFS::ExEdit::efLensBlur_var_ptr));
+                    auto kernel = cl.readyKernel(
+                        "LensBlur_Media",
+                        clmem_dst,
+                        clmem_src,
+                        efpip->obj_w,
+                        efpip->obj_h,
+                        efpip->obj_line,
+                        lensblur.range,
+                        lensblur.rangep05_sqr,
+                        lensblur.range_t3m1,
+                        lensblur.rangem1_sqr
+                    );
+                    cl.queue.enqueueNDRangeKernel(kernel, { 0,0 }, { (size_t)efpip->obj_w ,(size_t)efpip->obj_h });
 
-                cl.queue.enqueueReadBuffer(clmem_dst, CL_TRUE, 0, buf_size, efpip->obj_temp);
-            }
-            catch (const cl::Error& err) {
-                debug_log("OpenCL Error\n({}) {}", err.err(), err.what());
+                    cl.queue.enqueueReadBuffer(clmem_dst, CL_TRUE, 0, buf_size, efpip->obj_temp);
+                }
+                catch (const cl::Error& err) {
+                    debug_log("OpenCL Error\n({}) {}", err.err(), err.what());
+                    return efp->aviutl_exfunc->exec_multi_thread_func(original_func_ptr, efp, efpip);
+                }
+                sw.stop();
+                return TRUE;
+            } else {
                 return efp->aviutl_exfunc->exec_multi_thread_func(original_func_ptr, efp, efpip);
             }
-
-            sw.stop();
-            return TRUE;
         } else {
             sw.start();
             const auto ret = efp->aviutl_exfunc->exec_multi_thread_func(original_func_ptr, efp, efpip);
