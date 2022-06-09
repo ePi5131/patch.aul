@@ -497,3 +497,110 @@ kernel void FlashColor(global short* dst, global short* src, int src_w, int src_
         }
     }
 }
+
+kernel void LensBlur_Media(global char* dst, global char* src, int obj_w, int obj_h, int obj_line,
+    int range, int rangep05_sqr, int range_t3m1, int rangem1_sqr) {
+
+    int x = get_global_id(0);
+    int y = get_global_id(1);
+
+    int top = -min(y, range);
+    int bottom = min(obj_h - y - 1, range);
+    int left = -min(x, range);
+    int right = min(obj_w - x - 1, range);
+
+    float sum_y = 0.0;
+    int sum_cb = 0;
+    int sum_cr = 0;
+    int sum_a = 0;
+
+    int cor_sum = 0;
+
+    int offset = (x + left + (y + top) * obj_line) * 8;
+
+    for (int yy = top; yy <= bottom; yy++) {
+        int sqr = yy * yy + left * left;
+        int offset2 = offset;
+        for (int xx = left; xx <= right; xx++) {
+            if (sqr < rangep05_sqr) {
+                int cor_a;
+                if (rangem1_sqr < sqr) {
+                    cor_a = (rangep05_sqr - sqr << 12) / range_t3m1;
+                } else {
+                    cor_a = 4096;
+                }
+                cor_sum += cor_a;
+                sum_y += *(float*)&src[offset2] * (float)cor_a;
+                sum_cb += src[offset2 + 4] * cor_a;
+                sum_cr += src[offset2 + 5] * cor_a;
+                sum_a += *(short*)&src[offset2 + 6] * cor_a >> 12;
+            }
+            sqr += 1 + xx * 2;
+            offset2 += 8;
+        }
+        offset += obj_line * 8;
+    }
+
+    dst += (x + y * obj_line) * 8;
+    if (0 < sum_a) {
+        *(float*)dst = sum_y / (float)sum_a;
+        dst[4] = (char)(((sum_a >> 1) + sum_cb) / sum_a);
+        dst[5] = (char)(((sum_a >> 1) + sum_cr) / sum_a);
+        *(short*)&dst[6] = (short)round((float)sum_a * (4096.0f / (float)cor_sum));
+    } else {
+        *(long*)dst= 0;
+    }
+}
+
+kernel void LensBlur_Filter(global char* dst, global char* src, int scene_w, int scene_h, int scene_line,
+    int range, int rangep05_sqr, int range_t3m1, int rangem1_sqr) {
+
+    int x = get_global_id(0);
+    int y = get_global_id(1);
+
+    int top = -min(y, range);
+    int bottom = min(scene_h - y - 1, range);
+    int left = -min(x, range);
+    int right = min(scene_w - x - 1, range);
+
+    short tofloat[2];
+    float sum_y = 0.0;
+    int sum_cb = 0;
+    int sum_cr = 0;
+    int sum_a = 0;
+
+    int offset = (x + left + (y + top) * scene_line) * 6;
+
+    for (int yy = top; yy <= bottom; yy++) {
+
+        int sqr = yy * yy + left * left;
+        int offset2 = offset;
+
+        for (int xx = left; xx <= right; xx++) {
+            if (sqr < rangep05_sqr) {
+                int cor_a;
+                if (rangem1_sqr < sqr) {
+                    cor_a = (rangep05_sqr - sqr << 12) / range_t3m1;
+                } else {
+                    cor_a = 4096;
+                }
+                tofloat[0] = *(short*)&src[offset2];
+                tofloat[1] = *(short*)&src[offset2 + 2];
+                sum_y += *(float*)tofloat * (float)cor_a;
+                sum_cb += src[offset2 + 4] * cor_a;
+                sum_cr += src[offset2 + 5] * cor_a;
+                sum_a += cor_a;
+            }
+            sqr += 1 + xx * 2;
+            offset2 += 6;
+        }
+        offset += scene_line * 6;
+    }
+
+    dst += (x + y * scene_line) * 6;
+    *(float*)tofloat = sum_y / (float)sum_a;
+    *(short*)&dst[0] = tofloat[0];
+    *(short*)&dst[2] = tofloat[1];
+    dst[4] = (char)(((sum_a >> 1) + sum_cb) / sum_a);
+    dst[5] = (char)(((sum_a >> 1) + sum_cr) / sum_a);
+}
