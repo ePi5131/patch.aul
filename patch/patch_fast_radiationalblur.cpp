@@ -29,7 +29,7 @@ namespace patch::fast {
         if constexpr (true) {
             sw.start();
             try {
-                auto& rb = *(efRadiationalBlur_var*)uintptr_t(reinterpret_cast<efRadiationalBlur_var*>(GLOBAL::exedit_base + OFS::ExEdit::efRadiationalBlur_var_ptr));
+                auto& rb = *reinterpret_cast<efRadiationalBlur_var*>(GLOBAL::exedit_base + OFS::ExEdit::efRadiationalBlur_var_ptr);
 
                 const auto src_size = efpip->obj_line * efpip->obj_h * sizeof(ExEdit::PixelYCA);
                 cl::Buffer clmem_src(cl.context, CL_MEM_READ_ONLY, src_size);
@@ -80,7 +80,7 @@ namespace patch::fast {
                 cl.queue.enqueueWriteBuffer(clmem_src, CL_TRUE, 0, buf_size, efpip->frame_edit);
 
                 cl::Buffer clmem_dst(cl.context, CL_MEM_WRITE_ONLY, buf_size);
-                auto& rb = *(efRadiationalBlur_var*)uintptr_t(reinterpret_cast<efRadiationalBlur_var*>(GLOBAL::exedit_base + OFS::ExEdit::efRadiationalBlur_var_ptr));
+                auto& rb = *reinterpret_cast<efRadiationalBlur_var*>(GLOBAL::exedit_base + OFS::ExEdit::efRadiationalBlur_var_ptr);
                 auto kernel = cl.readyKernel(
                     "RadiationalBlur_Filter",
                     clmem_dst,
@@ -119,7 +119,7 @@ namespace patch::fast {
                 cl.queue.enqueueWriteBuffer(clmem_src, CL_TRUE, 0, buf_size, efpip->frame_edit);
 
                 cl::Buffer clmem_dst(cl.context, CL_MEM_WRITE_ONLY, buf_size);
-                auto& rb = *(efRadiationalBlur_var*)uintptr_t(reinterpret_cast<efRadiationalBlur_var*>(GLOBAL::exedit_base + OFS::ExEdit::efRadiationalBlur_var_ptr));
+                auto& rb = *reinterpret_cast<efRadiationalBlur_var*>(GLOBAL::exedit_base + OFS::ExEdit::efRadiationalBlur_var_ptr);
                 auto kernel = cl.readyKernel(
                     "RadiationalBlur_Filter_Far",
                     clmem_dst,
