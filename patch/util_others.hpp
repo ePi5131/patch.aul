@@ -21,7 +21,14 @@
 #include <concepts>
 
 #include <Windows.h>
+#include <CommCtrl.h>
 
+#include <intrin.h>
+
+#include <aviutl/flag.hpp>
+
+#include "global.hpp"
+#include "resource.h"
 #include "offset_address.hpp"
 
 inline HWND pid2hwnd(DWORD pid) {
@@ -124,4 +131,103 @@ inline std::u8string string_convert_W2U(std::wstring_view str) {
 	std::u8string ret(size, '\0');
 	WideCharToMultiByte(CP_UTF8, 0, str.data(), str.size(), reinterpret_cast<LPSTR>(ret.data()), size, nullptr, nullptr);
 	return ret;
+}
+
+enum class CPUCmdSet : uint32_t {
+    F_TSC              = 1 << 0,
+    F_MMX              = 1 << 1,
+    F_SSE              = 1 << 2,
+    F_SSE2             = 1 << 3,
+    F_3DNOW            = 1 << 4,
+    F_3DNOWEXT         = 1 << 5,
+    F_SMT              = 1 << 6,
+    F_64BIT            = 1 << 7,
+    F_SSE3             = 1 << 8,
+    F_SSSE3            = 1 << 9,
+    F_SSE4A            = 1 << 10,
+    F_SSE41            = 1 << 12,
+    F_SSE42            = 1 << 13,
+    F_AESNI            = 1 << 14,
+    F_AVX              = 1 << 15,
+    F_AVX2             = 1 << 16,
+    F_FMA4             = 1 << 11,
+    F_AVX512F          = 1 << 17,
+    F_AVX512DQ         = 1 << 18,
+    F_AVX512_IFMA      = 1 << 19,
+    F_AVX512PF         = 1 << 20,
+    F_AVX512ER         = 1 << 21,
+    F_AVX512CD         = 1 << 22,
+    F_AVX512BW         = 1 << 23,
+    F_AVX512VL         = 1 << 24,
+    F_AVX512_VBMI      = 1 << 25,
+    F_AVX512_VPOPCNTDQ = 1 << 26,
+    F_AVX512_4VNNIW    = 1 << 27,
+    F_AVX512_4FMAPS    = 1 << 28,
+};
+template<>struct AviUtl::detail::flag::ops_def<CPUCmdSet>:std::true_type{};
+
+/*
+    参考: https://www.timbreofprogram.info/blog/archives/951
+*/
+inline CPUCmdSet get_CPUCmdSet() {
+    static CPUCmdSet ret = {};
+    static bool inited = false;
+
+    if (inited) return ret;
+
+    int cpuinfo[4];
+
+    __cpuid(cpuinfo, 0x00000000);
+    auto basicmax = cpuinfo[0];
+
+    __cpuid(cpuinfo, 0x80000000);
+    auto extendmax = cpuinfo[0];
+
+    __cpuid(cpuinfo, 0x00000001);
+    if (cpuinfo[3] & (1u << 4)) ret |= CPUCmdSet::F_TSC;
+    if (cpuinfo[3] & (1u << 23)) ret |= CPUCmdSet::F_MMX;
+    if (cpuinfo[3] & (1u << 25)) ret |= CPUCmdSet::F_SSE;
+    if (cpuinfo[3] & (1u << 26)) ret |= CPUCmdSet::F_SSE2;
+    if (cpuinfo[3] & (1u << 28)) ret |= CPUCmdSet::F_SMT;
+
+    if (cpuinfo[2] & (1u << 0)) ret |= CPUCmdSet::F_SSE3;
+    if (cpuinfo[2] & (1u << 9)) ret |= CPUCmdSet::F_SSSE3;
+    if (cpuinfo[2] & (1u << 19)) ret |= CPUCmdSet::F_SSE41;
+    if (cpuinfo[2] & (1u << 20)) ret |= CPUCmdSet::F_SSE42;
+    if (cpuinfo[2] & (1u << 25)) ret |= CPUCmdSet::F_AESNI;
+    if (cpuinfo[2] & (1u << 28)) ret |= CPUCmdSet::F_AVX;
+
+    if (static_cast<unsigned int>(extendmax) < 0x80000000u) return ret;
+
+
+    __cpuid(cpuinfo, 0x80000001);
+    if (cpuinfo[3] & (1u << 31)) ret |= CPUCmdSet::F_3DNOW;
+    if (cpuinfo[3] & (1u << 30)) ret |= CPUCmdSet::F_3DNOWEXT;
+    if (cpuinfo[3] & (1u << 29)) ret |= CPUCmdSet::F_64BIT;
+
+    if (cpuinfo[2] & (1u << 6)) ret |= CPUCmdSet::F_SSE4A;
+    if (cpuinfo[2] & (1u << 16)) ret |= CPUCmdSet::F_FMA4;
+
+
+    if (basicmax < 7) return ret;
+
+    __cpuidex(cpuinfo, 7, 0);
+    if (cpuinfo[1] & (1u << 5)) ret |= CPUCmdSet::F_AVX2;
+    if (cpuinfo[1] & (1u << 16)) ret |= CPUCmdSet::F_AVX512F;
+    if (cpuinfo[1] & (1u << 17)) ret |= CPUCmdSet::F_AVX512DQ;
+    if (cpuinfo[1] & (1u << 21)) ret |= CPUCmdSet::F_AVX512_IFMA;
+    if (cpuinfo[1] & (1u << 26)) ret |= CPUCmdSet::F_AVX512PF;
+    if (cpuinfo[1] & (1u << 27)) ret |= CPUCmdSet::F_AVX512ER;
+    if (cpuinfo[1] & (1u << 28)) ret |= CPUCmdSet::F_AVX512CD;
+    if (cpuinfo[1] & (1u << 30)) ret |= CPUCmdSet::F_AVX512BW;
+    if (cpuinfo[1] & (1u << 31)) ret |= CPUCmdSet::F_AVX512VL;
+
+    if (cpuinfo[2] & (1u << 1)) ret |= CPUCmdSet::F_AVX512_VBMI;
+    if (cpuinfo[2] & (1u << 14)) ret |= CPUCmdSet::F_AVX512_VPOPCNTDQ;
+
+    if (cpuinfo[3] & (1u << 2)) ret |= CPUCmdSet::F_AVX512_4VNNIW;
+    if (cpuinfo[3] & (1u << 3)) ret |= CPUCmdSet::F_AVX512_4FMAPS;
+
+    inited = true;
+    return ret;
 }

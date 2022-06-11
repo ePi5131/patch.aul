@@ -16,6 +16,8 @@
 #pragma once
 #include <optional>
 #include <bit>
+#include <concepts>
+#include <type_traits>
 
 #include <boost/scope_exit.hpp>
 
@@ -160,6 +162,9 @@ public:
 #endif
 	}
 
+	template<std::integral... T> requires(sizeof...(T) == std::extent_v<decltype(data)>)
+	constexpr SHA256(T&&... list) noexcept : data{ static_cast<std::byte>(std::forward<T>(list))... } {}
+
 	static std::optional<SHA256> make_opt(std::string_view filename) {
 		try {
 			return SHA256(filename);
@@ -183,3 +188,7 @@ public:
 		return ret;
 	}
 };
+
+inline bool operator==(const SHA256& a, const SHA256& b) {
+	return std::equal(std::begin(a.data), std::end(a.data), std::begin(b.data));
+}

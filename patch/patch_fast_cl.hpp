@@ -220,7 +220,7 @@ kernel void PolorTransform(global short* dst, global short* src, int src_w, int 
         }
     }
 }
-
+)" R"(
 kernel void RadiationalBlur(
     global short* dst, global short* src, int src_w, int src_h, int exedit_buffer_line,
 	int X,
@@ -322,8 +322,7 @@ kernel void RadiationalBlur(
         }
     }
 }
-
-
+)" R"(
 kernel void Flash(global short* dst, global short* src, int src_w, int src_h, int exedit_buffer_line,
     int g_cx,
     int g_cy,
@@ -428,6 +427,7 @@ kernel void Flash(global short* dst, global short* src, int src_w, int src_h, in
         }
     }
 }
+)" R"(
 kernel void FlashColor(global short* dst, global short* src, int src_w, int src_h, int exedit_buffer_line,
     int g_cx,
     int g_cy,
