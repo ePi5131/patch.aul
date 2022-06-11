@@ -62,6 +62,7 @@ namespace OFS {
 		constexpr i32 efPolorTransform_func_proc_ptr = 0x0add30;
 		constexpr i32 efRadiationalBlur_func_proc = 0x00b310;
 		constexpr i32 efRadiationalBlur_func_proc_ptr = 0x09fdb0;
+		constexpr i32 efRadiationalBlur_var_ptr = 0x0d75a8;
 		constexpr i32 efFlash_func_proc = 0x04e560;
 		constexpr i32 efFlash_var_ptr = 0x1a6b7c;
 		constexpr i32 efFlash_func_proc_ptr = 0x0a5a28;
