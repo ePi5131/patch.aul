@@ -221,8 +221,8 @@ kernel void PolorTransform(global short* dst, global short* src, int src_w, int 
     }
 }
 kernel void RadiationalBlur_Media(
-    global short* dst, global short* src, int src_w, int src_h, int buffer_line,
-    int rb_blur_cx, int rb_blur_cy, int rb_obj_cx, int rb_obj_cy, int rb_range, int rb_pixel_range) {
+    global short* dst, global short* src, int scene_w, int scene_h, int buffer_line,
+    int rb_blur_cx, int rb_blur_cy, int rb_range, int rb_pixel_range) {
 
     int xi = get_global_id(0);
     int yi = get_global_id(1);
@@ -347,11 +347,7 @@ kernel void RadiationalBlur_Filter(
 }
 kernel void RadiationalBlur_Filter_Far(
     global short* dst, global short* src, int scene_w, int scene_h, int buffer_line,
-    int rb_blur_cx,
-    int rb_blur_cy,
-    int rb_range,
-    int rb_pixel_range
-) {
+    int rb_blur_cx, int rb_blur_cy, int rb_range, int rb_pixel_range) {
     int x = get_global_id(0);
     int y = get_global_id(1);
 
