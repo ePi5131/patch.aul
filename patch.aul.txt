@@ -12,6 +12,7 @@ https://scrapbox.io/ePi5131/patch.aul
 
 推奨環境
     OpenCLを使用可能なデバイス
+    AVX2命令を使用可能なCPU
 
 導入
     patch.aul は aviutl.exe と同じディレクトリに配置します。
