@@ -101,13 +101,13 @@ namespace patch::fast {
 
             reinterpret_cast<void(__cdecl*)(short*, short*, short*, int)>(GLOBAL::exedit_base + OFS::ExEdit::rgb2yc)(&border.color_y, &border.color_cb, &border.color_cr, *(int*)&exdata->color & 0xffffff);
 
-            if (efpip->obj_w < add_size) {
+            if (efpip->obj_w <= add_size) {
                 efp->aviutl_exfunc->exec_multi_thread_func(efBorder_horizontal_convolution_alpha_simd2, efp, efpip);
             } else {
                 efp->aviutl_exfunc->exec_multi_thread_func(efBorder_horizontal_convolution_alpha_simd, efp, efpip);
             }
 
-            if (efpip->obj_h < add_size) {
+            if (efpip->obj_h <= add_size) {
                 if (file_w == 0 || file_h == 0) { // 画像なし
                     efp->aviutl_exfunc->exec_multi_thread_func(efBorder_vertical_convolution_alpha_and_put_color_simd2, efp, efpip);
                 } else { // 画像あり
