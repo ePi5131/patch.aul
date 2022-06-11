@@ -110,7 +110,10 @@ public:
 		    #ifdef PATCH_SWITCH_SETTINGDIALOG_MOVE
                 patch::setting_dialog_move.switch_load(cr);
 		    #endif
-                
+                    #ifdef PATCH_SWITCH_SETTINGDIALOG_EXCOLORCONFIG
+                patch::excolorconfig.switch_load(cr);
+		    #endif
+		
 		    #ifdef PATCH_SWITCH_UNDO
                 patch::undo.switch_load(cr);
                 #ifdef PATCH_SWITCH_UNDO_REDO
@@ -149,7 +152,10 @@ public:
                 #ifdef PATCH_SWITCH_FAST_TEXT
                     patch::fast::text.switch_load(cr);
                 #endif
-
+                #ifdef PATCH_SWITCH_FAST_BORDER
+                    patch::fast::Border.switch_load(cr);
+                #endif
+		
                 #ifdef PATCH_SWITCH_CL
                     patch::fast::cl.switch_load(cr);
                     
@@ -349,7 +355,9 @@ public:
 		    #ifdef PATCH_SWITCH_SETTINGDIALOG_MOVE
                 patch::setting_dialog_move.switch_store(switch_);
 		    #endif
-                
+		    #ifdef PATCH_SWITCH_SETTINGDIALOG_EXCOLORCONFIG
+                patch::excolorconfig.switch_store(switch_);
+		    #endif
 		    #ifdef PATCH_SWITCH_UNDO
                 patch::undo.switch_store(switch_);
                 #ifdef PATCH_SWITCH_UNDO_REDO
@@ -388,7 +396,10 @@ public:
                 #ifdef PATCH_SWITCH_FAST_TEXT
                     patch::fast::text.switch_store(switch_);
                 #endif
-
+                #ifdef PATCH_SWITCH_FAST_BORDER
+                    patch::fast::Border.switch_store(switch_);
+                #endif
+		
                 #ifdef PATCH_SWITCH_CL
                     patch::fast::cl.switch_store(switch_);
                     

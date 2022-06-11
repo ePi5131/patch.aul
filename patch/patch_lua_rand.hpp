@@ -31,6 +31,10 @@ namespace patch {
         inline static const char key[] = "lua.rand";
 
     public:
+        void init() {
+            enabled_i = enabled;
+        }
+
         static void require(lua_State* L) {
             lua_pushcfunction(L, &l_rand_overwrite);
             lua_setfield(L, -3, "rand");

@@ -53,6 +53,11 @@ namespace OFS {
 		constexpr i32 exedit_max_w = 0x196748;
 		constexpr i32 exedit_max_h = 0x1920e0;
 
+		constexpr i32 memory_ptr = 0x01a5328;
+
+		constexpr i32 efBorder_func_proc_var_ptr = 0x0a5d28;
+		constexpr i32 efBorder_func_proc_ptr = 0x0515d0;
+		constexpr i32 efBorder_var_ptr = 0x1b1e30;
 		constexpr i32 efPolorTransform_func_proc = 0x0748a0;
 		constexpr i32 efPolorTransform_func_proc_ptr = 0x0add30;
 		constexpr i32 efRadiationalBlur_func_proc = 0x00b310;
