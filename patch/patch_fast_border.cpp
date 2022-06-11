@@ -292,13 +292,13 @@ namespace patch::fast {
                     mem++;
                 }
 
-                for (; x <= border.add_size; x++) {
+                for (; x < border.add_size; x++) {
                     for (int i = 0; i < 8; i++) {
                         mem[i * efpip->obj_line] = (unsigned short)a256.m256i_u32[i];
                     }
                     mem++;
                 }
-                for (x = 1; x < efpip->obj_w; x++) {
+                for (x = 0; x < efpip->obj_w; x++) {
                     a256 = _mm256_srli_epi32(_mm256_i32gather_epi32(pix2, offset256, 4), 16);
                     a_sum256 = _mm256_sub_epi32(a_sum256, a256);
                     a256 = _mm256_mullo_epi32(a_sum256, border_alpha256);
@@ -331,11 +331,11 @@ namespace patch::fast {
                 mem++;
             }
 
-            for (; x <= border.add_size; x++) {
+            for (; x < border.add_size; x++) {
                 *mem = a;
                 mem++;
             }
-            for (x = 1; x < efpip->obj_w; x++) {
+            for (x = 0; x < efpip->obj_w; x++) {
                 a_sum -= *pixa2;
                 *mem = (unsigned short)min(a_sum * border.alpha >> border._alpha_shift, ALPHA_TEMP_MAX);
 
@@ -499,12 +499,12 @@ namespace patch::fast {
                     pix += efpip->obj_line;
                     mem1 += efpip->obj_line;
                 }
-                for (; y <= border.add_size; y++) {
+                for (; y < border.add_size; y++) {
                     *(__m256i*)pix = pix256;
                     pix += efpip->obj_line;
                 }
 
-                for (y = 1; y < efpip->obj_h; y++) {
+                for (y = 0; y < efpip->obj_h; y++) {
                     a_sum256 = _mm256_sub_epi64(a_sum256, _mm256_cvtepu16_epi64(*(__m128i*)mem2));
                     pix256 = _mm256_mullo_epi32(a_sum256, border_alpha256);
                     pix256 = _mm256_srli_epi32(pix256, border._alpha_shift);
@@ -538,16 +538,12 @@ namespace patch::fast {
                 mem1 += efpip->obj_line;
             }
 
-            if (a_sum) {
-                for (; y <= border.add_size; y++) {
-                    *pix = color;
-                    pix += efpip->obj_line;
-                }
-            } else {
-                pix += (border.add_size - efpip->obj_h + 1) * efpip->obj_line;
+            for (; y < border.add_size; y++) {
+                *pix = color;
+                pix += efpip->obj_line;
             }
 
-            for (y = 1; y < efpip->obj_h; y++) {
+            for (y = 0; y < efpip->obj_h; y++) {
                 a_sum -= *mem2;
                 if (a_sum == 0) {
                     pix->a = 0;
@@ -732,7 +728,7 @@ namespace patch::fast {
                     mem1 += efpip->obj_line;
                 }
 
-                for (; y <= border.add_size; y++) {
+                for (; y < border.add_size; y++) {
                     __m256i pixa256 = _mm256_srli_epi32(_mm256_i32gather_epi32(pixa, offset256, 4), 16);
                     pixa256 = _mm256_mullo_epi32(a256, pixa256);
                     pixa256 = _mm256_srli_epi32(pixa256, 12);
@@ -744,7 +740,7 @@ namespace patch::fast {
                     pixa += efpip->obj_line * 2;
                 }
 
-                for (y = 1; y < efpip->obj_h; y++) {
+                for (y = 0; y < efpip->obj_h; y++) {
                     a_sum256 = _mm256_sub_epi32(a_sum256, _mm256_cvtepu16_epi32(*(__m128i*)mem2));
                     a256 = _mm256_mullo_epi32(a_sum256, border_alpha256);
                     a256 = _mm256_srli_epi32(a256, border._alpha_shift);
@@ -781,17 +777,17 @@ namespace patch::fast {
                 pixa += efpip->obj_line * 4;
                 mem1 += efpip->obj_line;
             }
-
-            for (; y <= border.add_size; y++) {
-                a = a_sum * border.alpha >> border._alpha_shift;
-                if (a < 0x1000) {
+            
+            if (a < 0x1000) {
+                for (; y < border.add_size; y++) {
                     *pixa = (short)(*pixa * a >> 12);
+                    pixa += efpip->obj_line * 4;
                 }
-
-                pixa += efpip->obj_line * 4;
+            } else {
+                pixa += efpip->obj_line * 4 * (border.add_size - efpip->obj_h);
             }
 
-            for (y = 1; y < efpip->obj_h; y++) {
+            for (y = 0; y < efpip->obj_h; y++) {
                 a_sum -= *mem2;
                 a = a_sum * border.alpha >> border._alpha_shift;
                 if (a < 0x1000) {
