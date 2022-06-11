@@ -294,7 +294,7 @@ kernel void RadiationalBlur_Media(
     }
 }
 kernel void RadiationalBlur_Filter(
-    global short* dst, global short* src, int scene_w, int scene_h, int buffer_line,
+    global short* dst, global short* src, int buffer_line,
     int rb_blur_cx, int rb_blur_cy, int rb_range, int rb_pixel_range) {
     int x = get_global_id(0);
     int y = get_global_id(1);
