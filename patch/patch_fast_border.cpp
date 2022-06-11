@@ -444,7 +444,7 @@ namespace patch::fast {
                 mem2 += efpip->obj_line;
             }
 
-            for (int y = 0; y < border.add_size; y++) {
+            for (y = 0; y < border.add_size; y++) {
                 a_sum -= *mem2;
                 if (a_sum == 0) {
                     pix->a = 0;
@@ -528,7 +528,7 @@ namespace patch::fast {
             for (y = 0; y < efpip->obj_h; y++) {
                 a_sum += *mem1;
                 if (a_sum == 0) {
-                    pix->a = 0;
+                    pix->a = color.a = 0;
                 } else {
                     color.a = (short)min(a_sum * border.alpha >> border._alpha_shift, 0x1000);
                     *pix = color;
