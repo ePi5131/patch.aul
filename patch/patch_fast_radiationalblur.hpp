@@ -51,24 +51,24 @@ namespace patch::fast {
 			if (!enabled_i)return;
 			{   // Media object
 				OverWriteOnProtectHelper h(GLOBAL::exedit_base + 0x00b5c1, 6);
-				h.store_i16(0, '\x90\xe8'); // nop; call (rel32)
+				h.store_i16(0, { 0x90, 0xe8 }); // nop; call (rel32)
 				h.replaceNearJmp(2, &media_mt_func);
 			}
 
 			{   // Filter object
 				OverWriteOnProtectHelper h(GLOBAL::exedit_base + 0x00bb39, 6);
-				h.store_i16(0, '\x90\xe8'); // nop; call (rel32)
+				h.store_i16(0, { 0x90, 0xe8 }); // nop; call (rel32)
 				h.replaceNearJmp(2, &filter_mt_func);
 			}
 			{   // Filter object
 				OverWriteOnProtectHelper h(GLOBAL::exedit_base + 0x00bb4f, 6);
-				h.store_i16(0, '\x90\xe8'); // nop; call (rel32)
+				h.store_i16(0, { 0x90, 0xe8 }); // nop; call (rel32)
 				h.replaceNearJmp(2, &filter_mt_far_func);
 			}
 
 			{   // SceneChange
 				OverWriteOnProtectHelper h(GLOBAL::exedit_base + 0x00c1ec, 6);
-				h.store_i16(0, '\x90\xe8'); // nop; call (rel32)
+				h.store_i16(0, { 0x90, 0xe8 }); // nop; call (rel32)
 				h.replaceNearJmp(2, &filter_mt_func);
 			}
 

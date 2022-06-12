@@ -505,7 +505,7 @@ namespace patch {
             */
             {
                 OverWriteOnProtectHelper h(GLOBAL::exedit_base + 0x08d723, 2);
-                h.store_i16(0, '\xeb\x15');
+                h.store_i16(0, { 0xeb, 0x15 });
             }
             {
                 OverWriteOnProtectHelper h(GLOBAL::exedit_base + 0x08d73a, 5);
@@ -574,16 +574,16 @@ namespace patch {
             */
             {
                 OverWriteOnProtectHelper h(GLOBAL::exedit_base + 0x08d21a, 6);
-                h.store_i16(0, '\x57\xe8');
+                h.store_i16(0, { 0x57, 0xe8 });
                 h.replaceNearJmp(2, &AllocUndoBuffer_patch);
             }
             {
                 OverWriteOnProtectHelper h(GLOBAL::exedit_base + 0x08d220, 2);
-                h.store_i16(0, '\xeb\x0d'); // jmp +0dh
+                h.store_i16(0, { 0xeb, 0x0d }); // jmp +0dh
             }
             {
                 OverWriteOnProtectHelper h(GLOBAL::exedit_base + 0x08d23b, 2);
-                h.store_i16(0, '\xeb\x99'); // jmp +99h
+                h.store_i16(0, { 0xeb, 0x99 }); // jmp +99h
             }
 
             // シーン切り替えてもUndoが継続できるようにする

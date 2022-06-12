@@ -41,20 +41,20 @@ public:
 		VirtualProtect(reinterpret_cast<LPVOID>(m_address), m_size, m_oldProtect, &m_oldProtect);
 	}
 
-	template<class T1, class T2>
-	void store_i8(T1 address, T2 value) const {
+	template<class T = i_seq<i8>>
+	void store_i8(auto address, const T& value) const {
 		::store_i8(m_address + address, value);
 	}
-	template<class T1, class T2>
-	void store_i16(T1 address, T2 value) const {
+	template<class T = i_seq<i16>>
+	void store_i16(auto address, const T& value) const {
 		::store_i16(m_address + address, value);
 	}
-	template<class T1, class T2>
-	void store_i32(T1 address, T2 value) const {
+	template<class T = i_seq<i32>>
+	void store_i32(auto address, const T& value) const {
 		::store_i32(m_address + address, value);
 	}
-	template<class T1, class T2>
-	void store_i64(T1 address, T2 value) const {
+	template<class T = i_seq<i64>>
+	void store_i64(auto address, const T& value) const {
 		::store_i64(m_address + address, value);
 	}
 
@@ -145,10 +145,10 @@ inline bool InjectFunction_stdcall(uint32_t address, const void* function, size_
 
 	store_i8(cursor, '\xb8'); // mov eax, (i32)
 	store_i32(cursor + 1, function);
-	store_i16(cursor + 5, '\xff\xd0'); // call eax
+	store_i16(cursor + 5, { 0xff, 0xd0 }); // call eax
 	
 	std::copy((std::byte*)address, (std::byte*)address + asm_word_n, cursor + 7);
-	store_i16(cursor + asm_word_n + 7, '\xff\x25'); // jmp [(i32)]
+	store_i16(cursor + asm_word_n + 7, { 0xff, 0x25 }); // jmp [(i32)]
 	store_i32(cursor + asm_word_n + 9, cursor + asm_word_n + 13);
 	store_i32(cursor + asm_word_n + 13, address + asm_word_n);
 	GLOBAL::executable_memory_cursor += asm_word_n + 17;
@@ -157,7 +157,7 @@ inline bool InjectFunction_stdcall(uint32_t address, const void* function, size_
 		OverWriteOnProtectHelper protect(address, 7);
 		store_i8(address, '\xb8'); // mov eax, (i32)
 		store_i32(address + 1, cursor);
-		store_i16(address + 5, '\xff\xe0'); // call eax
+		store_i16(address + 5, { 0xff, 0xe0 }); // call eax
 	}
 	return TRUE;
 }
@@ -190,20 +190,20 @@ inline bool InjectFunction_fastcall(uint32_t address, void(*func)(), size_t asm_
 
 	auto bridge = GLOBAL::executable_memory_cursor;
 
-	store_i16(bridge, '\x51\x52'); // PUSH ECX; PUSH EDX
+	store_i16(bridge, { 0x51, 0x52 }); // PUSH ECX; PUSH EDX
 	store_i8(bridge + 2, '\xb8'); // MOV EAX, (i32)
 	store_i32(bridge + 3, func);
-	store_i16(bridge + 7, '\xff\xd0'); // CALL EAX
-	store_i16(bridge + 9, '\x5a\x59'); // POP EDX; POP ECX
+	store_i16(bridge + 7, { 0xff, 0xd0 }); // CALL EAX
+	store_i16(bridge + 9, { 0x5a, 0x59 }); // POP EDX; POP ECX
 	std::copy((std::byte*)address, (std::byte*)address + asm_word_n, bridge + 11);
-	store_i16(bridge + asm_word_n + 11, '\xff\x25'); // JMP (i32)
+	store_i16(bridge + asm_word_n + 11, { 0xff, 0x25 }); // JMP (i32)
 	store_i32(bridge + asm_word_n + 13, bridge + asm_word_n + 17);
 	store_i32(bridge + asm_word_n + 17, address + asm_word_n);
 	GLOBAL::executable_memory_cursor += asm_word_n + 21;
 
 	store_i8(address, '\xb8'); // MOV EAX,
 	store_i32(address + 1, bridge);
-	store_i16(address + 5, '\xff\xe0'); // JMP EAX
+	store_i16(address + 5, { 0xff, 0xe0 }); // JMP EAX
 
 	return true;
 }

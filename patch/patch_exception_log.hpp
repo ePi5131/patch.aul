@@ -346,8 +346,8 @@ namespace patch {
 			log_dir += L"log\\";
 
 			OverWriteOnProtectHelper h(GLOBAL::aviutl_base + 0x5b8b0, 13);
-			h.store_i32(0, '\xff\x74\x24\x04'); // push [esp+4]
-			h.store_i32(4, '\x52\x51\xff\x15'); // push edx ; push ecx ; call [(i32)]
+			h.store_i32(0, { 0xff, 0x74, 0x24, 0x04 }); // push [esp+4]
+			h.store_i32(4, { 0x52, 0x51, 0xff, 0x15 }); // push edx ; push ecx ; call [(i32)]
 			h.store_i32(8, &exception_catch_ptr);
 			h.store_i8(12, '\xc3'); // ret
 

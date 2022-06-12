@@ -40,7 +40,7 @@ namespace patch {
 			auto& cursor = GLOBAL::executable_memory_cursor;
 
             OverWriteOnProtectHelper h(GLOBAL::exedit_base + 0x06577a, 6);
-            h.store_i16(0, '\x90\xe9');
+            h.store_i16(0, { 0x90, 0xe9 });
             h.store_i32(2, cursor - (GLOBAL::exedit_base + 0x065780));
             /*
                 1006577a 8b91d0000000  mov     edx,dword ptr [ecx+000000d0] ; filter_param_ptr->track_link

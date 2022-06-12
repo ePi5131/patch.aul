@@ -211,12 +211,12 @@ namespace patch {
 				store_i32(ptr + 4, load_i32(adr + 4));
 				store_i16(ptr + 6, '\x68'); // PUSH (i32)
 				store_i32(ptr + 7, 0); LayerLockBorder_ptr = reinterpret_cast<decltype(LayerLockBorder_ptr)>(ptr + 7);
-				store_i16(ptr + 11, '\xff\x25'); // jmp [i32]
+				store_i16(ptr + 11, { 0xff, 0x25 }); // jmp [i32]
 				store_i32(ptr + 13, &LayerLockBorder_mod_jmp_ret_adr);
 				
 				OverWriteOnProtectHelper h(adr, 6);
 				
-				h.store_i16(0, '\xff\x25'); // jmp [i32]
+				h.store_i16(0, { 0xff, 0x25 }); // jmp [i32]
 				h.store_i32(2, &LayerLockBorder_mod_jmp_adr);
 			}
 
