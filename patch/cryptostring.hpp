@@ -26,8 +26,8 @@
 template <class CharT, size_t N>
 class cryptostring {
 	template<class CharT> struct KeyV {};
-	template<> struct KeyV<char> { inline static constexpr char value = 0b00101101i8; };
-	template<> struct KeyV<wchar_t> { inline static constexpr wchar_t value = 0b1001010110001100i16; };
+	template<> struct KeyV<char> { inline static constexpr char value = 0b00101101; };
+	template<> struct KeyV<wchar_t> { inline static constexpr wchar_t value = 0b1001010110001100; };
 
 	template<std::integral T>
 	[[nodiscard]] constexpr static T bit_rotate_l(const T x, size_t a) {
