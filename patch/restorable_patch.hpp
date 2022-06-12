@@ -1,28 +1,26 @@
 #pragma once
-#include <vector>
+#include <array>
 #include <bit>
 
 #include "util_magic.hpp"
 
-class restorable_patch {
+template<std::size_t N, typename Derived>
+class restorable_patch_base {
 protected:
-	std::vector<std::byte> data;
+	std::array<std::byte, N> data;
 	std::uintptr_t address;
 
 	bool state;
 
-	restorable_patch(std::uintptr_t address, std::vector<std::byte>&& data) : data(std::move(data)), address(address), state(false) {}
+	restorable_patch_base(std::uintptr_t address) : address(address), state(false) {}
 
 public:
-	restorable_patch(std::uintptr_t address, void* data, size_t length) : data(static_cast<std::byte*>(data), static_cast<std::byte*>(data) + length), address(address), state(false) {}
+	template<typename T>
+	requires (sizeof(std::array<std::byte, N>) == sizeof(std::array<T, N>))
+	restorable_patch_base(std::uintptr_t address, const std::array<T, N>& data) : data(std::bit_cast<std::array<std::byte, N>>(data)), address(address), state(false) {}
 
 	void swap_data() {
-		OverWriteOnProtectHelper h(address, data.size());
-		for (size_t i = 0; i < data.size(); i++) {
-			auto tmp = load_i8<std::byte>(address + i);
-			store_i8(address + i, data[i]);
-			data[i] = tmp;
-		}
+		static_cast<Derived*>(this)->swap_data();
 	}
 
 	void switch_true_to_false() {
@@ -48,51 +46,55 @@ public:
 		}
 	}
 };
-
-class restorable_patch_function : public restorable_patch {
-	static std::vector<std::byte> make_data(std::uintptr_t address, void* newfunc) {
-		static std::vector<std::byte> ret;
-		ret.resize(5);
-		ret[0] = std::byte{ 0xe9 };
-		store_i32(&ret[1], CalcNearJmp(address + 1, reinterpret_cast<i32>(newfunc)));
-		return ret;
-	}
+template<std::size_t N>
+class restorable_patch : public restorable_patch_base<N, restorable_patch<N>> {
 public:
-	restorable_patch_function(std::uintptr_t address, void* newfunc) : restorable_patch(address, std::move(make_data(address, newfunc))) {}
+	void swap_data() {
+		OverWriteOnProtectHelper h(this->address, this->data.size());
+		for (size_t i = 0; i < this->data.size(); i++) {
+			const auto tmp = load_i8<std::byte>(this->address + i);
+			store_i8(this->address + i, this->data[i]);
+			this->data[i] = tmp;
+		}
+	}
 };
 
-class restorable_patch_i8 : public restorable_patch {
-	static std::vector<std::byte> make_data(i8 value) {
-		static std::vector<std::byte> ret;
-		ret.resize(1);
-		store_i8(&ret[0], value);
-		return ret;
-	}
+class restorable_patch_function : public restorable_patch_base<5, restorable_patch_function> {
+	using base = restorable_patch_base<5, restorable_patch_function>;
 public:
-	template<class T>
-	restorable_patch_i8(std::uintptr_t address, T value) : restorable_patch(address, std::move(make_data((i8)value))) {}
+	restorable_patch_function(std::uintptr_t address, function_t newfunc)
+		: base(address)
+	{
+		this->data[0] = std::byte{ 0xe9 };
+		store_i32(&this->data[1], CalcNearJmp(address + 1, reinterpret_cast<i32>(newfunc)));
+	}
+	void swap_data() {
+		OverWriteOnProtectHelper h(this->address, this->data.size());
+		const auto tmp = load_i32(this->address + 1);
+		i32 d;
+		std::memcpy(&d, &this->data[1], sizeof(i32));
+		store_i32(this->address, d);
+		store_i32(&this->data[1], tmp);
+	}
 };
 
-class restorable_patch_i16 : public restorable_patch {
-	static std::vector<std::byte> make_data(i16 value) {
-		static std::vector<std::byte> ret;
-		ret.resize(2);
-		store_i16(&ret[0], value);
-		return ret;
-	}
-public:
-	template<class T>
-	restorable_patch_i16(std::uintptr_t address, T value) : restorable_patch(address, std::move(make_data((i16)value))) {}
-};
-
-class restorable_patch_i32 : public restorable_patch {
-	static std::vector<std::byte> make_data(i32 value) {
-		static std::vector<std::byte> ret;
-		ret.resize(4);
-		store_i32(&ret[0], value);
-		return ret;
-	}
+template<std::integral IntType>
+class restorable_patch_i : public restorable_patch_base<sizeof(IntType), restorable_patch_i<IntType>> {
+	using base = restorable_patch_base<sizeof(IntType), restorable_patch_i<IntType>>;
 public:
 	template<class T>
-	restorable_patch_i32(std::uintptr_t address, T value) : restorable_patch(address, std::move(make_data((i32)value))) {}
+	restorable_patch_i(std::uintptr_t address, T value)
+		: base(address)
+	{
+		store_i<IntType>(&this->data[0], value);
+	}
+	void swap_data() {
+		OverWriteOnProtectHelper h(this->address, this->data.size());
+		const auto tmp = load_i<IntType>(this->address);
+		store_i<IntType>(this->address, this->data);
+		store_i<IntType>(&this->data[0], tmp);
+	}
 };
+using restorable_patch_i8 = restorable_patch_i<i8>;
+using restorable_patch_i16 = restorable_patch_i<i16>;
+using restorable_patch_i32 = restorable_patch_i<i32>;
