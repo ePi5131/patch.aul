@@ -35,7 +35,7 @@ namespace patch {
 
     public:
         void init() {
-            rp1.emplace(GLOBAL::exedit_base + OFS::ExEdit::ignore_media_param_reset_mov, { 0x90, 0xe9 });
+            rp1.emplace(GLOBAL::exedit_base + OFS::ExEdit::ignore_media_param_reset_mov, 0x90, 0xe9);
             rp2.emplace(GLOBAL::exedit_base + OFS::ExEdit::ignore_media_param_reset_aud, '\xeb');
 
             rp1->switching(enabled);

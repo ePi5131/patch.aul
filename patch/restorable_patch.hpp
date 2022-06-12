@@ -18,6 +18,8 @@ public:
 	template<typename T>
 	requires (sizeof(std::array<std::byte, N>) == sizeof(std::array<T, N>))
 	restorable_patch_base(std::uintptr_t address, const std::array<T, N>& data) : data(std::bit_cast<std::array<std::byte, N>>(data)), address(address), state(false) {}
+	template<typename ...Args>
+	restorable_patch_base(std::uintptr_t address, Args&& ...args) : restorable_patch_base(address, { std::forward<Args>(args)... }) {}
 
 	void swap_data() {
 		static_cast<Derived*>(this)->swap_data();
