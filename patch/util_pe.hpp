@@ -21,7 +21,9 @@
 
 #include <Windows.h>
 #include <DbgHelp.h>
+#ifdef _MSC_VER
 #pragma comment(lib, "Dbghelp.lib")
+#endif
 
 #include "util_int.hpp"
 
