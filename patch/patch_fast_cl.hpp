@@ -541,7 +541,7 @@ kernel void DirectionalBlur_Media(global short* dst, global short* src, int obj_
 
     dst += (x + y * obj_line) * 4;
 
-    int sum_y = 0;
+    uint sum_y = 0;
     int sum_cb = 0;
     int sum_cr = 0;
     int sum_a = 0;
@@ -581,7 +581,7 @@ kernel void DirectionalBlur_original_size(global short* dst, global short* src, 
     int x_itr = (x << 16) + 0x8000 - range * x_step;
     int y_itr = (y << 16) + 0x8000 - range * y_step;
 
-    int sum_y = 0;
+    uint sum_y = 0;
     int sum_cb = 0;
     int sum_cr = 0;
     int sum_a = 0;
