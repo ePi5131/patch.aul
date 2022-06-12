@@ -25,7 +25,7 @@
 /// </summary>
 template <class CharT, size_t N>
 class cryptostring {
-	template<class CharT> struct KeyV {};
+	template<class> struct KeyV {};
 	template<> struct KeyV<char> { inline static constexpr char value = 0b00101101; };
 	template<> struct KeyV<wchar_t> { inline static constexpr wchar_t value = 0b1001010110001100; };
 
