@@ -172,7 +172,7 @@ inline bool InjectFunction_stdcall(uint32_t address, const void* function, size_
 /// <param name="asm_word_n"> 命令単位に合った数(7以上) </param>
 /// <returns> TRUE </returns>
 inline bool InjectFunction_cdecl(uint32_t address, const void* function, size_t asm_word_n) noexcept {
-	InjectFunction_stdcall(address, function, asm_word_n);
+	return InjectFunction_stdcall(address, function, asm_word_n);
 }
 
 /// <summary>
