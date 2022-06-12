@@ -368,3 +368,5 @@ FodyWeavers.xsd
 test/
 pack/
 Release_PDB/
+
+build/
