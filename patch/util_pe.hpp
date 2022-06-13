@@ -18,6 +18,8 @@
 #include <set>
 #include <unordered_map>
 #include <optional>
+#include <string>
+#include <string_view>
 
 #include <Windows.h>
 #include <DbgHelp.h>
@@ -136,7 +138,7 @@ inline std::optional<std::string> ordinal_to_name(HMODULE hMod, DWORD ordinal) n
 		for (DWORD j = 0; j < iedp->NumberOfNames; j++) {
 			if (ordinals[j] != i)continue;
 			if (ordinals[j] == ordinal) {
-				return reinterpret_cast<char*>(base + names[j]);
+				return std::string(reinterpret_cast<const char*>(base + names[j]));
 			}
 		}
 	}
