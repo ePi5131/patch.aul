@@ -24,17 +24,25 @@ using i8 = uint8_t;
 using i16 = uint16_t;
 using i32 = uint32_t;
 using i64 = uint64_t;
+using function_t = void (*)();
 
 template<std::integral T>
 using i_seq = std::array<i8, sizeof(T)>;
 template<typename T>
-concept storable = std::integral<T> || std::is_same_v<T, i8>;
+concept storable = std::is_integral_v<T> || std::is_same_v<T, std::byte>;
+template<typename T>
+concept storable_pointer = std::is_pointer_v<T> && sizeof(T) <= sizeof(std::uintptr_t);
 template<std::integral T1, storable T2>
 inline void store_i(auto address, T2 value) {
 	const auto src = static_cast<T1>(value);
 	std::memcpy(reinterpret_cast<void*>(address), &src, sizeof(T1));
 }
-template<std::integral T>
+template<typename T1, storable_pointer T2>
+requires (std::integral<T1> && sizeof(T1) == sizeof(i32))
+inline void store_i(auto address, T2 value) {
+	std::memcpy(reinterpret_cast<void*>(address), &value, sizeof(T1));
+}
+template<storable T>
 inline void store_i(auto address, const i_seq<T>& value) {
 	std::memcpy(reinterpret_cast<void*>(address), value.data(), sizeof(T));
 }
@@ -55,7 +63,8 @@ inline void store_i64(auto address, const T& value) {
 	store_i<i64>(address, value);
 }
 
-template<storable T0, class T1>
+template<typename T0, class T1>
+requires (storable<T0> || std::is_floating_point_v<T0> || std::is_pointer_v<T0>)
 inline T0 load_i(T1 address) {
 	T0 ret;
 	std::memcpy(&ret, reinterpret_cast<void*>(address), sizeof(T0));
