@@ -121,8 +121,11 @@ public:
 } ReplaceFunction;
 
 
+template<typename F>
+concept function_ptr = std::is_pointer_v<F> && std::is_function_v<std::remove_pointer_t<F>>;
 // 乗っ取りたいモジュール, 乗っ取る関数があるDLLのファイル名, 乗っ取る関数の名前, 新しい関数へのポインタ
-inline BOOL ExchangeFunction(HMODULE hModule, std::string_view modname, std::string_view funcname, void* function) noexcept {
+template<function_ptr F>
+inline BOOL ExchangeFunction(HMODULE hModule, std::string_view modname, std::string_view funcname, F function) noexcept {
 	auto ptr = search_import(hModule, modname, funcname);
 	if (!ptr)return FALSE;
 	DWORD flOldProtect;
