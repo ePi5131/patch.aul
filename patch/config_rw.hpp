@@ -24,6 +24,11 @@
 #include <unordered_map>
 #include <functional>
 #include <optional>
+#include <charconv>
+#ifndef __cpp_lib_to_chars
+#include <cmath>
+#include <cerrno>
+#endif
 
 #include "json.h"
 
@@ -410,8 +415,17 @@ public:
 	template<std::floating_point Float>
 	inline static bool load_variable(json_value_s* jv, Float& value) {
 		if (auto n = json_value_as_number(jv); n) {
+#ifdef __cpp_lib_to_chars
 			Float ret;
+			//__cpp_lib_to_chars
 			std::from_chars(n->number, n->number + n->number_size, ret);
+#else
+			std::string num{n->number, n->number};
+			const char* endptr = num.c_str();
+			errno = 0;
+			const auto ret = std::strtod(num.c_str(), &endptr);
+			if (errno != 0 || (ret == 0 && num.c_str() == endptr)) return false;
+#endif
 			value = ret;
 			return true;
 		}
