@@ -178,9 +178,9 @@ namespace patch::fast {
         efDirectionalBlur_var& dblur = *(efDirectionalBlur_var*)uintptr_t(reinterpret_cast<efDirectionalBlur_var*>(GLOBAL::exedit_base + OFS::ExEdit::efDirectionalBlur_var_ptr));
 
         try {
-            const auto src_size = efpip->obj_line * efpip->obj_h * sizeof(ExEdit::PixelYCA);
+            const auto src_size = efpip->obj_line * efpip->scene_h * sizeof(ExEdit::PixelYC);
             cl::Buffer clmem_src(cl.context, CL_MEM_READ_ONLY, src_size);
-            cl.queue.enqueueWriteBuffer(clmem_src, CL_TRUE, 0, src_size, efpip->obj_edit);
+            cl.queue.enqueueWriteBuffer(clmem_src, CL_TRUE, 0, src_size, efpip->frame_edit);
 
             cl::Buffer clmem_dst(cl.context, CL_MEM_WRITE_ONLY, src_size);
 
@@ -196,9 +196,9 @@ namespace patch::fast {
                 dblur.y_step,
                 dblur.range
             );
-            cl.queue.enqueueNDRangeKernel(kernel, { 0,0 }, { (size_t)efpip->obj_w, (size_t)efpip->obj_h });
+            cl.queue.enqueueNDRangeKernel(kernel, { 0,0 }, { (size_t)efpip->scene_w, (size_t)efpip->scene_h });
 
-            cl.queue.enqueueReadBuffer(clmem_dst, CL_TRUE, 0, src_size, efpip->obj_temp);
+            cl.queue.enqueueReadBuffer(clmem_dst, CL_TRUE, 0, src_size, efpip->frame_temp);
         }
         catch (const cl::Error& err) {
             debug_log("OpenCL Error\n({}) {}", err.err(), err.what());
