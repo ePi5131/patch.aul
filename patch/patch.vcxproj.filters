@@ -187,6 +187,9 @@
     <ClInclude Include="patch_fast_border.hpp">
       <Filter>feature\fast</Filter>
     </ClInclude>
+    <ClInclude Include="patch_fast_directionalblur.hpp">
+      <Filter>feature\fast</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="init.cpp" />
@@ -265,6 +268,9 @@
       <Filter>feature</Filter>
     </ClCompile>
     <ClCompile Include="patch_fast_border.cpp">
+      <Filter>feature\fast</Filter>
+    </ClCompile>
+    <ClCompile Include="patch_fast_directionalblur.cpp">
       <Filter>feature\fast</Filter>
     </ClCompile>
   </ItemGroup>

@@ -66,6 +66,9 @@ namespace OFS {
 		constexpr i32 efFlash_func_proc = 0x04e560;
 		constexpr i32 efFlash_var_ptr = 0x1a6b7c;
 		constexpr i32 efFlash_func_proc_ptr = 0x0a5a28;
+		constexpr i32 efDirectionalBlur_func_proc_ptr = 0x0a00a0;
+		constexpr i32 efDirectionalBlur_var_ptr = 0x0d75cc;
+		constexpr i32 efDirectionalBlur_Filter_mt_func_call = 0x00cae6;
 
 		constexpr i32 ScriptProcessingFilter = 0x1b2b10;
 

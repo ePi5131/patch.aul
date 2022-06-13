@@ -602,6 +602,120 @@ kernel void FlashColor(global short* dst, global short* src, int src_w, int src_
         }
     }
 }
+)" R"(
+kernel void DirectionalBlur_Media(global short* dst, global short* src, int obj_w, int obj_h, int obj_line,
+    int x_begin, int x_end, int x_step, int y_begin, int y_end, int y_step, int range) {
+    int x = get_global_id(0);
+    int y = get_global_id(1);
+    int pix_range = range * 2 + 1;
+
+    dst += (x + y * obj_line) * 4;
+
+    uint sum_y = 0;
+    int sum_cb = 0;
+    int sum_cr = 0;
+    int sum_a = 0;
+
+    int x_itr = (x + x_begin << 16) + 0x8000 - range * x_step;
+    int y_itr = (y + y_begin << 16) + 0x8000 - range * y_step;
+
+    for (int n = 0; n < pix_range; n++) {
+        int xx = x_itr >> 16;
+        int yy = y_itr >> 16;
+        if (0 <= xx && xx < obj_w && 0 <= yy && yy < obj_h) {
+            short* pix = src + (xx + yy * obj_line) * 4;
+            int src_a = min((int)pix[3], 0x1000);
+            sum_y += pix[0] * src_a >> 12;
+            sum_cb += pix[1] * src_a >> 12;
+            sum_cr += pix[2] * src_a >> 12;
+            sum_a += src_a;
+        }
+        x_itr += x_step;
+        y_itr += y_step;
+    }
+    if (sum_a) {
+        dst[0] = (short)(sum_y * 4096 / sum_a);
+        dst[1] = (short)(sum_cb * 4096 / sum_a);
+        dst[2] = (short)(sum_cr * 4096 / sum_a);
+    }
+    dst[3] = (short)(sum_a / pix_range);
+}
+)" R"(
+kernel void DirectionalBlur_original_size(global short* dst, global short* src, int obj_w, int obj_h, int obj_line,
+    int x_step, int y_step, int range) {
+    int x = get_global_id(0);
+    int y = get_global_id(1);
+    int pix_range = range * 2 + 1;
+
+    dst += (x + y * obj_line) * 4;
+
+    int x_itr = (x << 16) + 0x8000 - range * x_step;
+    int y_itr = (y << 16) + 0x8000 - range * y_step;
+
+    uint sum_y = 0;
+    int sum_cb = 0;
+    int sum_cr = 0;
+    int sum_a = 0;
+    int cnt = 0;
+
+    for (int n = 0; n < pix_range; n++) {
+        int xx = x_itr >> 16;
+        int yy = y_itr >> 16;
+        if (0 <= xx && xx < obj_w && 0 <= yy && yy < obj_h) {
+            short* pix = src + (xx + yy * obj_line) * 4;
+            int src_a = min((int)pix[3], 0x1000);
+            sum_y += pix[0] * src_a >> 12;
+            sum_cb += pix[1] * src_a >> 12;
+            sum_cr += pix[2] * src_a >> 12;
+            sum_a += src_a;
+            cnt++;
+        }
+        x_itr += x_step;
+        y_itr += y_step;
+    }
+    if(cnt == 0) cnt = 0xffffff;
+    if (sum_a) {
+        dst[0] = (short)(sum_y * 4096 / sum_a);
+        dst[1] = (short)(sum_cb * 4096 / sum_a);
+        dst[2] = (short)(sum_cr * 4096 / sum_a);
+    }
+    dst[3] = (short)(sum_a / cnt);
+}
+)" R"(
+kernel void DirectionalBlur_Filter(global short* dst, global short* src, int scene_w, int scene_h, int scene_line,
+    int x_step, int y_step, int range) {
+    int x = get_global_id(0);
+    int y = get_global_id(1);
+    int pix_range = range * 2 + 1;
+
+    dst += (x + y * scene_line) * 3;
+
+    int x_itr = (x << 16) + 0x8000 - range * x_step;
+    int y_itr = (y << 16) + 0x8000 - range * y_step;
+
+    int sum_y = 0;
+    int sum_cb = 0;
+    int sum_cr = 0;
+    int cnt = 0;
+    for (int n = 0; n < pix_range; n++) {
+        int xx = x_itr >> 16;
+        int yy = y_itr >> 16;
+        if (0 <= xx && xx < scene_w && 0 <= yy && yy < scene_h) {
+            short* pix = src + (xx + yy * scene_line) * 3;
+            sum_y += pix[0];
+            sum_cb += pix[1];
+            sum_cr += pix[2];
+            cnt++;
+        }
+        x_itr += x_step;
+        y_itr += y_step;
+    }
+    if(cnt == 0) cnt = 0xffffff;
+    dst[0] = (short)(sum_y / cnt);
+    dst[1] = (short)(sum_cb / cnt);
+    dst[2] = (short)(sum_cr / cnt);
+}
+
 )");
 #pragma endregion
 
