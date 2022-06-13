@@ -229,7 +229,7 @@ namespace patch::fast {
             int x;
             for (x = 0; x <= border.add_size; x++) {
                 a_sum += *pixa1;
-                *mem = (unsigned short)min(a_sum * border.alpha >> border._alpha_shift, ALPHA_TEMP_MAX);
+                *mem = std::min<unsigned short>(a_sum * border.alpha >> border._alpha_shift, ALPHA_TEMP_MAX);
 
                 pixa1 += 4;
                 mem++;
@@ -237,7 +237,7 @@ namespace patch::fast {
 
             for (; x < efpip->obj_w; x++) {
                 a_sum += *pixa1 - *pixa2;
-                *mem = (unsigned short)min(a_sum * border.alpha >> border._alpha_shift, ALPHA_TEMP_MAX);
+                *mem = std::min<unsigned short>(a_sum * border.alpha >> border._alpha_shift, ALPHA_TEMP_MAX);
 
                 pixa1 += 4;
                 pixa2 += 4;
@@ -245,7 +245,7 @@ namespace patch::fast {
             }
             for (x = 0; x < border.add_size; x++) {
                 a_sum -= *pixa2;
-                *mem = (unsigned short)min(a_sum * border.alpha >> border._alpha_shift, ALPHA_TEMP_MAX);
+                *mem = std::min<unsigned short>(a_sum * border.alpha >> border._alpha_shift, ALPHA_TEMP_MAX);
 
                 pixa2 += 4;
                 mem++;
@@ -325,7 +325,7 @@ namespace patch::fast {
             int x;
             for (x = 0; x < efpip->obj_w; x++) {
                 a_sum += *pixa1;
-                *mem = a = (unsigned short)min(a_sum * border.alpha >> border._alpha_shift, ALPHA_TEMP_MAX);
+                *mem = a = std::min<unsigned short>(a_sum * border.alpha >> border._alpha_shift, ALPHA_TEMP_MAX);
 
                 pixa1 += 4;
                 mem++;
@@ -337,7 +337,7 @@ namespace patch::fast {
             }
             for (x = 0; x < efpip->obj_w; x++) {
                 a_sum -= *pixa2;
-                *mem = (unsigned short)min(a_sum * border.alpha >> border._alpha_shift, ALPHA_TEMP_MAX);
+                *mem = std::min<unsigned short>(a_sum * border.alpha >> border._alpha_shift, ALPHA_TEMP_MAX);
 
                 pixa2 += 4;
                 mem++;
@@ -423,7 +423,7 @@ namespace patch::fast {
                 if (a_sum == 0) {
                     pix->a = 0;
                 } else {
-                    color.a = (short)min(a_sum * border.alpha >> border._alpha_shift, 0x1000);
+                    color.a = std::min<short>(a_sum * border.alpha >> border._alpha_shift, 0x1000);
                     *pix = color;
                 }
 
@@ -435,7 +435,7 @@ namespace patch::fast {
                 if (a_sum == 0) {
                     pix->a = 0;
                 } else {
-                    color.a = (short)min(a_sum * border.alpha >> border._alpha_shift, 0x1000);
+                    color.a = std::min<short>(a_sum * border.alpha >> border._alpha_shift, 0x1000);
                     *pix = color;
                 }
 
@@ -449,7 +449,7 @@ namespace patch::fast {
                 if (a_sum == 0) {
                     pix->a = 0;
                 } else {
-                    color.a = (short)min(a_sum * border.alpha >> border._alpha_shift, 0x1000);
+                    color.a = std::min<short>(a_sum * border.alpha >> border._alpha_shift, 0x1000);
                     *pix = color;
                 }
 
@@ -530,7 +530,7 @@ namespace patch::fast {
                 if (a_sum == 0) {
                     pix->a = color.a = 0;
                 } else {
-                    color.a = (short)min(a_sum * border.alpha >> border._alpha_shift, 0x1000);
+                    color.a = std::min<short>(a_sum * border.alpha >> border._alpha_shift, 0x1000);
                     *pix = color;
                 }
 
@@ -548,7 +548,7 @@ namespace patch::fast {
                 if (a_sum == 0) {
                     pix->a = 0;
                 } else {
-                    color.a = (short)min(a_sum * border.alpha >> border._alpha_shift, 0x1000);
+                    color.a = std::min<short>(a_sum * border.alpha >> border._alpha_shift, 0x1000);
                     *pix = color;
                 }
 
