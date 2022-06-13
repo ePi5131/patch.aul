@@ -149,7 +149,6 @@ set(Boost_USE_MULTITHREADED ON)
 set(Boost_USE_STATIC_LIBS ON)
 set(Boost_USE_STATIC_RUNTIME OFF)
 set(Boost_USE_DEBUG_RUNTIME OFF)
-set(Boost_DEBUG ON)
 add_definitions(${Boost_LIB_DIAGNOSTIC_DEFINITIONS})
 find_package(Boost 1.77.0 REQUIRED)
 
