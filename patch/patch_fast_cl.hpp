@@ -532,7 +532,7 @@ kernel void FlashColor(global short* dst, global short* src, int src_w, int src_
         }
     }
 }
-
+)" R"(
 kernel void LensBlur_Media(global char* dst, global char* src, int obj_w, int obj_h, int obj_line,
     int range, int rangep05_sqr, int range_t3m1, int rangem1_sqr) {
 
@@ -586,7 +586,7 @@ kernel void LensBlur_Media(global char* dst, global char* src, int obj_w, int ob
         *(long*)dst= 0;
     }
 }
-
+)" R"(
 kernel void LensBlur_Filter(global char* dst, global char* src, int scene_w, int scene_h, int scene_line,
     int range, int rangep05_sqr, int range_t3m1, int rangem1_sqr) {
 
