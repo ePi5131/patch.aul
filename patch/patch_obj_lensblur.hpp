@@ -48,8 +48,8 @@ namespace patch {
             if (!enabled_i)return;
 
             // オフセットアドレス exedit + 71449 の修正
-            store_i32(GLOBAL::exedit_base + 0x01280a, &efLensBlur_resize_709a0_wrap_12809);
-            store_i32(GLOBAL::exedit_base + 0x0126a7, &efLensBlur_resize_71420_wrap_126a6);
+            ReplaceNearJmp(GLOBAL::exedit_base + 0x01280a, &efLensBlur_resize_709a0_wrap_12809);
+            ReplaceNearJmp(GLOBAL::exedit_base + 0x0126a7, &efLensBlur_resize_71420_wrap_126a6);
 
         }
 
@@ -63,7 +63,7 @@ namespace patch {
         void switch_load(ConfigReader& cr) {
             cr.regist(key, [this](json_value_s* value) {
                 ConfigReader::load_variable(value, enabled);
-                });
+            });
         }
 
         void switch_store(ConfigWriter& cw) {
