@@ -181,6 +181,21 @@
       <Filter>feature\fast</Filter>
     </ClInclude>
     <ClInclude Include="timer.hpp" />
+    <ClInclude Include="patch_setting_dialog_excolorconfig.hpp">
+      <Filter>feature</Filter>
+    </ClInclude>
+    <ClInclude Include="patch_fast_border.hpp">
+      <Filter>feature\fast</Filter>
+    </ClInclude>
+    <ClInclude Include="patch_fast_directionalblur.hpp">
+      <Filter>feature\fast</Filter>
+    </ClInclude>
+    <ClInclude Include="patch_fast_lensblur.hpp">
+      <Filter>feature\fast</Filter>
+    </ClInclude>
+    <ClInclude Include="patch_obj_lensblur.hpp">
+      <Filter>feature</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="init.cpp" />
@@ -254,6 +269,21 @@
     </ClCompile>
     <ClCompile Include="patch_fast_text.cpp">
       <Filter>feature\fast</Filter>
+    </ClCompile>
+    <ClCompile Include="patch_setting_dialog_excolorconfig.cpp">
+      <Filter>feature</Filter>
+    </ClCompile>
+    <ClCompile Include="patch_fast_border.cpp">
+      <Filter>feature\fast</Filter>
+    </ClCompile>
+    <ClCompile Include="patch_fast_directionalblur.cpp">
+      <Filter>feature\fast</Filter>
+    </ClCompile>
+    <ClCompile Include="patch_fast_lensblur.cpp">
+      <Filter>feature\fast</Filter>
+    </ClCompile>
+    <ClCompile Include="patch_obj_lensblur.cpp">
+      <Filter>feature</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

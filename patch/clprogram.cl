@@ -186,106 +186,177 @@ kernel void PolorTransform(global short* dst, global short* src, int src_w, int 
     }
 }
 
-kernel void RadiationalBlur(
-    global short* dst, global short* src, int src_w, int src_h, int exedit_buffer_line,
-	int X,
-	int Y,
-	int Range,
-	int pixel_range,
-	int Cx,
-	int Cy,
-	int result_x_max,
-	int result_y_max
-) {
+kernel void RadiationalBlur_Media(
+    global short* dst, global short* src, int src_w, int src_h, int buffer_line,
+    int rb_blur_cx, int rb_blur_cy, int rb_obj_cx, int rb_obj_cy, int rb_range, int rb_pixel_range) {
+
     int xi = get_global_id(0);
     int yi = get_global_id(1);
 
-    int y = yi + Cy;
-    int y_detail = y * 0x10000 + 0x8000;
+    int x = xi + rb_obj_cx;
+    int y = yi + rb_obj_cy;
 
-    int pixel_itr = xi + yi * exedit_buffer_line;
-    int x = xi + Cx;
-    int x_detail = x * 0x10000 + 0x8000;
-    int cx = X - x;
-    int cy = Y - y;
+    int pixel_itr = xi + yi * buffer_line;
+    int cx = rb_blur_cx - x;
+    int cy = rb_blur_cy - y;
     int c_dist_times8 = (int)round(sqrt((float)(cx * cx + cy * cy)) * 8.0f);
-    int range = (Range * c_dist_times8) / 1000;
+    int range = (rb_range * c_dist_times8) / 1000;
 
-    if (pixel_range < c_dist_times8) {
-        range = pixel_range * Range / 1000;
-        c_dist_times8 = pixel_range;
-    }
-    else if (8 < c_dist_times8) {
+    if (rb_pixel_range < c_dist_times8) {
+        range = rb_pixel_range * rb_range / 1000;
+        c_dist_times8 = rb_pixel_range;
+    } else if (8 < c_dist_times8) {
         c_dist_times8 *= 8;
         range *= 8;
-    }
-    else if (4 < c_dist_times8) {
+    } else if (4 < c_dist_times8) {
         c_dist_times8 *= 4;
         range *= 4;
-    }
-    else if (2 < c_dist_times8) {
+    } else if (2 < c_dist_times8) {
         c_dist_times8 *= 2;
         range *= 2;
     }
 
-    if ((c_dist_times8 < 2) || (range < 2)) {
-        if (x_detail < 0x8000 || y_detail < 0x8000 || src_w <= x || src_h <= y) {
-            vstore4((short4)(0, 0, 0, 0), pixel_itr, dst);
-        }
-        else {
-            vstore4(vload4(x + y * exedit_buffer_line, src), pixel_itr, dst);
-        }
-    }
-    else {
+    if (2 <= c_dist_times8 && 2 <= range) {
         int sum_a = 0;
         int sum_cr = 0;
         int sum_cb = 0;
         int sum_y = 0;
-        int x_detail_itr = x_detail;
-        int y_detail_itr = y_detail;
 
-        if (0 < range) {
-            for (int i = 0; i < range; i++) {
-                int x_itr = x_detail_itr / 0x10000;
-                int y_itr = y_detail_itr / 0x10000;
-                if (0 <= x_itr && x_itr < src_w && 0 <= y_itr && y_itr < src_h) {
-                    short4 itr = vload4(x_itr + y_itr * exedit_buffer_line, src);
-                    int itr_a = itr.w;
-                    if (itr_a != 0) {
-                        if (itr_a < 0x1000) {
-                            sum_y  += itr.x * itr_a / 4096;
-                            sum_cb += itr.y * itr_a / 4096;
-                            sum_cr += itr.z * itr_a / 4096;
-                        }
-                        else {
-                            sum_y  += itr.x;
-                            sum_cb += itr.y;
-                            sum_cr += itr.z;
-                        }
-                        sum_a += itr_a;
+        for (int i = 0; i < range; i++) {
+            int x_itr = x + i * cx / c_dist_times8;
+            int y_itr = y + i * cy / c_dist_times8;
+            if (0 <= x_itr && x_itr < src_w && 0 <= y_itr && y_itr < src_h) {
+                short4 itr = vload4(x_itr + y_itr * buffer_line, src);
+                int itr_a = itr.w;
+                if (itr_a != 0) {
+                    sum_a += itr_a;
+                    if (itr_a < 0x1000) {
+                        itr_a = 0x1000;
                     }
+                    sum_y += itr.x * itr_a / 4096;
+                    sum_cb += itr.y * itr_a / 4096;
+                    sum_cr += itr.z * itr_a / 4096;
                 }
-                x_detail_itr += (cx * 0x10000) / c_dist_times8;
-                y_detail_itr += (cy * 0x10000) / c_dist_times8;
-            }
-            if (sum_a != 0) {
-                vstore4(
-                    (short4)(
-                        round(sum_y  * 4096.0f / sum_a),
-                        round(sum_cb * 4096.0f / sum_a),
-                        round(sum_cr * 4096.0f / sum_a),
-                        sum_a / range
-                    ),
-                    pixel_itr, dst
-                );
-            }
-            else{
-                dst[pixel_itr * 4 + 3] = (short)(sum_a / range);
             }
         }
-        else{
+        if (sum_a != 0) {
+            vstore4(
+                (short4)(
+                    round(sum_y * 4096.0f / sum_a),
+                    round(sum_cb * 4096.0f / sum_a),
+                    round(sum_cr * 4096.0f / sum_a),
+                    sum_a / range
+                    ),
+                pixel_itr, dst
+            );
+        } else {
             dst[pixel_itr * 4 + 3] = (short)(sum_a / range);
         }
+    } else {
+        if (x < 0 || y < 0 || src_w <= x || src_h <= y) {
+            vstore4((short4)(0, 0, 0, 0), pixel_itr, dst);
+        } else {
+            vstore4(vload4(x + y * buffer_line, src), pixel_itr, dst);
+        }
+    }
+}
+
+kernel void RadiationalBlur_Filter(
+    global short* dst, global short* src, int buffer_line,
+    int rb_blur_cx, int rb_blur_cy, int rb_range, int rb_pixel_range) {
+    int x = get_global_id(0);
+    int y = get_global_id(1);
+
+    int cx = rb_blur_cx - x;
+    int cy = rb_blur_cy - y;
+    int c_dist_times8 = (int)round(sqrt((float)(cx * cx + cy * cy)) * 8.0f);
+    int range = rb_range * c_dist_times8 / 1000;
+    if (rb_pixel_range < c_dist_times8) {
+        range = (rb_pixel_range * rb_range) / 1000;
+        c_dist_times8 = rb_pixel_range;
+    } else if (8 < c_dist_times8) {
+        c_dist_times8 *= 8;
+        range *= 8;
+    } else if (4 < c_dist_times8) {
+        c_dist_times8 *= 4;
+        range *= 4;
+    } else if (2 < c_dist_times8) {
+        c_dist_times8 *= 2;
+        range *= 2;
+    }
+
+    int offset = (x + y * buffer_line) * 3;
+    if (2 <= c_dist_times8 && 2 <= range) {
+        int sum_y = 0;
+        int sum_cb = 0;
+        int sum_cr = 0;
+        for (int i = 0; i < range; i++) {
+            int x_itr = x + i * cx / c_dist_times8;
+            int y_itr = y + i * cy / c_dist_times8;
+            int pix_offset = (x_itr + y_itr * buffer_line) * 3;
+            sum_y += src[pix_offset];
+            sum_cb += src[++pix_offset];
+            sum_cr += src[++pix_offset];
+        }
+
+        dst[offset] = (short)(sum_y / range);
+        dst[++offset] = (short)(sum_cb / range);
+        dst[++offset] = (short)(sum_cr / range);
+    } else {
+        dst[offset] = src[offset];
+        dst[offset + 1] = src[offset + 1];
+        dst[offset + 2] = src[offset + 2];
+    }
+}
+
+
+kernel void RadiationalBlur_Filter_Far(
+    global short* dst, global short* src, int scene_w, int scene_h, int buffer_line,
+    int rb_blur_cx, int rb_blur_cy, int rb_range, int rb_pixel_range) {
+    int x = get_global_id(0);
+    int y = get_global_id(1);
+
+    int cx = rb_blur_cx - x;
+    int cy = rb_blur_cy - y;
+    int c_dist_times8 = (int)round(sqrt((float)(cx * cx + cy * cy)) * 8.0f);
+    int range = rb_range * c_dist_times8 / 1000;
+    if (rb_pixel_range < c_dist_times8) {
+        range = (rb_pixel_range * rb_range) / 1000;
+        c_dist_times8 = rb_pixel_range;
+    } else if (8 < c_dist_times8) {
+        c_dist_times8 *= 8;
+        range *= 8;
+    } else if (4 < c_dist_times8) {
+        c_dist_times8 *= 4;
+        range *= 4;
+    } else if (2 < c_dist_times8) {
+        c_dist_times8 *= 2;
+        range *= 2;
+    }
+
+    int offset = (x + y * buffer_line) * 3;
+    if (2 <= c_dist_times8 && 2 <= range) {
+        int sum_y = 0;
+        int sum_cb = 0;
+        int sum_cr = 0;
+        for (int i = 0; i < range; i++) {
+            int x_itr = x + i * cx / c_dist_times8;
+            int y_itr = y + i * cy / c_dist_times8;
+            if (0 <= x_itr && 0 <= y_itr && x_itr < scene_w && y_itr < scene_h) {
+                int pix_offset = (x_itr + y_itr * buffer_line) * 3;
+                sum_y += src[pix_offset];
+                sum_cb += src[++pix_offset];
+                sum_cr += src[++pix_offset];
+            }
+        }
+
+        dst[offset] = (short)(sum_y / range);
+        dst[++offset] = (short)(sum_cb / range);
+        dst[++offset] = (short)(sum_cr / range);
+    } else {
+        dst[offset] = src[offset];
+        dst[offset + 1] = src[offset + 1];
+        dst[offset + 2] = src[offset + 2];
     }
 }
 
@@ -496,4 +567,221 @@ kernel void FlashColor(global short* dst, global short* src, int src_w, int src_
             );
         }
     }
+}
+kernel void DirectionalBlur_Media(global short* dst, global short* src, int obj_w, int obj_h, int obj_line,
+    int x_begin, int x_end, int x_step, int y_begin, int y_end, int y_step, int range) {
+    int x = get_global_id(0);
+    int y = get_global_id(1);
+    int pix_range = range * 2 + 1;
+
+    dst += (x + y * obj_line) * 4;
+
+    uint sum_y = 0;
+    int sum_cb = 0;
+    int sum_cr = 0;
+    int sum_a = 0;
+
+    int x_itr = (x + x_begin << 16) + 0x8000 - range * x_step;
+    int y_itr = (y + y_begin << 16) + 0x8000 - range * y_step;
+
+    for (int n = 0; n < pix_range; n++) {
+        int xx = x_itr >> 16;
+        int yy = y_itr >> 16;
+        if (0 <= xx && xx < obj_w && 0 <= yy && yy < obj_h) {
+            short* pix = src + (xx + yy * obj_line) * 4;
+            int src_a = min((int)pix[3], 0x1000);
+            sum_y += pix[0] * src_a >> 12;
+            sum_cb += pix[1] * src_a >> 12;
+            sum_cr += pix[2] * src_a >> 12;
+            sum_a += src_a;
+        }
+        x_itr += x_step;
+        y_itr += y_step;
+    }
+    if (sum_a) {
+        dst[0] = (short)(sum_y * 4096 / sum_a);
+        dst[1] = (short)(sum_cb * 4096 / sum_a);
+        dst[2] = (short)(sum_cr * 4096 / sum_a);
+    }
+    dst[3] = (short)(sum_a / pix_range);
+}
+kernel void DirectionalBlur_original_size(global short* dst, global short* src, int obj_w, int obj_h, int obj_line,
+    int x_step, int y_step, int range) {
+    int x = get_global_id(0);
+    int y = get_global_id(1);
+    int pix_range = range * 2 + 1;
+
+    dst += (x + y * obj_line) * 4;
+
+    int x_itr = (x << 16) + 0x8000 - range * x_step;
+    int y_itr = (y << 16) + 0x8000 - range * y_step;
+
+    uint sum_y = 0;
+    int sum_cb = 0;
+    int sum_cr = 0;
+    int sum_a = 0;
+    int cnt = 0;
+
+    for (int n = 0; n < pix_range; n++) {
+        int xx = x_itr >> 16;
+        int yy = y_itr >> 16;
+        if (0 <= xx && xx < obj_w && 0 <= yy && yy < obj_h) {
+            short* pix = src + (xx + yy * obj_line) * 4;
+            int src_a = min((int)pix[3], 0x1000);
+            sum_y += pix[0] * src_a >> 12;
+            sum_cb += pix[1] * src_a >> 12;
+            sum_cr += pix[2] * src_a >> 12;
+            sum_a += src_a;
+            cnt++;
+        }
+        x_itr += x_step;
+        y_itr += y_step;
+    }
+
+    if(cnt == 0) cnt = 0xffffff;
+    if (sum_a) {
+        dst[0] = (short)(sum_y * 4096 / sum_a);
+        dst[1] = (short)(sum_cb * 4096 / sum_a);
+        dst[2] = (short)(sum_cr * 4096 / sum_a);
+    }
+    dst[3] = (short)(sum_a / cnt);
+}
+kernel void DirectionalBlur_Filter(global short* dst, global short* src, int scene_w, int scene_h, int scene_line,
+    int x_step, int y_step, int range) {
+    int x = get_global_id(0);
+    int y = get_global_id(1);
+    int pix_range = range * 2 + 1;
+
+    dst += (x + y * scene_line) * 3;
+
+    int x_itr = (x << 16) + 0x8000 - range * x_step;
+    int y_itr = (y << 16) + 0x8000 - range * y_step;
+
+    int sum_y = 0;
+    int sum_cb = 0;
+    int sum_cr = 0;
+    int cnt = 0;
+    for (int n = 0; n < pix_range; n++) {
+        int xx = x_itr >> 16;
+        int yy = y_itr >> 16;
+        if (0 <= xx && xx < scene_w && 0 <= yy && yy < scene_h) {
+            short* pix = src + (xx + yy * scene_line) * 3;
+            sum_y += pix[0];
+            sum_cb += pix[1];
+            sum_cr += pix[2];
+            cnt++;
+        }
+        x_itr += x_step;
+        y_itr += y_step;
+    }
+    if(cnt == 0) cnt = 0xffffff;
+    dst[0] = (short)(sum_y / cnt);
+    dst[1] = (short)(sum_cb / cnt);
+    dst[2] = (short)(sum_cr / cnt);
+}
+
+kernel void LensBlur_Media(global char* dst, global char* src, int obj_w, int obj_h, int obj_line,
+    int range, int rangep05_sqr, int range_t3m1, int rangem1_sqr) {
+
+    int x = get_global_id(0);
+    int y = get_global_id(1);
+
+    int top = -min(y, range);
+    int bottom = min(obj_h - y - 1, range);
+    int left = -min(x, range);
+    int right = min(obj_w - x - 1, range);
+
+    float sum_y = 0.0;
+    int sum_cb = 0;
+    int sum_cr = 0;
+    int sum_a = 0;
+    int cor_sum = 0;
+
+    int offset = (x + left + (y + top) * obj_line) * 8;
+
+    for (int yy = top; yy <= bottom; yy++) {
+        int sqr = yy * yy + left * left;
+        int offset2 = offset;
+        for (int xx = left; xx <= right; xx++) {
+            if (sqr < rangep05_sqr) {
+                int cor_a;
+                if (rangem1_sqr < sqr) {
+                    cor_a = (rangep05_sqr - sqr << 12) / range_t3m1;
+                } else {
+                    cor_a = 4096;
+                }
+                cor_sum += cor_a;
+                sum_y += *(float*)&src[offset2] * (float)cor_a;
+                sum_cb += src[offset2 + 4] * cor_a;
+                sum_cr += src[offset2 + 5] * cor_a;
+                sum_a += *(short*)&src[offset2 + 6] * cor_a >> 12;
+            }
+            sqr += 1 + xx * 2;
+            offset2 += 8;
+        }
+        offset += obj_line * 8;
+    }
+
+    dst += (x + y * obj_line) * 8;
+    if (0 < sum_a) {
+        *(float*)dst = sum_y / (float)sum_a;
+        dst[4] = (char)(((sum_a >> 1) + sum_cb) / sum_a);
+        dst[5] = (char)(((sum_a >> 1) + sum_cr) / sum_a);
+        *(short*)&dst[6] = (short)round((float)sum_a * (4096.0f / (float)cor_sum));
+    } else {
+        *(long*)dst= 0;
+    }
+}
+
+kernel void LensBlur_Filter(global char* dst, global char* src, int scene_w, int scene_h, int scene_line,
+    int range, int rangep05_sqr, int range_t3m1, int rangem1_sqr) {
+
+    int x = get_global_id(0);
+    int y = get_global_id(1);
+
+    int top = -min(y, range);
+    int bottom = min(scene_h - y - 1, range);
+    int left = -min(x, range);
+    int right = min(scene_w - x - 1, range);
+
+    short tofloat[2];
+    float sum_y = 0.0;
+    int sum_cb = 0;
+    int sum_cr = 0;
+    int sum_a = 0;
+
+    int offset = (x + left + (y + top) * scene_line) * 6;
+
+    for (int yy = top; yy <= bottom; yy++) {
+
+        int sqr = yy * yy + left * left;
+        int offset2 = offset;
+
+        for (int xx = left; xx <= right; xx++) {
+            if (sqr < rangep05_sqr) {
+                int cor_a;
+                if (rangem1_sqr < sqr) {
+                    cor_a = (rangep05_sqr - sqr << 12) / range_t3m1;
+                } else {
+                    cor_a = 4096;
+                }
+                tofloat[0] = *(short*)&src[offset2];
+                tofloat[1] = *(short*)&src[offset2 + 2];
+                sum_y += *(float*)tofloat * (float)cor_a;
+                sum_cb += src[offset2 + 4] * cor_a;
+                sum_cr += src[offset2 + 5] * cor_a;
+                sum_a += cor_a;
+            }
+            sqr += 1 + xx * 2;
+            offset2 += 6;
+        }
+        offset += scene_line * 6;
+    }
+
+    dst += (x + y * scene_line) * 6;
+    *(float*)tofloat = sum_y / (float)sum_a;
+    *(short*)&dst[0] = tofloat[0];
+    *(short*)&dst[2] = tofloat[1];
+    dst[4] = (char)(((sum_a >> 1) + sum_cb) / sum_a);
+    dst[5] = (char)(((sum_a >> 1) + sum_cr) / sum_a);
 }
