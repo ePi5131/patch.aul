@@ -133,8 +133,10 @@ FetchContent_Declare(
 )
 FetchContent_Declare(
     winwrap
-    GIT_REPOSITORY https://github.com/ePi5131/winwrap.git
-    GIT_TAG de29f34b822f330ed2d13e6a3b2fa35c96f456ee
+    # GIT_REPOSITORY https://github.com/ePi5131/winwrap.git
+    GIT_REPOSITORY https://github.com/yumetodo/winwrap.git
+    # GIT_TAG de29f34b822f330ed2d13e6a3b2fa35c96f456ee
+    GIT_TAG 012e25a669bc348d6027a5eb9bc1090fceb6085d
 )
 FetchContent_MakeAvailable(AviutlExeditSdk winwrap)
 
