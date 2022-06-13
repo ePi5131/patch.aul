@@ -127,7 +127,7 @@ find_package(OpenCL REQUIRED)
 # Get Dependencies
 include(FetchContent)
 FetchContent_Declare(
-    AviutlExeditSdk
+    aviutl_exedit_sdk
     GIT_REPOSITORY https://github.com/ePi5131/aviutl_exedit_sdk.git
     GIT_TAG 219be3ede890ab5998618d7f11d9e1987d5f9637
 )
@@ -176,7 +176,7 @@ set_target_properties(patch PROPERTIES SUFFIX ".aul")
 target_include_directories(patch
   PUBLIC ${Boost_INCLUDE_DIRS}
   PUBLIC ${OpenCL_INCLUDE_DIRS}
-  PUBLIC ${AviutlExeditSdk_SOURCE_DIR}
+  PUBLIC ${aviutl_exedit_sdk_SOURCE_DIR}
   PUBLIC ${winwrap_SOURCE_DIR}
 )
 
