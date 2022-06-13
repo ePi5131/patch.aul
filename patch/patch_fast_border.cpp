@@ -175,9 +175,10 @@ namespace patch::fast {
                     a256 = _mm256_mullo_epi32(a_sum256, border_alpha256);
                     a256 = _mm256_srli_epi32(a256, border._alpha_shift);
                     a256 = _mm256_min_epu32(a256, a_mem_max256);
-
+                    alignas(32) std::uint32_t u32[8];
+                    _mm256_store_si256(reinterpret_cast<__m256i*>(u32), a256);
                     for (int i = 0; i < 8; i++) {
-                        mem[i * efpip->obj_line] = (unsigned short)a256.m256i_u32[i];
+                        mem[i * efpip->obj_line] = (unsigned short)u32[i];
                     }
 
                     pix1 += 2;
@@ -193,9 +194,10 @@ namespace patch::fast {
                     a256 = _mm256_mullo_epi32(a_sum256, border_alpha256);
                     a256 = _mm256_srli_epi32(a256, border._alpha_shift);
                     a256 = _mm256_min_epu32(a256, a_mem_max256);
-
+                    alignas(32) std::uint32_t u32[8];
+                    _mm256_store_si256(reinterpret_cast<__m256i*>(u32), a256);
                     for (int i = 0; i < 8; i++) {
-                        mem[i * efpip->obj_line] = (unsigned short)a256.m256i_u32[i];
+                        mem[i * efpip->obj_line] = (unsigned short)u32[i];
                     }
 
                     pix1 += 2;
@@ -209,9 +211,10 @@ namespace patch::fast {
                     a256 = _mm256_mullo_epi32(a_sum256, border_alpha256);
                     a256 = _mm256_srli_epi32(a256, border._alpha_shift);
                     a256 = _mm256_min_epu32(a256, a_mem_max256);
-
+                    alignas(32) std::uint32_t u32[8];
+                    _mm256_store_si256(reinterpret_cast<__m256i*>(u32), a256);
                     for (int i = 0; i < 8; i++) {
-                        mem[i * efpip->obj_line] = (unsigned short)a256.m256i_u32[i];
+                        mem[i * efpip->obj_line] = (unsigned short)u32[i];
                     }
 
                     pix2 += 2;
@@ -276,6 +279,7 @@ namespace patch::fast {
 
                 __m256i a_sum256 = _mm256_setzero_si256();
                 __m256i a256;
+                alignas(32) std::uint32_t u32[8];
                 int x;
                 for (x = 0; x < efpip->obj_w; x++) {
                     a256 = _mm256_srli_epi32(_mm256_i32gather_epi32(pix1, offset256, 4), 16);
@@ -283,9 +287,9 @@ namespace patch::fast {
                     a256 = _mm256_mullo_epi32(a_sum256, border_alpha256);
                     a256 = _mm256_srli_epi32(a256, border._alpha_shift);
                     a256 = _mm256_min_epu32(a256, a_mem_max256);
-
+                    _mm256_store_si256(reinterpret_cast<__m256i*>(u32), a256);
                     for (int i = 0; i < 8; i++) {
-                        mem[i * efpip->obj_line] = (unsigned short)a256.m256i_u32[i];
+                        mem[i * efpip->obj_line] = (unsigned short)u32[i];
                     }
 
                     pix1 += 2;
@@ -294,7 +298,7 @@ namespace patch::fast {
 
                 for (; x < border.add_size; x++) {
                     for (int i = 0; i < 8; i++) {
-                        mem[i * efpip->obj_line] = (unsigned short)a256.m256i_u32[i];
+                        mem[i * efpip->obj_line] = (unsigned short)u32[i];
                     }
                     mem++;
                 }
@@ -304,9 +308,9 @@ namespace patch::fast {
                     a256 = _mm256_mullo_epi32(a_sum256, border_alpha256);
                     a256 = _mm256_srli_epi32(a256, border._alpha_shift);
                     a256 = _mm256_min_epu32(a256, a_mem_max256);
-
+                    _mm256_store_si256(reinterpret_cast<__m256i*>(u32), a256);
                     for (int i = 0; i < 8; i++) {
-                        mem[i * efpip->obj_line] = (unsigned short)a256.m256i_u32[i];
+                        mem[i * efpip->obj_line] = (unsigned short)u32[i];
                     }
 
                     pix2 += 2;
@@ -592,9 +596,11 @@ namespace patch::fast {
                     __m256i pixa256 = _mm256_srli_epi32(_mm256_i32gather_epi32(pixa, offset256, 4), 16);
                     a256 = _mm256_mullo_epi32(a256, pixa256);
                     a256 = _mm256_srli_epi32(a256, 12);
+                    alignas(32) std::uint32_t u32[8];
+                    _mm256_store_si256(reinterpret_cast<__m256i*>(u32), a256);
                     short* pixas = (short*)pixa + 1;
                     for (int i = 0; i < 8; i++) {
-                        pixas[i * 4] = (unsigned short)a256.m256i_u32[i];
+                        pixas[i * 4] = (unsigned short)u32[i];
                     }
 
                     pixa += efpip->obj_line * 2;
@@ -610,9 +616,11 @@ namespace patch::fast {
                     __m256i pixa256 = _mm256_srli_epi32(_mm256_i32gather_epi32(pixa, offset256, 4), 16);
                     a256 = _mm256_mullo_epi32(a256, pixa256);
                     a256 = _mm256_srli_epi32(a256, 12);
+                    alignas(32) std::uint32_t u32[8];
+                    _mm256_store_si256(reinterpret_cast<__m256i*>(u32), a256);
                     short* pixas = (short*)pixa + 1;
                     for (int i = 0; i < 8; i++) {
-                        pixas[i * 4] = (unsigned short)a256.m256i_u32[i];
+                        pixas[i * 4] = (unsigned short)u32[i];
                     }
 
                     pixa += efpip->obj_line * 2;
@@ -628,9 +636,11 @@ namespace patch::fast {
                     __m256i pixa256 = _mm256_srli_epi32(_mm256_i32gather_epi32(pixa, offset256, 4), 16);
                     a256 = _mm256_mullo_epi32(a256, pixa256);
                     a256 = _mm256_srli_epi32(a256, 12);
+                    alignas(32) std::uint32_t u32[8];
+                    _mm256_store_si256(reinterpret_cast<__m256i*>(u32), a256);
                     short* pixas = (short*)pixa + 1;
                     for (int i = 0; i < 8; i++) {
-                        pixas[i * 4] = (unsigned short)a256.m256i_u32[i];
+                        pixas[i * 4] = (unsigned short)u32[i];
                     }
 
                     pixa += efpip->obj_line * 2;
@@ -719,9 +729,11 @@ namespace patch::fast {
                     __m256i pixa256 = _mm256_srli_epi32(_mm256_i32gather_epi32(pixa, offset256, 4), 16);
                     pixa256 = _mm256_mullo_epi32(a256, pixa256);
                     pixa256 = _mm256_srli_epi32(pixa256, 12);
+                    alignas(32) std::uint32_t u32[8];
+                    _mm256_store_si256(reinterpret_cast<__m256i*>(u32), a256);
                     short* pixas = (short*)pixa + 1;
                     for (int i = 0; i < 8; i++) {
-                        pixas[i * 4] = (unsigned short)pixa256.m256i_u32[i];
+                        pixas[i * 4] = (unsigned short)u32[i];
                     }
 
                     pixa += efpip->obj_line * 2;
@@ -732,9 +744,11 @@ namespace patch::fast {
                     __m256i pixa256 = _mm256_srli_epi32(_mm256_i32gather_epi32(pixa, offset256, 4), 16);
                     pixa256 = _mm256_mullo_epi32(a256, pixa256);
                     pixa256 = _mm256_srli_epi32(pixa256, 12);
+                    alignas(32) std::uint32_t u32[8];
+                    _mm256_store_si256(reinterpret_cast<__m256i*>(u32), a256);
                     short* pixas = (short*)pixa + 1;
                     for (int i = 0; i < 8; i++) {
-                        pixas[i * 4] = (unsigned short)pixa256.m256i_u32[i];
+                        pixas[i * 4] = (unsigned short)u32[i];
                     }
 
                     pixa += efpip->obj_line * 2;
@@ -748,9 +762,11 @@ namespace patch::fast {
                     __m256i pixa256 = _mm256_srli_epi32(_mm256_i32gather_epi32(pixa, offset256, 4), 16);
                     pixa256 = _mm256_mullo_epi32(a256, pixa256);
                     pixa256 = _mm256_srli_epi32(pixa256, 12);
+                    alignas(32) std::uint32_t u32[8];
+                    _mm256_store_si256(reinterpret_cast<__m256i*>(u32), a256);
                     short* pixas = (short*)pixa + 1;
                     for (int i = 0; i < 8; i++) {
-                        pixas[i * 4] = (unsigned short)pixa256.m256i_u32[i];
+                        pixas[i * 4] = (unsigned short)u32[i];
                     }
 
                     pixa += efpip->obj_line * 2;
