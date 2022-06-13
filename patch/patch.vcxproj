@@ -65,6 +65,7 @@
     <ClInclude Include="patch_lua_getvalueex.hpp" />
     <ClInclude Include="patch_lua_rand.hpp" />
     <ClInclude Include="patch_lua_randex.hpp" />
+    <ClInclude Include="patch_obj_lensblur.hpp" />
     <ClInclude Include="patch_redo.hpp" />
     <ClInclude Include="patch_scroll_objdlg.hpp" />
     <ClInclude Include="patch_setting_dialog_wndproc_override.hpp" />
@@ -110,6 +111,7 @@
     <ClCompile Include="patch_lua_rand.cpp" />
     <ClCompile Include="patch_lua_randex.cpp" />
     <ClCompile Include="patch_console.cpp" />
+    <ClCompile Include="patch_obj_lensblur.cpp" />
     <ClCompile Include="patch_redo.cpp" />
     <ClCompile Include="patch_setting_dialog_wndproc_override.cpp" />
     <ClCompile Include="patch_splash.cpp" />
