@@ -25,9 +25,9 @@
 /// </summary>
 template <class CharT, size_t N>
 class cryptostring {
-	template<class> struct KeyV {};
-	template<> struct KeyV<char> { inline static constexpr char value = 0b00101101; };
-	template<> struct KeyV<wchar_t> { inline static constexpr wchar_t value = 0b1001010110001100; };
+	static consteval auto key_v_helper(char) { return 0b00101101; }
+	static consteval auto key_v_helper(wchar_t) { return 0b1001010110001100; }
+	static inline constexpr auto key_v = key_v_helper(CharT());
 
 	template<std::integral T>
 	[[nodiscard]] constexpr static T bit_rotate_l(const T x, size_t a) {
@@ -45,12 +45,12 @@ class cryptostring {
 	bool decrypted = false;
 public:
 	constexpr cryptostring(const CharT(&str)[N]) {
-		for (size_t i = 0; i < N; i++) ary[i] = str[i] ^ bit_rotate_l(KeyV<CharT>::value, (i * 3) % (CHAR_BIT * sizeof(CharT)));
+		for (size_t i = 0; i < N; i++) ary[i] = str[i] ^ bit_rotate_l(key_v, (i * 3) % (CHAR_BIT * sizeof(CharT)));
 	}
 
 	[[nodiscard]] CharT* get() {
 		if (!decrypted) [[unlikely]] {
-			for (size_t i = 0; i < N; i++) ary[i] ^= bit_rotate_l(KeyV<CharT>::value, (i * 3) % (CHAR_BIT * sizeof(CharT)));
+			for (size_t i = 0; i < N; i++) ary[i] ^= bit_rotate_l(key_v, (i * 3) % (CHAR_BIT * sizeof(CharT)));
 			decrypted = true;
 		}
 		return ary.data();
@@ -58,7 +58,7 @@ public:
 
 	void re_encrypt() {
 		if (decrypted) [[likely]] {
-			for (size_t i = 0; i < N; i++) ary[i] ^= bit_rotate_l(KeyV<CharT>::value, (i * 3) % (CHAR_BIT * sizeof(CharT)));
+			for (size_t i = 0; i < N; i++) ary[i] ^= bit_rotate_l(key_v, (i * 3) % (CHAR_BIT * sizeof(CharT)));
 			decrypted = false;
 		}
 	}
