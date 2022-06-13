@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup Label="ProjectConfigurations">
     <ProjectConfiguration Include="Debug|Win32">
@@ -50,10 +50,13 @@
     <ClInclude Include="patch_exo_trackminusval.hpp" />
     <ClInclude Include="patch_exo_trackparam.hpp" />
     <ClInclude Include="patch_fast.hpp" />
+    <ClInclude Include="patch_fast_border.hpp" />
     <ClInclude Include="patch_fast_cl.hpp" />
+    <ClInclude Include="patch_fast_directionalblur.hpp" />
     <ClInclude Include="patch_fast_exeditwindow.hpp" />
     <ClInclude Include="patch_fast_flash.hpp" />
     <ClInclude Include="patch_fast_getputpixeldata.hpp" />
+    <ClInclude Include="patch_fast_lensblur.hpp" />
     <ClInclude Include="patch_fast_polortransform.hpp" />
     <ClInclude Include="patch_fast_radiationalblur.hpp" />
     <ClInclude Include="patch_fast_setting_dialog.hpp" />
@@ -68,6 +71,7 @@
     <ClInclude Include="patch_obj_lensblur.hpp" />
     <ClInclude Include="patch_redo.hpp" />
     <ClInclude Include="patch_scroll_objdlg.hpp" />
+    <ClInclude Include="patch_setting_dialog_excolorconfig.hpp" />
     <ClInclude Include="patch_setting_dialog_wndproc_override.hpp" />
     <ClInclude Include="patch_setting_gui.hpp" />
     <ClInclude Include="patch_splash.hpp" />
@@ -98,9 +102,12 @@
     <ClCompile Include="patch_exception_log.cpp" />
     <ClCompile Include="patch_exception_log_dialog.cpp" />
     <ClCompile Include="patch_exo_trackminusval.cpp" />
+    <ClCompile Include="patch_fast_border.cpp" />
+    <ClCompile Include="patch_fast_directionalblur.cpp" />
     <ClCompile Include="patch_fast_exeditwindow.cpp" />
     <ClCompile Include="patch_fast_flash.cpp" />
     <ClCompile Include="patch_fast_getputpixeldata.cpp" />
+    <ClCompile Include="patch_fast_lensblur.cpp" />
     <ClCompile Include="patch_fast_polortransform.cpp" />
     <ClCompile Include="patch_fast_radiationalblur.cpp" />
     <ClCompile Include="patch_fast_setting_dialog.cpp" />
@@ -113,6 +120,7 @@
     <ClCompile Include="patch_console.cpp" />
     <ClCompile Include="patch_obj_lensblur.cpp" />
     <ClCompile Include="patch_redo.cpp" />
+    <ClCompile Include="patch_setting_dialog_excolorconfig.cpp" />
     <ClCompile Include="patch_setting_dialog_wndproc_override.cpp" />
     <ClCompile Include="patch_splash.cpp" />
     <ClCompile Include="patch_susie_load.cpp" />

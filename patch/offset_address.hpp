@@ -53,13 +53,25 @@ namespace OFS {
 		constexpr i32 exedit_max_w = 0x196748;
 		constexpr i32 exedit_max_h = 0x1920e0;
 
+		constexpr i32 memory_ptr = 0x01a5328;
+
+		constexpr i32 efBorder_func_proc_var_ptr = 0x0a5d28;
+		constexpr i32 efBorder_func_proc_ptr = 0x0515d0;
+		constexpr i32 efBorder_var_ptr = 0x1b1e30;
 		constexpr i32 efPolorTransform_func_proc = 0x0748a0;
 		constexpr i32 efPolorTransform_func_proc_ptr = 0x0add30;
 		constexpr i32 efRadiationalBlur_func_proc = 0x00b310;
 		constexpr i32 efRadiationalBlur_func_proc_ptr = 0x09fdb0;
+		constexpr i32 efRadiationalBlur_var_ptr = 0x0d75a8;
 		constexpr i32 efFlash_func_proc = 0x04e560;
 		constexpr i32 efFlash_var_ptr = 0x1a6b7c;
 		constexpr i32 efFlash_func_proc_ptr = 0x0a5a28;
+		constexpr i32 efDirectionalBlur_func_proc_ptr = 0x0a00a0;
+		constexpr i32 efDirectionalBlur_var_ptr = 0x0d75cc;
+		constexpr i32 efDirectionalBlur_Filter_mt_func_call = 0x00cae6;
+		constexpr i32 efLensBlur_Media_mt_func_call = 0x012761;
+		constexpr i32 efLensBlur_Filter_mt_func_call = 0x012786;
+		constexpr i32 efLensBlur_var_ptr = 0x11ec5c;
 
 		constexpr i32 ScriptProcessingFilter = 0x1b2b10;
 

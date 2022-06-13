@@ -148,6 +148,10 @@ void init_t::InitAtExeditLoad() {
 #ifdef PATCH_SWITCH_OBJ_LENSBLUR
 	patch::LensBlur.init();
 #endif
+
+#ifdef PATCH_SWITCH_SETTINGDIALOG_EXCOLORCONFIG
+	patch::excolorconfig.init();
+#endif
 	
 	patch::setting_dialog();
 
@@ -169,7 +173,10 @@ void init_t::InitAtExeditLoad() {
 		#ifdef PATCH_SWITCH_FAST_TEXT
 			patch::fast::text.init();
 		#endif
-
+		#ifdef PATCH_SWITCH_FAST_BORDER
+			patch::fast::Border.init();
+		#endif
+		
 		#ifdef PATCH_SWITCH_CL
 			if (patch::fast::cl.init()) {
 				if (patch::fast::cl.is_enabled_i()) {
@@ -181,6 +188,12 @@ void init_t::InitAtExeditLoad() {
 					#endif
 					#ifdef PATCH_SWITCH_FAST_FLASH
 						patch::fast::Flash.init();
+					#endif
+					#ifdef PATCH_SWITCH_FAST_DIRECTIONALBLUR
+						patch::fast::DirectionalBlur.init();
+					#endif
+					#ifdef PATCH_SWITCH_FAST_LENSBLUR
+						patch::fast::LensBlur.init();
 					#endif
 				}
 			}

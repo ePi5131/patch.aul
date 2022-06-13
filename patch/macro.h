@@ -46,6 +46,7 @@
 #define PATCH_SWITCH_THEME_CC theme_cc
 #define PATCH_SWITCH_EXEDITWINDOW_SIZING exeditwindow_sizing
 #define PATCH_SWITCH_SETTINGDIALOG_MOVE settingdialog_move
+#define PATCH_SWITCH_SETTINGDIALOG_EXCOLORCONFIG settingdialog_excolorconfig
 
 #define PATCH_SWITCH_UNDO undo
 #ifdef PATCH_SWITCH_UNDO
@@ -93,7 +94,7 @@
 #endif //define PATCH_SWITCH_FAST
 
 #else // ifdef PATCH_INTERNAL
-#define PATCH_VERSION_STR "r32"
+#define PATCH_VERSION_STR "r34"
 
 #define PATCH_SWITCH_EXCEPTION_LOG
 #define PATCH_SWITCH_SYSINFO_MODIFY
@@ -110,6 +111,7 @@
 #define PATCH_SWITCH_THEME_CC theme_cc
 #define PATCH_SWITCH_EXEDITWINDOW_SIZING exeditwindow_sizing
 #define PATCH_SWITCH_SETTINGDIALOG_MOVE settingdialog_move
+#define PATCH_SWITCH_SETTINGDIALOG_EXCOLORCONFIG settingdialog_excolorconfig
 #define PATCH_SWITCH_CANCEL_BOOST_CONFLICT
 #define PATCH_SWITCH_WARNING_OLD_LSW
 #define PATCH_SWITCH_OBJ_LENSBLUR obj_lensblur
@@ -145,12 +147,15 @@
 	#define PATCH_SWITCH_FAST_SETTINGDIALOG fast_settingdialog
 	#define PATCH_SWITCH_FAST_EXEDITWINDOW fast_exeditwindow
 	#define PATCH_SWITCH_FAST_TEXT fast_text
+	#define PATCH_SWITCH_FAST_BORDER fast_border
 
 	#define PATCH_SWITCH_CL cl
 	#ifdef PATCH_SWITCH_CL
 		#define PATCH_SWITCH_FAST_POLORTRANSFORM fast_polortransform
 		#define PATCH_SWITCH_FAST_RADIATIONALBLUR fast_radiationalblur
 		#define PATCH_SWITCH_FAST_FLASH fast_flash
+		#define PATCH_SWITCH_FAST_DIRECTIONALBLUR fast_directionalblur
+		#define PATCH_SWITCH_FAST_LENSBLUR fast_lensblur
 
 	#endif // define PATCH_SWITCH_CL
 
