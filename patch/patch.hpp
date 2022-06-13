@@ -54,6 +54,7 @@
 #include "patch_lua_rand.hpp"
 #include "patch_lua_randex.hpp"
 #include "patch_fast_text.hpp"
+#include "patch_obj_lensblur.hpp"
 #include "patch_setting_dialog_excolorconfig.hpp"
 #include "patch_fast_border.hpp"
 #include "patch_fast_directionalblur.hpp"

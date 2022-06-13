@@ -110,7 +110,10 @@ public:
 		    #ifdef PATCH_SWITCH_SETTINGDIALOG_MOVE
                 patch::setting_dialog_move.switch_load(cr);
 		    #endif
-                    #ifdef PATCH_SWITCH_SETTINGDIALOG_EXCOLORCONFIG
+            #ifdef PATCH_SWITCH_OBJ_LENSBLUR
+                patch::LensBlur.switch_load(cr);
+            #endif
+            #ifdef PATCH_SWITCH_SETTINGDIALOG_EXCOLORCONFIG
                 patch::excolorconfig.switch_load(cr);
 		    #endif
 		
@@ -361,9 +364,13 @@ public:
 		    #ifdef PATCH_SWITCH_SETTINGDIALOG_MOVE
                 patch::setting_dialog_move.switch_store(switch_);
 		    #endif
+            #ifdef PATCH_SWITCH_OBJ_LENSBLUR
+                patch::LensBlur.switch_store(switch_);
+            #endif
 		    #ifdef PATCH_SWITCH_SETTINGDIALOG_EXCOLORCONFIG
                 patch::excolorconfig.switch_store(switch_);
 		    #endif
+
 		    #ifdef PATCH_SWITCH_UNDO
                 patch::undo.switch_store(switch_);
                 #ifdef PATCH_SWITCH_UNDO_REDO
