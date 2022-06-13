@@ -20,7 +20,7 @@
 #ifdef PATCH_SWITCH_EXCEPTION_LOG
 
 #include <optional>
-#include <format>
+#include "util_format.hpp"
 
 #include <Shlwapi.h>
 #pragma comment(lib, "shlwapi.lib")
@@ -125,7 +125,7 @@ namespace patch {
                     case PATCH_ID_EXCEPTION_LINK:{
                         STARTUPINFOW si={.cb=sizeof(STARTUPINFOW)};
                         PROCESS_INFORMATION pi;
-                        auto commandline = L"explorer.exe /select,{}{}"_fmt(this_->param->info_dir, this_->param->info_path);
+                        auto commandline = format(L"explorer.exe /select,{}{}", this_->param->info_dir, this_->param->info_path);
                         auto ret = CreateProcessW(NULL, commandline.data(), NULL, NULL, FALSE, 0, NULL, NULL, &si, &pi);
                         if(ret){
                             CloseHandle(pi.hProcess);

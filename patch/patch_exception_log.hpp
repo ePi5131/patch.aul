@@ -21,7 +21,7 @@
 #include <sstream>
 #include <fstream>
 #include <string>
-#include <format>
+#include "util_format.hpp"
 #include <variant>
 
 #include <Windows.h>
@@ -84,13 +84,13 @@ namespace patch {
 		// 例外コードごとに何か特別なフォーマットをしたいとき用の関数を置く連想配列
 		static inline const std::unordered_map<DWORD, std::string(*)(PEXCEPTION_RECORD)> exception_format{
 			{ EXCEPTION_ACCESS_VIOLATION, [](PEXCEPTION_RECORD erp){
-				return "read/write : {}\r\naccessed address : 0x{:08x}\r\n"_fmt(
+				return format("read/write : {}\r\naccessed address : 0x{:08x}\r\n", 
 					erp->ExceptionInformation[0],
 					erp->ExceptionInformation[1]
 				);
 			}},
 			{ EXCEPTION_IN_PAGE_ERROR, [](PEXCEPTION_RECORD erp) {
-				return "read/write : {}\r\naccessed address : 0x{:08x}\r\nNTSTATUS : {:08x}\r\n"_fmt(
+				return format("read/write : {}\r\naccessed address : 0x{:08x}\r\nNTSTATUS : {:08x}\r\n", 
 					erp->ExceptionInformation[0],
 					erp->ExceptionInformation[1],
 					erp->ExceptionInformation[2]
@@ -102,7 +102,7 @@ namespace patch {
 				uint32_t d3 = load_i32(d2 + 4);
 				auto class_name = reinterpret_cast<const char*>(d3 + 8);
 				auto exception = erp->ExceptionInformation[1];
-				return "Information[0] : {:08x}\r\nclass_name : {}\r\nexception ptr : {:08x}\r\n"_fmt(
+				return format("Information[0] : {:08x}\r\nclass_name : {}\r\nexception ptr : {:08x}\r\n", 
 					erp->ExceptionInformation[0],
 					class_name,
 					exception
@@ -201,12 +201,12 @@ namespace patch {
 			SYSTEMTIME st;
 			GetLocalTime(&st);
 			return std::make_tuple(
-				"{:04}-{:02}-{:02}_{:02}-{:02}-{:02}-{}_{}.txt"_fmt(
+				format("{:04}-{:02}-{:02}_{:02}-{:02}-{:02}-{}_{}.txt", 
 					st.wYear, st.wMonth,  st.wDay,
 					st.wHour, st.wMinute, st.wSecond, st.wMilliseconds,
 					tid
 				),
-				L"{:04}-{:02}-{:02}_{:02}-{:02}-{:02}-{}_{}.txt"_fmt(
+				format(L"{:04}-{:02}-{:02}_{:02}-{:02}-{:02}-{}_{}.txt", 
 					st.wYear, st.wMonth, st.wDay,
 					st.wHour, st.wMinute, st.wSecond, st.wMilliseconds,
 					tid

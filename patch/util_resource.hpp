@@ -16,7 +16,7 @@
 #pragma once
 #include <string>
 #include <optional>
-#include <format>
+#include "util_format.hpp"
 
 #include <Windows.h>
 
@@ -70,10 +70,10 @@ inline std::optional<std::string> resource_format_a(UINT rs_id, Args&& ...args) 
 	if (!format_str.has_value()) return std::nullopt;
 
 	try {
-		auto ret = std::vformat(format_str.value(), std::make_format_args(args...));
+		auto ret = vformat(format_str.value(), make_format_args(args...));
 		return ret;
 	}
-	catch (const std::format_error&) {
+	catch (const format_error&) {
 		return std::nullopt;
 	}
 }
@@ -84,10 +84,10 @@ inline std::optional<std::wstring> resource_format_w(UINT rs_id, Args&& ...args)
 	if (!format_str.has_value()) return std::nullopt;
 
 	try {
-		auto ret = std::vformat(format_str.value(), std::make_format_args(args...));
+		auto ret = vformat(format_str.value(), make_format_args(args...));
 		return ret;
 	}
-	catch (const std::format_error&) {
+	catch (const format_error&) {
 		return std::nullopt;
 	}
 }
@@ -98,7 +98,7 @@ inline std::optional<int> patch_resource_message_a(UINT rs_id, UINT uType) {
 		return MessageBoxA(NULL, str.value().c_str(), "patch.aul", uType);
 	}
 	else {
-		MessageBoxW(NULL, L"resource error ({})"_fmt(rs_id).c_str(), L"patch.aul", MB_TOPMOST | MB_TASKMODAL | MB_ICONERROR);
+		MessageBoxW(NULL, format(L"resource error ({})", rs_id).c_str(), L"patch.aul", MB_TOPMOST | MB_TASKMODAL | MB_ICONERROR);
 		return std::nullopt;
 	}
 }
@@ -109,7 +109,7 @@ inline std::optional<int> patch_resource_message_w(UINT rs_id, UINT uType) {
 		return MessageBoxW(NULL, str.value().c_str(), L"patch.aul", uType);
 	}
 	else {
-		MessageBoxW(NULL, L"resource error ({})"_fmt(rs_id).c_str(), L"patch.aul", MB_TOPMOST | MB_TASKMODAL | MB_ICONERROR);
+		MessageBoxW(NULL, format(L"resource error ({})", rs_id).c_str(), L"patch.aul", MB_TOPMOST | MB_TASKMODAL | MB_ICONERROR);
 		return std::nullopt;
 	}
 }
@@ -119,15 +119,15 @@ inline std::optional<int> patch_resource_message_a(UINT rs_id, UINT uType, Args&
 	auto str = resource_string_a(rs_id);
 	if (str.has_value()) {
 		try {
-			return MessageBoxA(NULL, std::vformat(str.value(), std::make_format_args(args...)).c_str(), "patch.aul", uType);
+			return MessageBoxA(NULL, vformat(str.value(), make_format_args(args...)).c_str(), "patch.aul", uType);
 		}
-		catch (const std::format_error&) {
-			MessageBoxW(NULL, L"format error ({})"_fmt(rs_id).c_str(), L"patch.aul", MB_TOPMOST | MB_TASKMODAL | MB_ICONERROR);
+		catch (const format_error&) {
+			MessageBoxW(NULL, format(L"format error ({})", rs_id).c_str(), L"patch.aul", MB_TOPMOST | MB_TASKMODAL | MB_ICONERROR);
 			return std::nullopt;
 		}
 	}
 	else {
-		MessageBoxW(NULL, L"resource error ({})"_fmt(rs_id).c_str(), L"patch.aul", MB_TOPMOST | MB_TASKMODAL | MB_ICONERROR);
+		MessageBoxW(NULL, format(L"resource error ({})", rs_id).c_str(), L"patch.aul", MB_TOPMOST | MB_TASKMODAL | MB_ICONERROR);
 		return std::nullopt;
 	}
 }
@@ -137,15 +137,15 @@ inline std::optional<int> patch_resource_message_w(UINT rs_id, UINT uType, Args&
 	auto str = resource_string_w(rs_id);
 	if (str.has_value()) {
 		try {
-			return MessageBoxW(NULL, std::vformat(str.value(), std::make_wformat_args(args...)).c_str(), L"patch.aul", uType);
+			return MessageBoxW(NULL, vformat(str.value(), make_wformat_args(args...)).c_str(), L"patch.aul", uType);
 		}
-		catch (const std::format_error&) {
-			MessageBoxW(NULL, L"format error ({})"_fmt(rs_id).c_str(), L"patch.aul", MB_TOPMOST | MB_TASKMODAL | MB_ICONERROR);
+		catch (const format_error&) {
+			MessageBoxW(NULL, format(L"format error ({})", rs_id).c_str(), L"patch.aul", MB_TOPMOST | MB_TASKMODAL | MB_ICONERROR);
 			return std::nullopt;
 		}
 	}
 	else {
-		MessageBoxW(NULL, L"resource error ({})"_fmt(rs_id).c_str(), L"patch.aul", MB_TOPMOST | MB_TASKMODAL | MB_ICONERROR);
+		MessageBoxW(NULL, format(L"resource error ({})", rs_id).c_str(), L"patch.aul", MB_TOPMOST | MB_TASKMODAL | MB_ICONERROR);
 		return std::nullopt;
 	}
 }
@@ -168,14 +168,14 @@ public:
 		auto str = resource_string_w(rs_id);
 		if (str.has_value()) {
 			try {
-				MessageBoxW(NULL, std::vformat(str.value(), std::apply(std::make_format_args, args)).c_str(), L"patch.aul", uType);
+				MessageBoxW(NULL, vformat(str.value(), std::apply(make_format_args, args)).c_str(), L"patch.aul", uType);
 			}
-			catch (const std::format_error&) {
-				MessageBoxW(NULL, L"format error ({})"_fmt(rs_id).c_str(), L"patch.aul", MB_TOPMOST | MB_TASKMODAL | MB_ICONERROR);
+			catch (const format_error&) {
+				MessageBoxW(NULL, format(L"format error ({})", rs_id).c_str(), L"patch.aul", MB_TOPMOST | MB_TASKMODAL | MB_ICONERROR);
 			}
 		}
 		else {
-			MessageBoxW(NULL, L"resource error ({})"_fmt(rs_id).c_str(), L"patch.aul", MB_TOPMOST | MB_TASKMODAL | MB_ICONERROR);
+			MessageBoxW(NULL, format(L"resource error ({})", rs_id).c_str(), L"patch.aul", MB_TOPMOST | MB_TASKMODAL | MB_ICONERROR);
 		}
 	}
 };
@@ -192,12 +192,12 @@ public:
 			try {
 				MessageBoxW(NULL, str.value().c_str(), L"patch.aul", uType);
 			}
-			catch (const std::format_error&) {
-				MessageBoxW(NULL, L"format error ({})"_fmt(rs_id).c_str(), L"patch.aul", MB_TOPMOST | MB_TASKMODAL | MB_ICONERROR);
+			catch (const format_error&) {
+				MessageBoxW(NULL, format(L"format error ({})", rs_id).c_str(), L"patch.aul", MB_TOPMOST | MB_TASKMODAL | MB_ICONERROR);
 			}
 		}
 		else {
-			MessageBoxW(NULL, L"resource error ({})"_fmt(rs_id).c_str(), L"patch.aul", MB_TOPMOST | MB_TASKMODAL | MB_ICONERROR);
+			MessageBoxW(NULL, format(L"resource error ({})", rs_id).c_str(), L"patch.aul", MB_TOPMOST | MB_TASKMODAL | MB_ICONERROR);
 		}
 	}
 };

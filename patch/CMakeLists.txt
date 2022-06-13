@@ -138,7 +138,16 @@ FetchContent_Declare(
     # GIT_TAG de29f34b822f330ed2d13e6a3b2fa35c96f456ee
     GIT_TAG 012e25a669bc348d6027a5eb9bc1090fceb6085d
 )
-FetchContent_MakeAvailable(AviutlExeditSdk winwrap)
+if(NOT MSVC)
+FetchContent_Declare(
+  fmtlib
+    GIT_REPOSITORY https://github.com/fmtlib/fmt.git
+    GIT_TAG b6f4ceaed0a0a24ccf575fab6c56dd50ccf6f1a9 # 8.1.1
+    )
+  FetchContent_MakeAvailable(aviutl_exedit_sdk winwrap fmtlib)
+else()
+  FetchContent_MakeAvailable(aviutl_exedit_sdk winwrap)
+endif()
 
 # find Boost
 # https://cmake.org/cmake/help/v3.7/module/FindBoost.html
@@ -174,12 +183,25 @@ endif()
 #
 add_library(patch SHARED ${patch_src})
 set_target_properties(patch PROPERTIES SUFFIX ".aul")
-target_include_directories(patch
-  PUBLIC ${Boost_INCLUDE_DIRS}
-  PUBLIC ${OpenCL_INCLUDE_DIRS}
-  PUBLIC ${aviutl_exedit_sdk_SOURCE_DIR}
-  PUBLIC ${winwrap_SOURCE_DIR}
-)
+if(MSVC)
+  target_include_directories(patch
+    PUBLIC ${Boost_INCLUDE_DIRS}
+    PUBLIC ${OpenCL_INCLUDE_DIRS}
+    PUBLIC ${aviutl_exedit_sdk_SOURCE_DIR}
+    PUBLIC ${winwrap_SOURCE_DIR}
+  )
+else()
+  message("fmtlib/fmt loaded." ${fmtlib_SOURCE_DIR})
+  message(${aviutl_exedit_sdk_SOURCE_DIR})
+  target_include_directories(patch
+    PUBLIC ${Boost_INCLUDE_DIRS}
+    PUBLIC ${OpenCL_INCLUDE_DIRS}
+    PUBLIC ${aviutl_exedit_sdk_SOURCE_DIR}
+    PUBLIC ${winwrap_SOURCE_DIR}
+    PUBLIC ${fmtlib_SOURCE_DIR}/include
+  )
+endif()
+
 
 #
 # Link

@@ -17,7 +17,7 @@
 #include <cstdint>
 #include <iterator>
 #include <type_traits>
-#include <format>
+#include "util_format.hpp"
 #include <concepts>
 
 #include <Windows.h>
@@ -57,26 +57,9 @@ void modify_menuitem_check(HMENU menu, UINT item, BOOL position, Func func) {
 	SetMenuItemInfoA(menu, item, position, &info);
 }
 
-template<class CharT>
-struct format_literal_detail : private std::basic_string_view<CharT> {
-	format_literal_detail(const CharT* str, std::size_t size) : std::basic_string_view<CharT>(str, size) {}
-
-	template<class... Args>
-	auto operator()(Args&& ...args) { return std::format(*this, args...); }
-};
-
-inline auto operator""_fmt(const char* str, std::size_t size) {
-	return format_literal_detail(str, size);
-}
-
-inline auto operator""_fmt(const wchar_t* str, std::size_t size) {
-	return format_literal_detail(str, size);
-}
-
-
 template<class OStream, class... Args>
 inline auto format_to_os(OStream& ss, const std::basic_string_view<typename OStream::char_type> fmt, Args&& ...args) {
-	return std::format_to(std::ostreambuf_iterator<OStream::char_type>(ss), fmt, std::forward<Args>(args)...);
+	return vformat_to(std::ostreambuf_iterator<typename OStream::char_type>(ss), fmt, std::forward<Args>(args)...);
 }
 
 inline auto get_local_time() {
@@ -95,7 +78,7 @@ inline auto get_local_time() {
 // hh:mm:ss 形式のローカル時刻をもらう
 inline auto get_local_time_string() {
 	auto st_l = get_local_time();
-	return "{:02}:{:02}:{:02}"_fmt(st_l.wHour, st_l.wMinute, st_l.wSecond);
+	return format("{:02}:{:02}:{:02}", st_l.wHour, st_l.wMinute, st_l.wSecond);
 }
 
 // 編集プロジェクトの保存 を行う

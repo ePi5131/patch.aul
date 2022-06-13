@@ -55,13 +55,13 @@ inline static std::pair<std::vector<ModulesDataEntry>, std::string_view> getModu
 		else {
 			auto err = GetLastError();
 			CloseHandle(snapshot);
-			return { ret,"LastError:{}"_fmt(err) };
+			return { ret,format("LastError:{}", err) };
 		}
 	}
 	else {
 		auto err = GetLastError();
 		CloseHandle(snapshot);
-		return { ret,"LastError:{}"_fmt(err) };
+		return { ret,format("LastError:{}", err) };
 	}
 	std::sort(ret.begin(), ret.end(), [](auto a, auto b) { return a.begin < b.begin; });
 	return { ret, "" };
