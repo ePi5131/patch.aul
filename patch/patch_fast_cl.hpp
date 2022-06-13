@@ -220,7 +220,7 @@ kernel void PolorTransform(global short* dst, global short* src, int src_w, int 
         }
     }
 }
-
+)" R"(
 kernel void RadiationalBlur(
     global short* dst, global short* src, int src_w, int src_h, int exedit_buffer_line,
 	int X,
@@ -322,8 +322,7 @@ kernel void RadiationalBlur(
         }
     }
 }
-
-
+)" R"(
 kernel void Flash(global short* dst, global short* src, int src_w, int src_h, int exedit_buffer_line,
     int g_cx,
     int g_cy,
@@ -428,6 +427,7 @@ kernel void Flash(global short* dst, global short* src, int src_w, int src_h, in
         }
     }
 }
+)" R"(
 kernel void FlashColor(global short* dst, global short* src, int src_w, int src_h, int exedit_buffer_line,
     int g_cx,
     int g_cy,
@@ -532,7 +532,7 @@ kernel void FlashColor(global short* dst, global short* src, int src_w, int src_
         }
     }
 }
-
+)" R"(
 kernel void DirectionalBlur_Media(global short* dst, global short* src, int obj_w, int obj_h, int obj_line,
     int x_begin, int x_end, int x_step, int y_begin, int y_end, int y_step, int range) {
     int x = get_global_id(0);
@@ -570,6 +570,7 @@ kernel void DirectionalBlur_Media(global short* dst, global short* src, int obj_
     }
     dst[3] = (short)(sum_a / pix_range);
 }
+)" R"(
 kernel void DirectionalBlur_original_size(global short* dst, global short* src, int obj_w, int obj_h, int obj_line,
     int x_step, int y_step, int range) {
     int x = get_global_id(0);
@@ -610,6 +611,7 @@ kernel void DirectionalBlur_original_size(global short* dst, global short* src, 
     }
     dst[3] = (short)(sum_a / cnt);
 }
+)" R"(
 kernel void DirectionalBlur_Filter(global short* dst, global short* src, int scene_w, int scene_h, int scene_line,
     int x_step, int y_step, int range) {
     int x = get_global_id(0);
