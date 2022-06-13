@@ -7,20 +7,10 @@ AviUtlや拡張編集のバグを直したり機能を追加するプラグイ�
 
 ## ビルドについて
 
-- 以下の環境変数を設定してください
+- [CUDA TOOLKIT](https://developer.nvidia.com/cuda-toolkit)を用意してください
+ これのOpenCLライブラリを使います 環境変数`CUDA_PATH`を使います
 
-
-| 名前                  | 詳細                                         |
-| --------------------- | -------------------------------------------- |
-| BOOST_1_78_0_DIR      | https://www.boost.org                        |
-| AVIUTL_EXEDIT_SDK_DIR | https://github.com/ePi5131/aviutl_exedit_sdk |
-| WINWRAP_DIR           | https://github.com/ePi5131/winwrap           |
-
-- `pack`フォルダを作成してください
- これはリリース用のファイルが集まる場所になります
-
--  `test`フォルダを作成してください
+-  `test`フォルダを用意してください
  これは`aviutl.exe`などを置くフォルダで、デバッグ実行するとこのディレクトリの`aviutl.exe`が実行されます
 
-
-後はソリューションファイルを開いて適当にやるだけ
+- ビルドすると、`pack`フォルダにリリース用のファイルが集まります

@@ -292,5 +292,6 @@
   <ItemGroup>
     <None Include=".editorconfig" />
     <None Include="clprogram.cl" />
+    <None Include="packages.config" />
   </ItemGroup>
 </Project>
