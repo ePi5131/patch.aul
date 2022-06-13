@@ -188,6 +188,9 @@ void init_t::InitAtExeditLoad() {
 					#ifdef PATCH_SWITCH_FAST_DIRECTIONALBLUR
 						patch::fast::DirectionalBlur.init();
 					#endif
+					#ifdef PATCH_SWITCH_FAST_LENSBLUR
+						patch::fast::LensBlur.init();
+					#endif
 				}
 			}
 			else {

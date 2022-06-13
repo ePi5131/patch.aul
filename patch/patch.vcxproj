@@ -56,6 +56,7 @@
     <ClInclude Include="patch_fast_exeditwindow.hpp" />
     <ClInclude Include="patch_fast_flash.hpp" />
     <ClInclude Include="patch_fast_getputpixeldata.hpp" />
+    <ClInclude Include="patch_fast_lensblur.hpp" />
     <ClInclude Include="patch_fast_polortransform.hpp" />
     <ClInclude Include="patch_fast_radiationalblur.hpp" />
     <ClInclude Include="patch_fast_setting_dialog.hpp" />
@@ -105,6 +106,7 @@
     <ClCompile Include="patch_fast_exeditwindow.cpp" />
     <ClCompile Include="patch_fast_flash.cpp" />
     <ClCompile Include="patch_fast_getputpixeldata.cpp" />
+    <ClCompile Include="patch_fast_lensblur.cpp" />
     <ClCompile Include="patch_fast_polortransform.cpp" />
     <ClCompile Include="patch_fast_radiationalblur.cpp" />
     <ClCompile Include="patch_fast_setting_dialog.cpp" />
