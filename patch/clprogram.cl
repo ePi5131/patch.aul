@@ -588,11 +588,11 @@ kernel void DirectionalBlur_Media(global short* dst, global short* src, int obj_
 		int xx = x_itr >> 16;
 		int yy = y_itr >> 16;
 		if (0 <= xx && xx < obj_w && 0 <= yy && yy < obj_h) {
-			short* pix = src + (xx + yy * obj_line) * 4;
-			int src_a = min((int)pix[3], 0x1000);
-			sum_y += pix[0] * src_a >> 12;
-			sum_cb += pix[1] * src_a >> 12;
-			sum_cr += pix[2] * src_a >> 12;
+			int offset = (xx + yy * obj_line) * 4;
+			int src_a = min((int)src[offset+3], 0x1000);
+			sum_y += src[offset] * src_a >> 12;
+			sum_cb += src[offset+1] * src_a >> 12;
+			sum_cr += src[offset+2] * src_a >> 12;
 			sum_a += src_a;
 		}
 		x_itr += x_step;
@@ -628,18 +628,17 @@ kernel void DirectionalBlur_original_size(global short* dst, global short* src, 
 		int xx = x_itr >> 16;
 		int yy = y_itr >> 16;
 		if (0 <= xx && xx < obj_w && 0 <= yy && yy < obj_h) {
-			short* pix = src + (xx + yy * obj_line) * 4;
-			int src_a = min((int)pix[3], 0x1000);
-			sum_y += pix[0] * src_a >> 12;
-			sum_cb += pix[1] * src_a >> 12;
-			sum_cr += pix[2] * src_a >> 12;
+			int offset = (xx + yy * obj_line) * 4;
+			int src_a = min((int)src[offset+3], 0x1000);
+			sum_y += src[offset] * src_a >> 12;
+			sum_cb += src[offset+1] * src_a >> 12;
+			sum_cr += src[offset+2] * src_a >> 12;
 			sum_a += src_a;
 			cnt++;
 		}
 		x_itr += x_step;
 		y_itr += y_step;
 	}
-
 	if(cnt == 0) cnt = 0xffffff;
 	if (sum_a) {
 		dst[0] = (short)(sum_y * 4096 / sum_a);
@@ -669,10 +668,10 @@ kernel void DirectionalBlur_Filter(global short* dst, global short* src, int sce
 		int xx = x_itr >> 16;
 		int yy = y_itr >> 16;
 		if (0 <= xx && xx < scene_w && 0 <= yy && yy < scene_h) {
-			short* pix = src + (xx + yy * scene_line) * 3;
-			sum_y += pix[0];
-			sum_cb += pix[1];
-			sum_cr += pix[2];
+			int offset = (xx + yy * scene_line) * 3;
+			sum_y += src[offset];
+			sum_cb += src[offset+1];
+			sum_cr += src[offset+2];
 			cnt++;
 		}
 		x_itr += x_step;
@@ -683,7 +682,7 @@ kernel void DirectionalBlur_Filter(global short* dst, global short* src, int sce
 	dst[1] = (short)(sum_cb / cnt);
 	dst[2] = (short)(sum_cr / cnt);
 }
-
+	
 kernel void LensBlur_Media(global char* dst, global char* src, int obj_w, int obj_h, int obj_line,
 	int range, int rangep05_sqr, int range_t3m1, int rangem1_sqr) {
 
