@@ -598,10 +598,11 @@ kernel void DirectionalBlur_Media(global short* dst, global short* src, int obj_
 		x_itr += x_step;
 		y_itr += y_step;
 	}
-	if (sum_a) {
-		dst[0] = (short)(sum_y * 4096 / sum_a);
-		dst[1] = (short)(sum_cb * 4096 / sum_a);
-		dst[2] = (short)(sum_cr * 4096 / sum_a);
+	if (0 < sum_a) {
+		float a_float = 4096.0f / (float)sum_a;
+		dst[0] = (short)round((float)sum_y * a_float);
+		dst[1] = (short)round((float)sum_cb * a_float);
+		dst[2] = (short)round((float)sum_cr * a_float);
 	} else {
 		dst[0] = dst[1] = dst[2] = 0;
 	}
@@ -618,7 +619,7 @@ kernel void DirectionalBlur_original_size(global short* dst, global short* src, 
 	int x_itr = (x << 16) + 0x8000 - range * x_step;
 	int y_itr = (y << 16) + 0x8000 - range * y_step;
 
-	uint sum_y = 0;
+	int sum_y = 0;
 	int sum_cb = 0;
 	int sum_cr = 0;
 	int sum_a = 0;
@@ -640,10 +641,11 @@ kernel void DirectionalBlur_original_size(global short* dst, global short* src, 
 		y_itr += y_step;
 	}
 	if(cnt == 0) cnt = 0xffffff;
-	if (sum_a) {
-		dst[0] = (short)(sum_y * 4096 / sum_a);
-		dst[1] = (short)(sum_cb * 4096 / sum_a);
-		dst[2] = (short)(sum_cr * 4096 / sum_a);
+	if (0 < sum_a) {
+		float a_float = 4096.0f / (float)sum_a;
+		dst[0] = (short)round((float)sum_y * a_float);
+		dst[1] = (short)round((float)sum_cb * a_float);
+		dst[2] = (short)round((float)sum_cr * a_float);
 	} else {
 		dst[0] = dst[1] = dst[2] = 0;
 	}
