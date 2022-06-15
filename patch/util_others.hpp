@@ -57,26 +57,36 @@ void modify_menuitem_check(HMENU menu, UINT item, BOOL position, Func func) {
 	SetMenuItemInfoA(menu, item, position, &info);
 }
 
-template<class CharT>
-struct format_literal_detail : private std::basic_string_view<CharT> {
-	format_literal_detail(const CharT* str, std::size_t size) : std::basic_string_view<CharT>(str, size) {}
+struct format_literal_detail_a : private std::string_view {
+	format_literal_detail_a(const char* str, std::size_t size) : std::string_view(str, size) {}
 
 	template<class... Args>
-	auto operator()(Args&& ...args) { return std::format(*this, args...); }
+	auto operator()(Args&& ...args) { return std::vformat(*this, std::make_format_args(args...)); }
+};
+
+struct format_literal_detail_w : private std::wstring_view {
+    format_literal_detail_w(const wchar_t* str, std::size_t size) : std::wstring_view(str, size) {}
+
+    template<class... Args>
+    auto operator()(Args&& ...args) { return std::vformat(*this, std::make_wformat_args(args...)); }
 };
 
 inline auto operator""_fmt(const char* str, std::size_t size) {
-	return format_literal_detail(str, size);
+	return format_literal_detail_a(str, size);
 }
 
 inline auto operator""_fmt(const wchar_t* str, std::size_t size) {
-	return format_literal_detail(str, size);
+	return format_literal_detail_w(str, size);
 }
 
+template<class OStream, class... Args> requires std::is_same_v<typename OStream::char_type, char>
+inline auto format_to_os(OStream& ss, const std::string_view fmt, Args&& ...args) {
+	return std::vformat_to(std::ostreambuf_iterator<typename OStream::char_type>(ss), fmt, std::make_format_args(args...));
+}
 
-template<class OStream, class... Args>
-inline auto format_to_os(OStream& ss, const std::basic_string_view<typename OStream::char_type> fmt, Args&& ...args) {
-	return std::format_to(std::ostreambuf_iterator<OStream::char_type>(ss), fmt, std::forward<Args>(args)...);
+template<class OStream, class... Args> requires std::is_same_v<typename OStream::char_type, wchar_t>
+inline auto format_to_os(OStream& ss, const std::wstring_view fmt, Args&& ...args) {
+    return std::vformat_to(std::ostreambuf_iterator<typename OStream::char_type>(ss), fmt, std::make_wformat_args(args...));
 }
 
 inline auto get_local_time() {
