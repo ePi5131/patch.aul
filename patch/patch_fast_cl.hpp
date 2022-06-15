@@ -623,7 +623,7 @@ kernel void DirectionalBlur_Media(global short* dst, global short* src, int obj_
 		int xx = x_itr >> 16;
 		int yy = y_itr >> 16;
 		if (0 <= xx && xx < obj_w && 0 <= yy && yy < obj_h) {
-			short* pix = src + (xx + yy * obj_line) * 4;
+			global short* pix = src + (xx + yy * obj_line) * 4;
 			int src_a = min((int)pix[3], 0x1000);
 			sum_y += pix[0] * src_a >> 12;
 			sum_cb += pix[1] * src_a >> 12;
@@ -664,7 +664,7 @@ kernel void DirectionalBlur_original_size(global short* dst, global short* src, 
 		int xx = x_itr >> 16;
 		int yy = y_itr >> 16;
 		if (0 <= xx && xx < obj_w && 0 <= yy && yy < obj_h) {
-			short* pix = src + (xx + yy * obj_line) * 4;
+			global short* pix = src + (xx + yy * obj_line) * 4;
 			int src_a = min((int)pix[3], 0x1000);
 			sum_y += pix[0] * src_a >> 12;
 			sum_cb += pix[1] * src_a >> 12;
@@ -705,7 +705,7 @@ kernel void DirectionalBlur_Filter(global short* dst, global short* src, int sce
 		int xx = x_itr >> 16;
 		int yy = y_itr >> 16;
 		if (0 <= xx && xx < scene_w && 0 <= yy && yy < scene_h) {
-			short* pix = src + (xx + yy * scene_line) * 3;
+			global short* pix = src + (xx + yy * scene_line) * 3;
 			sum_y += pix[0];
 			sum_cb += pix[1];
 			sum_cr += pix[2];
