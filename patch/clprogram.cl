@@ -697,6 +697,7 @@ kernel void LensBlur_Media(global char* dst, global char* src, int obj_w, int ob
 	int sum_cb = 0;
 	int sum_cr = 0;
 	int sum_a = 0;
+
 	int cor_sum = 0;
 
 	int offset = (x + left + (y + top) * obj_line) * 8;
@@ -713,10 +714,10 @@ kernel void LensBlur_Media(global char* dst, global char* src, int obj_w, int ob
 					cor_a = 4096;
 				}
 				cor_sum += cor_a;
-				sum_y += *(float*)&src[offset2] * (float)cor_a;
+				sum_y += *(global float*)&src[offset2] * (float)cor_a;
 				sum_cb += src[offset2 + 4] * cor_a;
 				sum_cr += src[offset2 + 5] * cor_a;
-				sum_a += *(short*)&src[offset2 + 6] * cor_a >> 12;
+				sum_a += *(global short*)&src[offset2 + 6] * cor_a >> 12;
 			}
 			sqr += 1 + xx * 2;
 			offset2 += 8;
@@ -726,16 +727,16 @@ kernel void LensBlur_Media(global char* dst, global char* src, int obj_w, int ob
 
 	dst += (x + y * obj_line) * 8;
 	if (0 < sum_a) {
-		*(float*)dst = sum_y / (float)sum_a;
+		*(global float*)dst = sum_y / (float)sum_a;
 		dst[4] = (char)(((sum_a >> 1) + sum_cb) / sum_a);
 		dst[5] = (char)(((sum_a >> 1) + sum_cr) / sum_a);
-		*(short*)&dst[6] = (short)round((float)sum_a * (4096.0f / (float)cor_sum));
+		*(global short*)&dst[6] = (short)round((float)sum_a * (4096.0f / (float)cor_sum));
 	} else {
-		*(int*)dst = 0;
-		*(int*)&dst[4] = 0;
+		*(global int*)dst = 0;
+		*(global int*)&dst[4] = 0;
 	}
 }
-
+)" R"(
 kernel void LensBlur_Filter(global char* dst, global char* src, int scene_w, int scene_h, int scene_line,
 	int range, int rangep05_sqr, int range_t3m1, int rangem1_sqr) {
 
@@ -768,8 +769,8 @@ kernel void LensBlur_Filter(global char* dst, global char* src, int scene_w, int
 				} else {
 					cor_a = 4096;
 				}
-				tofloat[0] = *(short*)&src[offset2];
-				tofloat[1] = *(short*)&src[offset2 + 2];
+				tofloat[0] = *(global short*)&src[offset2];
+				tofloat[1] = *(global short*)&src[offset2 + 2];
 				sum_y += *(float*)tofloat * (float)cor_a;
 				sum_cb += src[offset2 + 4] * cor_a;
 				sum_cr += src[offset2 + 5] * cor_a;
@@ -783,8 +784,8 @@ kernel void LensBlur_Filter(global char* dst, global char* src, int scene_w, int
 
 	dst += (x + y * scene_line) * 6;
 	*(float*)tofloat = sum_y / (float)sum_a;
-	*(short*)&dst[0] = tofloat[0];
-	*(short*)&dst[2] = tofloat[1];
+	*(global short*)&dst[0] = tofloat[0];
+	*(global short*)&dst[2] = tofloat[1];
 	dst[4] = (char)(((sum_a >> 1) + sum_cb) / sum_a);
 	dst[5] = (char)(((sum_a >> 1) + sum_cr) / sum_a);
 }
