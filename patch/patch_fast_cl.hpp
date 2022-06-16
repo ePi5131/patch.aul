@@ -753,10 +753,11 @@ kernel void LensBlur_Media(global char* dst, global char* src, int obj_w, int ob
 					cor_a = 4096;
 				}
 				cor_sum += cor_a;
+				cor_a = *(global short*)&src[offset2 + 6] * cor_a >> 12;
 				sum_y += *(global float*)&src[offset2] * (float)cor_a;
 				sum_cb += src[offset2 + 4] * cor_a;
 				sum_cr += src[offset2 + 5] * cor_a;
-				sum_a += *(global short*)&src[offset2 + 6] * cor_a >> 12;
+				sum_a += cor_a;
 			}
 			sqr += 1 + xx * 2;
 			offset2 += 8;
