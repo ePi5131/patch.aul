@@ -145,6 +145,10 @@ void init_t::InitAtExeditLoad() {
 	patch::helpful_msgbox.init();
 #endif
 
+#ifdef PATCH_SWITCH_OBJ_LENSBLUR
+	patch::LensBlur.init();
+#endif
+
 #ifdef PATCH_SWITCH_SETTINGDIALOG_EXCOLORCONFIG
 	patch::excolorconfig.init();
 #endif
@@ -184,6 +188,12 @@ void init_t::InitAtExeditLoad() {
 					#endif
 					#ifdef PATCH_SWITCH_FAST_FLASH
 						patch::fast::Flash.init();
+					#endif
+					#ifdef PATCH_SWITCH_FAST_DIRECTIONALBLUR
+						patch::fast::DirectionalBlur.init();
+					#endif
+					#ifdef PATCH_SWITCH_FAST_LENSBLUR
+						patch::fast::LensBlur.init();
 					#endif
 				}
 			}
