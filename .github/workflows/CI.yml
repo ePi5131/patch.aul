@@ -1,0 +1,36 @@
+name: CI
+
+on:
+  push:
+  pull_request:
+
+jobs:
+  build:
+    runs-on: windows-2022
+    strategy:
+      matrix:
+        configuration: [Debug, Release]
+
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v2
+      with:
+        submodules: recursive
+    - name: Use Developer Command Prompt
+      uses: ilammy/msvc-dev-cmd@v1
+    - name: Install CUDA Toolkit
+      uses: Jimver/cuda-toolkit@v0.2.7
+    - name: Setup NuGet
+      uses: nuget/setup-nuget@v1
+    - name: Setup MSBuild
+      uses: microsoft/setup-msbuild@v1.1
+      with:
+        msbuild-architecture: x64
+    - name: Restore NuGet package
+      run : nuget restore patch.sln
+    - name: Create Directories
+      run : |
+        mkdir pack
+        mkdir test
+    - name: Build patch.aul
+      run : msbuild /nologo /t:Build /p:Configuration=${{ matrix.configuration }} /p:Platform="x86" patch.sln 
