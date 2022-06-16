@@ -85,6 +85,8 @@ set(patch_src
     "patch_lua_rand.hpp"
     "patch_lua_randex.cpp"
     "patch_lua_randex.hpp"
+    "patch_obj_lensblur.cpp"
+    "patch_obj_lensblur.hpp"
     "patch_redo.cpp"
     "patch_redo.hpp"
     "patch_scroll_objdlg.hpp"
