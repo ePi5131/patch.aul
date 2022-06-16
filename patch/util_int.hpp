@@ -42,8 +42,9 @@ requires (std::integral<T1> && sizeof(T1) == sizeof(i32))
 inline void store_i(auto address, T2 value) {
 	std::memcpy(reinterpret_cast<void*>(address), &value, sizeof(T1));
 }
-template<storable T>
-inline void store_i(auto address, const i_seq<T>& value) {
+template<storable T, typename T2>
+requires (sizeof(T2) == 1)
+inline void store_i(auto address, const std::array<T2, sizeof(T)>& value) {
 	std::memcpy(reinterpret_cast<void*>(address), value.data(), sizeof(T));
 }
 template<typename T = i_seq<i8>>
