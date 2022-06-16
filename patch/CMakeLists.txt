@@ -127,28 +127,14 @@ find_package(Threads REQUIRED)
 # find OpenCL library
 find_package(OpenCL REQUIRED)
 # Get Dependencies
-include(FetchContent)
-FetchContent_Declare(
-    aviutl_exedit_sdk
-    GIT_REPOSITORY https://github.com/ePi5131/aviutl_exedit_sdk.git
-    GIT_TAG 219be3ede890ab5998618d7f11d9e1987d5f9637
-)
-FetchContent_Declare(
-    winwrap
-    # GIT_REPOSITORY https://github.com/ePi5131/winwrap.git
-    GIT_REPOSITORY https://github.com/yumetodo/winwrap.git
-    # GIT_TAG de29f34b822f330ed2d13e6a3b2fa35c96f456ee
-    GIT_TAG 012e25a669bc348d6027a5eb9bc1090fceb6085d
-)
 if(NOT MSVC)
-FetchContent_Declare(
-  fmtlib
+  include(FetchContent)
+  FetchContent_Declare(
+    fmtlib
     GIT_REPOSITORY https://github.com/fmtlib/fmt.git
     GIT_TAG b6f4ceaed0a0a24ccf575fab6c56dd50ccf6f1a9 # 8.1.1
-    )
-  FetchContent_MakeAvailable(aviutl_exedit_sdk winwrap fmtlib)
-else()
-  FetchContent_MakeAvailable(aviutl_exedit_sdk winwrap)
+  )
+  FetchContent_MakeAvailable(fmtlib)
 endif()
 
 # find Boost
@@ -189,17 +175,16 @@ if(MSVC)
   target_include_directories(patch
     PUBLIC ${Boost_INCLUDE_DIRS}
     PUBLIC ${OpenCL_INCLUDE_DIRS}
-    PUBLIC ${aviutl_exedit_sdk_SOURCE_DIR}
-    PUBLIC ${winwrap_SOURCE_DIR}
+    PUBLIC "aviutl_exedit_sdk"
+    PUBLIC "winwrap"
   )
 else()
   message("fmtlib/fmt loaded." ${fmtlib_SOURCE_DIR})
-  message(${aviutl_exedit_sdk_SOURCE_DIR})
   target_include_directories(patch
     PUBLIC ${Boost_INCLUDE_DIRS}
     PUBLIC ${OpenCL_INCLUDE_DIRS}
-    PUBLIC ${aviutl_exedit_sdk_SOURCE_DIR}
-    PUBLIC ${winwrap_SOURCE_DIR}
+    PUBLIC "aviutl_exedit_sdk"
+    PUBLIC "winwrap"
     PUBLIC ${fmtlib_SOURCE_DIR}/include
   )
 endif()
