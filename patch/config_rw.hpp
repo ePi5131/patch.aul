@@ -48,7 +48,7 @@ namespace config_type {
 		ColorBGR(int b, int g, int r) :b(b), g(g), r(r), valid(1) {}
 		ColorBGR(std::string_view x) {
 			if (x.size() < 6) {
-				valid = 0;
+				b = g = r = valid = 0;
 				return;
 			}
 			auto itr = x.data();
@@ -337,7 +337,7 @@ public:
 
 		WriteBlockBegin(ss);
 
-		for (int i = 0; i < s - 1; i++) {
+		for (size_t i = 0; i < s - 1; i++) {
 			WriteLevel(ss, level + 1);
 			WriteKey(ss, vkv[i].key);
 			ss << vkv[i].value;

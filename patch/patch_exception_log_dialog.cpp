@@ -37,7 +37,8 @@ namespace patch {
         std::thread th([this, &ret] {
             MessageBeep(MB_ICONEXCLAMATION);
             auto current_hmod = load_i32<HMODULE>(GLOBAL::aviutl_base + OFS::AviUtl::current_resource_hmod);
-            if (FindResourceW(current_hmod, L"PATCH_DIALOG_EXCEPTION", MAKEINTRESOURCEW(RT_DIALOG))) 
+            const auto RT_DIALOG_W = (LPWSTR)(RT_DIALOG);
+            if (FindResourceW(current_hmod, L"PATCH_DIALOG_EXCEPTION", RT_DIALOG_W)) 
                 ret = IsolationAwareDialogBoxParamW(current_hmod, L"PATCH_DIALOG_EXCEPTION", NULL, dialog_proc, (LPARAM)this);
             else
                 ret = IsolationAwareDialogBoxParamW(GLOBAL::patchaul_hinst, L"PATCH_DIALOG_EXCEPTION", NULL, dialog_proc, (LPARAM)this);
