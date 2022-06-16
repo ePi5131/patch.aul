@@ -22,10 +22,6 @@ jobs:
       uses: Jimver/cuda-toolkit@v0.2.7
     - name: Setup NuGet
       uses: nuget/setup-nuget@v1
-    - name: Setup MSBuild
-      uses: microsoft/setup-msbuild@v1.1
-      with:
-        msbuild-architecture: x64
     - name: Restore NuGet package
       run : nuget restore patch.sln
     - name: Create Directories
@@ -33,4 +29,4 @@ jobs:
         mkdir pack
         mkdir test
     - name: Build patch.aul
-      run : msbuild /nologo /t:Build /p:Configuration=${{ matrix.configuration }} /p:Platform="x86" patch.sln 
+      run : devenv patch.sln /Build "${{ matrix.configuration }}|x86"
