@@ -913,7 +913,7 @@ public:
 					}
 				return true;
 			};
-#ifdef __MSC_VER
+#ifdef _MSC_VER
 			__try {
 				return loader();
 			}
