@@ -312,15 +312,15 @@ namespace patch {
 					auto store = [](uint32_t adr, config_type::ColorBGR3& col) {
 						OverWriteOnProtectHelper h(adr, 36);
 						if (col.has_value()) {
-							h.store_i32(0 , col.ary[0].r);
-							h.store_i32(4 , col.ary[0].g);
-							h.store_i32(8 , col.ary[0].b);
-							h.store_i32(12, col.ary[1].r);
-							h.store_i32(16, col.ary[1].g);
-							h.store_i32(20, col.ary[1].b);
-							h.store_i32(24, col.ary[2].r);
-							h.store_i32(28, col.ary[2].g);
-							h.store_i32(32, col.ary[2].b);
+							h.store_i32(0 , col.ary[0].val.r);
+							h.store_i32(4 , col.ary[0].val.g);
+							h.store_i32(8 , col.ary[0].val.b);
+							h.store_i32(12, col.ary[1].val.r);
+							h.store_i32(16, col.ary[1].val.g);
+							h.store_i32(20, col.ary[1].val.b);
+							h.store_i32(24, col.ary[2].val.r);
+							h.store_i32(28, col.ary[2].val.g);
+							h.store_i32(32, col.ary[2].val.b);
 						}
 						else {
 							col = {
@@ -356,9 +356,9 @@ namespace patch {
 					//OverWriteOnProtectHelper hr(GLOBAL::exedit_base + OFS::ExEdit::ObjectClippingColorR, 1);
 
 					if (auto& o = object.clipping_col; o.is_valid()) {
-						hb.store_i8(0, o.b);
-						hb.store_i8(2, o.g);
-						hb.store_i8(4, o.r);
+						hb.store_i8(0, o.val.b);
+						hb.store_i8(2, o.val.g);
+						hb.store_i8(4, o.val.r);
 					}
 					else {
 						o = {
