@@ -22,7 +22,8 @@
 namespace patch::fast {
 
 	HFONT __cdecl text_t::MyCreateFont(const char* fontname, int height, int weight, BOOL italic, BOOL high_precision, BOOL vertical) {
-		HFONT& currentFont = load_i32<HFONT&>(GLOBAL::exedit_base + 0x236388);
+		const auto address = GLOBAL::exedit_base + 0x236388;
+		HFONT currentFont = load_i32<HFONT>(address);
 
 		height = -height;
 		if (high_precision) {
@@ -37,7 +38,10 @@ namespace patch::fast {
 		}
 
 		auto font = ::CreateFontA(height, 0, 0, 0, weight, italic, 0, 0, 1, 8, 0, 4, 0, fontname);
-		if (font == NULL)return currentFont = NULL;
+		if (font == NULL) {
+			store_i<i32, HFONT>(address, NULL);
+			return currentFont;
+		}
 		LOGFONTW lfw;
 		::GetObjectW(font, sizeof(LOGFONTW), &lfw);
 
@@ -47,7 +51,8 @@ namespace patch::fast {
 		if (!b) {
 			::DeleteObject(font);
 		}
-		return currentFont = val->second.font;
+		store_i<i32>(address, val->second.font);
+		return currentFont;
 	}
 
 	HFONT WINAPI text_t::CreateFontIndirectW(const LOGFONTW* lplf) {

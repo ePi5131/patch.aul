@@ -118,7 +118,7 @@ namespace patch {
             lua_close(state);
             state = nullptr;
         }
-        auto& hmod_lua = load_i32<HMODULE&>(GLOBAL::exedit_base + OFS::ExEdit::hmodule_lua);
+        auto hmod_lua = load_i32<HMODULE>(GLOBAL::exedit_base + OFS::ExEdit::hmodule_lua);
         if(hmod_lua != NULL) {
             FreeLibrary(hmod_lua);
             hmod_lua = NULL;
