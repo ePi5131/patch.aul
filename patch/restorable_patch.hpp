@@ -87,6 +87,7 @@ template<std::integral IntType>
 class restorable_patch_i : public restorable_patch_base<sizeof(IntType), restorable_patch_i<IntType>> {
 	using base = restorable_patch_base<sizeof(IntType), restorable_patch_i<IntType>>;
 public:
+	using base::base;
 	template<class T>
 	restorable_patch_i(std::uintptr_t address, T value)
 		: base(address)
