@@ -59,12 +59,12 @@ void modify_menuitem_check(HMENU menu, UINT item, BOOL position, Func func) {
 
 template<class OStream, class... Args> requires std::is_same_v<typename OStream::char_type, char>
 inline auto format_to_os(OStream& ss, const std::string_view fmt, Args&& ...args) {
-	return std::vformat_to(std::ostreambuf_iterator<typename OStream::char_type>(ss), fmt, std::make_format_args(args...));
+	return vformat_to(std::ostreambuf_iterator<typename OStream::char_type>(ss), fmt, make_format_args(args...));
 }
 
 template<class OStream, class... Args> requires std::is_same_v<typename OStream::char_type, wchar_t>
 inline auto format_to_os(OStream& ss, const std::wstring_view fmt, Args&& ...args) {
-    return std::vformat_to(std::ostreambuf_iterator<typename OStream::char_type>(ss), fmt, std::make_wformat_args(args...));
+    return vformat_to(std::ostreambuf_iterator<typename OStream::char_type>(ss), fmt, make_wformat_args(args...));
 }
 
 inline auto get_local_time() {
