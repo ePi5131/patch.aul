@@ -134,7 +134,7 @@ namespace patch {
 
         // id1とid2の統合(重複部分はid1が優先)
         static void integrate_undodata(int id1, int id2) {
-            int& UndoInfo_write_offset = *UndoInfo_write_offset_ptr;
+            // int& UndoInfo_write_offset = *UndoInfo_write_offset_ptr;
 
             UndoData* undodata1 = UndoDataPtrArray[id1];
             UndoData* undodata2 = UndoDataPtrArray[id2];
@@ -189,8 +189,8 @@ namespace patch {
                 auto& ObjectArrayPointer = *ObjectArrayPointer_ptr;
                 auto& layer_setting_ofsptr = *layer_setting_ofsptr_ptr;
                 auto& exdata_buffer = *exdata_buffer_ptr;
-                auto& UndoInfo_object_num = *UndoInfo_object_num_ptr;
-                auto& UndoInfo_write_offset = *UndoInfo_write_offset_ptr;
+                // auto& UndoInfo_object_num = *UndoInfo_object_num_ptr;
+                // auto& UndoInfo_write_offset = *UndoInfo_write_offset_ptr;
 
                 UndoData* undodata = UndoDataPtrArray[id];
 
@@ -286,7 +286,7 @@ namespace patch {
         static void optimize_undo_data() {
             int& UndoInfo_current_id = *UndoInfo_current_id_ptr;
             int& UndoInfo_object_num = *UndoInfo_object_num_ptr;
-            int& UndoInfo_write_offset = *UndoInfo_write_offset_ptr;
+            // int& UndoInfo_write_offset = *UndoInfo_write_offset_ptr;
 
             if (new_object) {
                 new_object = FALSE;

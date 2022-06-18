@@ -31,7 +31,7 @@ namespace patch {
 		bool enabled = true;
         inline static const char key[] = "settingdialog_move";
 public:
-		void operator()(HWND hwnd) {
+		void operator()(HWND) {
 			if (!enabled)return;
 			std::this_thread::sleep_for(std::chrono::milliseconds{ 10 });
 		}

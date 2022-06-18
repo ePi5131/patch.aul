@@ -41,8 +41,8 @@ namespace patch {
 			auto rect = (RECT*)lparam;
 			if (rect->right < rect->left + 128) rect->right = rect->left + 128;
 
-			auto top = rect->top;
-			auto layer_count = (rect->bottom - rect->top - DAT_101a530c + LayerHeightState / 2) / LayerHeightState;
+			const auto top = rect->top;
+			auto layer_count = (rect->bottom - top - DAT_101a530c + LayerHeightState / 2) / LayerHeightState;
 
 			bool is_top;
 			switch (wparam) {
@@ -62,7 +62,7 @@ namespace patch {
 				rect->top = rect->bottom - (DAT_101a530c + LayerHeightState * layer_count);
 			}
 			else {
-				rect->bottom = rect->top + DAT_101a530c + LayerHeightState * layer_count;
+				rect->bottom = top + DAT_101a530c + LayerHeightState * layer_count;
 			}
 			return 0;
 		}
