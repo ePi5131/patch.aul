@@ -29,7 +29,9 @@
 #include <TlHelp32.h>
 
 #include <Shlwapi.h>
+#ifdef _MSC_VER
 #pragma comment(lib, "shlwapi.lib")
+#endif
 
 #include <boost/scope_exit.hpp>
 
@@ -134,7 +136,8 @@ namespace patch {
 			def(10, DF);
 			def(11, OF);
 			#undef def
-			if(c++) ss << "|"; ss << "IOPL" << ((eflags >> 12) & 0b11);
+			if(c++) ss << "|";
+			ss << "IOPL" << ((eflags >> 12) & 0b11);
 			#define def(shift, name) if (eflags & (1 << shift)) {  ss << "|" << #name; }
 			def(14, NT);
 			def(16, RF);
@@ -289,7 +292,7 @@ namespace patch {
 				return false;
 			}
 
-			const auto code = pExp->ExceptionRecord->ExceptionCode;
+			// const auto code = pExp->ExceptionRecord->ExceptionCode;
 
 			std::ostringstream ss;
 			ss << "patch.aul (" PATCH_VERSION_STR ") debug info file\r\n\r\n";

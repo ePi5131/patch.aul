@@ -38,7 +38,7 @@ struct ModulesDataEntry {
 
 inline static std::pair<std::vector<ModulesDataEntry>, std::string_view> getModulesData() {
 	std::vector<ModulesDataEntry> ret;
-	auto snapshot = CreateToolhelp32Snapshot(TH32CS_SNAPMODULE, NULL);
+	auto snapshot = CreateToolhelp32Snapshot(TH32CS_SNAPMODULE, 0);
 	if (snapshot != INVALID_HANDLE_VALUE) {
 		MODULEENTRY32 entry{ .dwSize = sizeof(MODULEENTRY32) };
 		if (Module32First(snapshot, &entry)) {
@@ -79,7 +79,7 @@ public:
 	inline static std::mutex mtx;
 
 	static void update() {
-		auto snapshot = CreateToolhelp32Snapshot(TH32CS_SNAPMODULE, NULL);
+		auto snapshot = CreateToolhelp32Snapshot(TH32CS_SNAPMODULE, 0);
 		if (snapshot != INVALID_HANDLE_VALUE) {
 			MODULEENTRY32 entry{ .dwSize = sizeof(MODULEENTRY32) };
 			if (Module32First(snapshot, &entry)) {
@@ -97,12 +97,12 @@ public:
 				CloseHandle(snapshot);
 			}
 			else {
-				auto err = GetLastError();
+				// auto err = GetLastError();
 				CloseHandle(snapshot);
 			}
 		}
 		else {
-			auto err = GetLastError();
+			// auto err = GetLastError();
 			CloseHandle(snapshot);
 		}
 	}

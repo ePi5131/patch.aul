@@ -214,7 +214,7 @@ namespace patch {
 
 		// コンソールウィンドウを前面に移動させる
 		void front() const {
-			SetWindowPos(console_hwnd, HWND_NOTOPMOST, NULL, NULL, NULL, NULL, SWP_NOSIZE | SWP_NOMOVE);
+			SetWindowPos(console_hwnd, HWND_NOTOPMOST, 0, 0, 0, 0, SWP_NOSIZE | SWP_NOMOVE);
 		}
 
 		void update_visible_state(HMENU aviutl_hmwnu_disp) {
