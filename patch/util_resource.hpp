@@ -137,7 +137,12 @@ inline std::optional<int> patch_resource_message_w(UINT rs_id, UINT uType, Args&
 	auto str = resource_string_w(rs_id);
 	if (str.has_value()) {
 		try {
-			return MessageBoxW(NULL, vformat(str.value(), make_wformat_args(args...)).c_str(), L"patch.aul", uType);
+#ifndef __cpp_lib_format
+			fmt::wstring_view sv(str.value());
+#else
+			std::wstring_view sv(str.value());
+#endif
+			return MessageBoxW(NULL, vformat(sv, make_wformat_args(args...)).c_str(), L"patch.aul", uType);
 		}
 		catch (const format_error&) {
 			MessageBoxW(NULL, format(L"format error ({})", rs_id).c_str(), L"patch.aul", MB_TOPMOST | MB_TASKMODAL | MB_ICONERROR);
