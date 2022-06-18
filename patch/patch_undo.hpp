@@ -195,18 +195,18 @@ namespace patch {
             // グループ制御とかの対象レイヤー数を変更してもUndoデータが生成されない
             {
                 OverWriteOnProtectHelper h(GLOBAL::exedit_base + 0x059e1b, 20);
-                char patch[] = {
-                    0x51, // push ecx=message
-                    0x50, // push eax=efp
-                    0x8b, 0x4c, 0x24, 0x28, // mov ecx, dword ptr[esp + 0x28]=lparam
-                    0x51, // push ecx
-                    0x8b, 0x4c, 0x24, 0x28, // mov ecx, dword ptr[esp + 0x28]=wparam
-                    0x51, // push ecx
-                    0xe8, 0, 0, 0, 0, // call rel32
-                    0x85, 0xc0, // test eax, eax
-                    0x74, /* 0x6e */ // JZ +0x6e
+                const char patch[] = {
+                    "\x51" // push ecx=message
+                    "\x50" // push eax=efp
+                    "\x8b\x4c\x24\x28" // mov ecx, dword ptr[esp + 0x28]=lparam
+                    "\x51" // push ecx
+                    "\x8b\x4c\x24\x28" // mov ecx, dword ptr[esp + 0x28]=wparam
+                    "\x51" // push ecx
+                    "\xe8XXXX" // call rel32
+                    "\x85\xc0" // test eax, eax
+                    "\x74" /* 0x6e */ // JZ +0x6e
                 };
-                memcpy(reinterpret_cast<void*>(h.address()), patch, sizeof(patch));
+                memcpy(reinterpret_cast<void*>(h.address()), patch, sizeof(patch) - 1);
                 h.replaceNearJmp(13, &f59e27);
             }
 

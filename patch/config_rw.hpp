@@ -50,7 +50,7 @@ namespace config_type {
 		ColorBGR(uint8_t b, uint8_t g, uint8_t r) : val{ b, g, r, 1} {}
 		ColorBGR(std::string_view x) {
 			if (x.size() < 6) {
-				val.valid = 0;
+				val = {};
 				return;
 			}
 			auto itr = x.data();
