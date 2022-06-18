@@ -66,8 +66,7 @@ public:
 class restorable_patch_function : public restorable_patch_base<5, restorable_patch_function> {
 	using base = restorable_patch_base<5, restorable_patch_function>;
 public:
-	template<typename F>
-	requires(std::is_pointer_v<F> && std::is_function_v<std::remove_pointer_t<F>>)
+	template<function_ptr F>
 	restorable_patch_function(std::uintptr_t address, F newfunc)
 		: base(address)
 	{

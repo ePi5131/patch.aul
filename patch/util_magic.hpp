@@ -24,6 +24,9 @@
 
 #include "util_int.hpp"
 #include "util_pe.hpp"
+template<typename F>
+concept function_ptr = std::is_pointer_v<F> && std::is_function_v<std::remove_pointer_t<F>>;
+
 
 inline i32 CalcNearJmp(i32 address, i32 jmp_address) {
 	return jmp_address - (address + 4);
@@ -75,7 +78,8 @@ public:
 		return ::load_i64<T0>(m_address + address);
 	}
 
-	void replaceNearJmp(i32 offset, void* jmp_address) {
+	template<function_ptr F>
+	void replaceNearJmp(i32 offset, F jmp_address) {
 		store_i32(offset, CalcNearJmp(m_address + offset, reinterpret_cast<i32>(jmp_address)));
 	}
 
@@ -92,7 +96,9 @@ public:
 /// </summary>
 /// <param name="address">書き換える対象のアドレス</param>
 /// <param name="jmp_address">代わりに飛ばして欲しいアドレス</param>
-inline void ReplaceNearJmp(i32 address, void* jmp_address) {
+template<typename Address>
+requires (std::is_pointer_v<Address>)
+inline void ReplaceNearJmp(i32 address, Address jmp_address) {
 	OverWriteOnProtectHelper(address, 4).replaceNearJmp(0, jmp_address);
 }
 
@@ -102,8 +108,9 @@ inline class ReplaceFunction_t {
 
 public:
 	// 乗っ取りたい関数があるアドレス,ジャンプさせる関数のポインタ,元の関数の内容が返る場所
-	template<class T, size_t N = asm_size, std::enable_if_t<N >= asm_size, std::nullptr_t> = nullptr>
-	void operator()(T address, const void* function, std::byte(&original)[N]) noexcept {
+	template<class T, function_ptr F, size_t N = asm_size>
+	requires (N >= asm_size)
+	void operator()(T address, F function, std::byte(&original)[N]) noexcept {
 		auto adr = std::bit_cast<i32>(address);
 		OverWriteOnProtectHelper h(adr, asm_size);
 		std::copy(adr, adr + N, original);
@@ -111,8 +118,8 @@ public:
 		store_i32(adr + 1, CalcNearJmp(address + 1, (i32)function));
 	}
 
-	template<class T>
-	void operator()(T address, const void* function) noexcept {
+	template<class T, function_ptr F>
+	void operator()(T address, F function) noexcept {
 		auto adr = std::bit_cast<i32>(address);
 		OverWriteOnProtectHelper h(adr, asm_size);
 		store_i8(adr, '\xe9'); // jmp rel32
@@ -121,8 +128,6 @@ public:
 } ReplaceFunction;
 
 
-template<typename F>
-concept function_ptr = std::is_pointer_v<F> && std::is_function_v<std::remove_pointer_t<F>>;
 // 乗っ取りたいモジュール, 乗っ取る関数があるDLLのファイル名, 乗っ取る関数の名前, 新しい関数へのポインタ
 template<function_ptr F>
 inline BOOL ExchangeFunction(HMODULE hModule, std::string_view modname, std::string_view funcname, F function) noexcept {
