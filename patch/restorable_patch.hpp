@@ -64,7 +64,9 @@ public:
 class restorable_patch_function : public restorable_patch_base<5, restorable_patch_function> {
 	using base = restorable_patch_base<5, restorable_patch_function>;
 public:
-	restorable_patch_function(std::uintptr_t address, function_t newfunc)
+	template<typename F>
+	requires(std::is_pointer_v<F> && std::is_function_v<std::remove_pointer_t<F>>)
+	restorable_patch_function(std::uintptr_t address, F newfunc)
 		: base(address)
 	{
 		this->data[0] = std::byte{ 0xe9 };
