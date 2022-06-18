@@ -40,7 +40,7 @@ namespace patch {
 
 		inline static const char key[] = "theme_cc";
 
-		struct {
+		struct layer_t {
 			inline static const char name[] = "layer";
 
 			std::optional<int> height_large;
@@ -97,7 +97,7 @@ namespace patch {
 
 		} layer;
 
-		struct {
+		struct object_t{
 			inline static const char name[] = "object";
 
 			ColorBGR3 media_col;
@@ -170,7 +170,7 @@ namespace patch {
 
 		} object;
 
-		struct {
+		struct timeline_t{
 			inline static const char name[] = "timeline";
 
 			ColorBGR2 scale_col;
