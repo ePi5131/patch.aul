@@ -1,4 +1,4 @@
-patch.aul r40
+patch.aul r41
 Copyright (c) 2021-2022 ePi
 https://scrapbox.io/ePi5131/patch.aul
 
@@ -196,7 +196,7 @@ https://scrapbox.io/ePi5131/patch.aul
 Lua追加要素詳細
     _PATCH
         patch.aulのバージョン情報
-        現在は "patch.aul r40" という文字列が格納されている
+        現在は "patch.aul r41" という文字列が格納されている
 
     obj.randex(seed,frame)
         seed : integer
@@ -378,3 +378,6 @@ Lua追加要素詳細
     r40
         レンズブラーの高速化のバグを修正
         タイムラインのアイテムが長すぎるときに描画色がおかしくなるのを修正
+
+    r41
+        タイムラインのアイテムが長すぎるときに描画色がおかしくなるのを再修正
