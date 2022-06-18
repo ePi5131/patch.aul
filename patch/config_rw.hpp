@@ -420,7 +420,7 @@ public:
 			std::string num{n->number, n->number};
 			const char* endptr = num.c_str();
 			errno = 0;
-			const auto ret = std::strtod(num.c_str(), &const_cast<char*>(endptr));
+			const auto ret = std::strtod(num.c_str(), const_cast<char**>(&endptr));
 			if (errno != 0 || (ret == 0 && num.c_str() == endptr)) return false;
 #endif
 			value = ret;
