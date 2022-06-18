@@ -865,7 +865,7 @@ public:
 		Failed
 	} state;
 
-	cl_t() :state(State::NotYet), CLLib(NULL) {}
+	cl_t() : CLLib(NULL), state(State::NotYet) {}
 	~cl_t() {
 		FreeLibrary(CLLib);
 		if (program_opt) {
@@ -874,13 +874,36 @@ public:
 		}
 	}
 
+	inline static bool delay_load_exception_has_occured = false;
+	static inline LONG filter(int code) {
+		if (
+			code == VcppException(ERROR_SEVERITY_ERROR, ERROR_MOD_NOT_FOUND) ||
+			code == VcppException(ERROR_SEVERITY_ERROR, ERROR_PROC_NOT_FOUND)
+		) {
+			return EXCEPTION_EXECUTE_HANDLER;
+		}
+		return EXCEPTION_CONTINUE_SEARCH;
+	}
+#ifndef _MSC_VER
+	static inline __stdcall LONG handler(_EXCEPTION_POINTERS* ExceptionInfo){
+		const LONG ret = filter(ExceptionInfo->ExceptionRecord->ExceptionCode);
+		//The handler should not call functions that acquire synchronization objects or allocate memory,
+		//because this can cause problems. Typically, the handler will simply access the exception record and return.
+		//
+		if (ret == EXCEPTION_EXECUTE_HANDLER) {
+			delay_load_exception_has_occured = true;
+		//	debug_log("OpenCL not available {}\n", "delay load exception");
+		}
+		return ret;
+	}
+#endif
 	bool init() {
 		enabled_i = enabled;
 
 		if (!enabled_i)return true;
 
 		if (![]() {
-			__try {
+			auto loader = [] {
 				auto load_ret = __HrLoadAllImportsForDll("OpenCL.dll");
 					if (FAILED(load_ret)) {
 						[load_ret]() {
@@ -889,19 +912,25 @@ public:
 						return false;
 					}
 				return true;
+			};
+#ifdef __MSC_VER
+			__try {
+				return loader();
 			}
-			__except ([](int code) {
-				if (
-					code == VcppException(ERROR_SEVERITY_ERROR, ERROR_MOD_NOT_FOUND) ||
-					code == VcppException(ERROR_SEVERITY_ERROR, ERROR_PROC_NOT_FOUND)
-				) {
-					return EXCEPTION_EXECUTE_HANDLER;
-				}
-				return EXCEPTION_CONTINUE_SEARCH;
-			} (GetExceptionCode())) {
+			__except (filter(GetExceptionCode())) {
 				debug_log("OpenCL not available {}\n", "delay load exception");
 				return false;
 			}
+#else
+			const auto h = AddVectoredExceptionHandler(1, handler);
+			const bool ret = loader();
+			RemoveVectoredExceptionHandler(h);
+			if (delay_load_exception_has_occured) {
+				debug_log("OpenCL not available {}\n", "delay load exception");
+				return false;
+			}
+			return ret;
+#endif
 		}()) {
 			state = State::Failed;
 			return false;
