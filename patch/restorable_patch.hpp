@@ -15,12 +15,12 @@ protected:
 	restorable_patch_base(std::uintptr_t address) : address(address), state(false) {}
 
 public:
-	template<typename T>
+	template<typename T = char>
 	requires (sizeof(std::array<std::byte, N>) == sizeof(std::array<T, N>))
 	restorable_patch_base(std::uintptr_t address, const std::array<T, N>& data) : data(std::bit_cast<std::array<std::byte, N>>(data)), address(address), state(false) {}
 	template<typename ...Args>
-	restorable_patch_base(std::uintptr_t address, Args&& ...args) : restorable_patch_base(address, { std::forward<Args>(args)... }) {}
-
+	requires (sizeof...(Args) == N)
+	restorable_patch_base(std::uintptr_t address, Args&& ...args) : restorable_patch_base(address, { static_cast<char>(args)... }) {}
 	void swap_data() {
 		static_cast<Derived*>(this)->swap_data();
 	}
@@ -50,7 +50,9 @@ public:
 };
 template<std::size_t N>
 class restorable_patch : public restorable_patch_base<N, restorable_patch<N>> {
+	using base = restorable_patch_base<N, restorable_patch<N>>;
 public:
+	using base::base;
 	void swap_data() {
 		OverWriteOnProtectHelper h(this->address, this->data.size());
 		for (size_t i = 0; i < this->data.size(); i++) {
