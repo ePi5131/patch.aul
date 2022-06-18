@@ -1,6 +1,6 @@
 [submodule "patch/aviutl_exedit_sdk"]
 	path = patch/aviutl_exedit_sdk
-	url = https://github.com/ePi5131/aviutl_exedit_sdk
+	url = https://github.com/yumetodo/aviutl_exedit_sdk
 [submodule "patch/winwrap"]
 	path = patch/winwrap
-	url = https://github.com/ePi5131/winwrap
+	url = https://github.com/yumetodo/winwrap
