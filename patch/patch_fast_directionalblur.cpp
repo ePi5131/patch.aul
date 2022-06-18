@@ -178,7 +178,7 @@ namespace patch::fast {
         efDirectionalBlur_var& dblur = *(efDirectionalBlur_var*)uintptr_t(reinterpret_cast<efDirectionalBlur_var*>(GLOBAL::exedit_base + OFS::ExEdit::efDirectionalBlur_var_ptr));
 
         try {
-            const auto src_size = efpip->obj_line * efpip->scene_h * sizeof(ExEdit::PixelYC);
+            const auto src_size = efpip->scene_line * efpip->scene_h * sizeof(ExEdit::PixelYC);
             cl::Buffer clmem_src(cl.context, CL_MEM_READ_ONLY, src_size);
             cl.queue.enqueueWriteBuffer(clmem_src, CL_TRUE, 0, src_size, efpip->frame_edit);
 

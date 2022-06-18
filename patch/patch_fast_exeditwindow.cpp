@@ -34,7 +34,7 @@ namespace patch {
 		tv[0].Alpha = 0;
 		tv[1].Alpha = 0;
 
-		auto real_diff = gradation_right - gradation_left;
+		uint64_t real_diff = static_cast<int64_t>(gradation_right) - gradation_left;
 		if (prect->left < gradation_left) {
 			if (prect->right < gradation_left) {
 				SetDCBrushColor(hDC, RGB(r1, g1, b1));
@@ -77,9 +77,9 @@ namespace patch {
 					tv[1].Blue  = static_cast<COLOR16>(cb2);
 				}
 				else {
-					tv[1].Red   = static_cast<COLOR16>(cr1 + (cr2 - cr1) * (prect->right - gradation_left) / real_diff);
-					tv[1].Green = static_cast<COLOR16>(cg1 + (cg2 - cg1) * (prect->right - gradation_left) / real_diff);
-					tv[1].Blue  = static_cast<COLOR16>(cb1 + (cb2 - cb1) * (prect->right - gradation_left) / real_diff);
+					tv[1].Red   = static_cast<COLOR16>(cr1 + (cr2 - cr1) * static_cast<uint64_t>(static_cast<int64_t>(prect->right) - gradation_left) / real_diff);
+					tv[1].Green = static_cast<COLOR16>(cg1 + (cg2 - cg1) * static_cast<uint64_t>(static_cast<int64_t>(prect->right) - gradation_left) / real_diff);
+					tv[1].Blue  = static_cast<COLOR16>(cb1 + (cb2 - cb1) * static_cast<uint64_t>(static_cast<int64_t>(prect->right) - gradation_left) / real_diff);
 				}
 			}
 			GradientFill(hDC, tv, std::size(tv), &gr, std::size(gr), GRADIENT_FILL_RECT_H);
@@ -101,9 +101,9 @@ namespace patch {
 				tv[0].Blue  = cb1;
 			}
 			else {
-				tv[0].Red   = static_cast<COLOR16>(cr1 + (cr2 - cr1) * (prect->left - gradation_left) / real_diff);
-				tv[0].Green = static_cast<COLOR16>(cg1 + (cg2 - cg1) * (prect->left - gradation_left) / real_diff);
-				tv[0].Blue  = static_cast<COLOR16>(cb1 + (cb2 - cb1) * (prect->left - gradation_left) / real_diff);
+				tv[0].Red   = static_cast<COLOR16>(cr1 + static_cast<uint64_t>(cr2 - cr1) * static_cast<uint64_t>(static_cast<int64_t>(prect->left) - gradation_left) / real_diff);
+				tv[0].Green = static_cast<COLOR16>(cg1 + static_cast<uint64_t>(cg2 - cg1) * static_cast<uint64_t>(static_cast<int64_t>(prect->left) - gradation_left) / real_diff);
+				tv[0].Blue  = static_cast<COLOR16>(cb1 + static_cast<uint64_t>(cb2 - cb1) * static_cast<uint64_t>(static_cast<int64_t>(prect->left) - gradation_left) / real_diff);
 			}
 
 			if (gradation_right < prect->right) {
@@ -126,9 +126,9 @@ namespace patch {
 					tv[1].Blue  = static_cast<COLOR16>(cb2);
 				}
 				else {
-					tv[1].Red   = static_cast<COLOR16>(cr1 + (cr2 - cr1) * (prect->right - gradation_left) / real_diff);
-					tv[1].Green = static_cast<COLOR16>(cg1 + (cg2 - cg1) * (prect->right - gradation_left) / real_diff);
-					tv[1].Blue  = static_cast<COLOR16>(cb1 + (cb2 - cb1) * (prect->right - gradation_left) / real_diff);
+					tv[1].Red   = static_cast<COLOR16>(cr1 + static_cast<uint64_t>(cr2 - cr1) * static_cast<uint64_t>(static_cast<int64_t>(prect->right) - gradation_left) / real_diff);
+					tv[1].Green = static_cast<COLOR16>(cg1 + static_cast<uint64_t>(cg2 - cg1) * static_cast<uint64_t>(static_cast<int64_t>(prect->right) - gradation_left) / real_diff);
+					tv[1].Blue  = static_cast<COLOR16>(cb1 + static_cast<uint64_t>(cb2 - cb1) * static_cast<uint64_t>(static_cast<int64_t>(prect->right) - gradation_left) / real_diff);
 				}
 			}
 			GradientFill(hDC, tv, std::size(tv), &gr, std::size(gr), GRADIENT_FILL_RECT_H);
@@ -196,7 +196,7 @@ namespace patch {
 
 		for (int i = 0; i < steps; i++) {
 			L = R;
-			R = gradation_left + (gradation_right - gradation_left) * (i + 1) / steps;
+			R = static_cast<int32_t>(gradation_left + static_cast<uint64_t>(gradation_right - gradation_left) * (i + 1) / steps);
 
 			if (R < prect->left) continue;
 			if (prect->right < L) continue;

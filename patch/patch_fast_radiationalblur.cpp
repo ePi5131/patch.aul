@@ -44,7 +44,7 @@ namespace patch::fast {
                     clmem_src,
                     efpip->obj_w,
                     efpip->obj_h,
-                    efpip->scene_line,
+                    efpip->obj_line,
                     rb.blur_cx,
                     rb.blur_cy,
                     rb.obj_cx,

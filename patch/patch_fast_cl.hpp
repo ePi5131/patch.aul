@@ -611,7 +611,7 @@ kernel void DirectionalBlur_Media(global short* dst, global short* src, int obj_
 
 	dst += (x + y * obj_line) * 4;
 
-	uint sum_y = 0;
+	int sum_y = 0;
 	int sum_cb = 0;
 	int sum_cr = 0;
 	int sum_a = 0;
@@ -623,7 +623,7 @@ kernel void DirectionalBlur_Media(global short* dst, global short* src, int obj_
 		int xx = x_itr >> 16;
 		int yy = y_itr >> 16;
 		if (0 <= xx && xx < obj_w && 0 <= yy && yy < obj_h) {
-			short* pix = src + (xx + yy * obj_line) * 4;
+			global short* pix = src + (xx + yy * obj_line) * 4;
 			int src_a = min((int)pix[3], 0x1000);
 			sum_y += pix[0] * src_a >> 12;
 			sum_cb += pix[1] * src_a >> 12;
@@ -633,10 +633,13 @@ kernel void DirectionalBlur_Media(global short* dst, global short* src, int obj_
 		x_itr += x_step;
 		y_itr += y_step;
 	}
-	if (sum_a) {
-		dst[0] = (short)(sum_y * 4096 / sum_a);
-		dst[1] = (short)(sum_cb * 4096 / sum_a);
-		dst[2] = (short)(sum_cr * 4096 / sum_a);
+	if (0 < sum_a) {
+		float a_float = 4096.0f / (float)sum_a;
+		dst[0] = (short)round((float)sum_y * a_float);
+		dst[1] = (short)round((float)sum_cb * a_float);
+		dst[2] = (short)round((float)sum_cr * a_float);
+	} else {
+		dst[0] = dst[1] = dst[2] = 0;
 	}
 	dst[3] = (short)(sum_a / pix_range);
 }
@@ -652,7 +655,7 @@ kernel void DirectionalBlur_original_size(global short* dst, global short* src, 
 	int x_itr = (x << 16) + 0x8000 - range * x_step;
 	int y_itr = (y << 16) + 0x8000 - range * y_step;
 
-	uint sum_y = 0;
+	int sum_y = 0;
 	int sum_cb = 0;
 	int sum_cr = 0;
 	int sum_a = 0;
@@ -662,7 +665,7 @@ kernel void DirectionalBlur_original_size(global short* dst, global short* src, 
 		int xx = x_itr >> 16;
 		int yy = y_itr >> 16;
 		if (0 <= xx && xx < obj_w && 0 <= yy && yy < obj_h) {
-			short* pix = src + (xx + yy * obj_line) * 4;
+			global short* pix = src + (xx + yy * obj_line) * 4;
 			int src_a = min((int)pix[3], 0x1000);
 			sum_y += pix[0] * src_a >> 12;
 			sum_cb += pix[1] * src_a >> 12;
@@ -674,10 +677,13 @@ kernel void DirectionalBlur_original_size(global short* dst, global short* src, 
 		y_itr += y_step;
 	}
 	if(cnt == 0) cnt = 0xffffff;
-	if (sum_a) {
-		dst[0] = (short)(sum_y * 4096 / sum_a);
-		dst[1] = (short)(sum_cb * 4096 / sum_a);
-		dst[2] = (short)(sum_cr * 4096 / sum_a);
+	if (0 < sum_a) {
+		float a_float = 4096.0f / (float)sum_a;
+		dst[0] = (short)round((float)sum_y * a_float);
+		dst[1] = (short)round((float)sum_cb * a_float);
+		dst[2] = (short)round((float)sum_cr * a_float);
+	} else {
+		dst[0] = dst[1] = dst[2] = 0;
 	}
 	dst[3] = (short)(sum_a / cnt);
 }
@@ -701,7 +707,7 @@ kernel void DirectionalBlur_Filter(global short* dst, global short* src, int sce
 		int xx = x_itr >> 16;
 		int yy = y_itr >> 16;
 		if (0 <= xx && xx < scene_w && 0 <= yy && yy < scene_h) {
-			short* pix = src + (xx + yy * scene_line) * 3;
+			global short* pix = src + (xx + yy * scene_line) * 3;
 			sum_y += pix[0];
 			sum_cb += pix[1];
 			sum_cr += pix[2];
@@ -726,7 +732,7 @@ kernel void LensBlur_Media(global char* dst, global char* src, int obj_w, int ob
 	int left = -min(x, range);
 	int right = min(obj_w - x - 1, range);
 
-	float sum_y = 0.0;
+	float sum_y = 0.0f;
 	int sum_cb = 0;
 	int sum_cr = 0;
 	int sum_a = 0;
@@ -747,10 +753,11 @@ kernel void LensBlur_Media(global char* dst, global char* src, int obj_w, int ob
 					cor_a = 4096;
 				}
 				cor_sum += cor_a;
-				sum_y += *(float*)&src[offset2] * (float)cor_a;
+				cor_a = *(global short*)&src[offset2 + 6] * cor_a >> 12;
+				sum_y += *(global float*)&src[offset2] * (float)cor_a;
 				sum_cb += src[offset2 + 4] * cor_a;
 				sum_cr += src[offset2 + 5] * cor_a;
-				sum_a += *(short*)&src[offset2 + 6] * cor_a >> 12;
+				sum_a += cor_a;
 			}
 			sqr += 1 + xx * 2;
 			offset2 += 8;
@@ -760,12 +767,13 @@ kernel void LensBlur_Media(global char* dst, global char* src, int obj_w, int ob
 
 	dst += (x + y * obj_line) * 8;
 	if (0 < sum_a) {
-		*(float*)dst = sum_y / (float)sum_a;
+		*(global float*)dst = sum_y / (float)sum_a;
 		dst[4] = (char)(((sum_a >> 1) + sum_cb) / sum_a);
 		dst[5] = (char)(((sum_a >> 1) + sum_cr) / sum_a);
-		*(short*)&dst[6] = (short)round((float)sum_a * (4096.0f / (float)cor_sum));
+		*(global short*)&dst[6] = (short)round((float)sum_a * (4096.0f / (float)cor_sum));
 	} else {
-		*(long*)dst= 0;
+		*(global int*)dst = 0;
+		*(global int*)&dst[4] = 0;
 	}
 }
 )" R"(
@@ -781,7 +789,7 @@ kernel void LensBlur_Filter(global char* dst, global char* src, int scene_w, int
 	int right = min(scene_w - x - 1, range);
 
 	short tofloat[2];
-	float sum_y = 0.0;
+	float sum_y = 0.0f;
 	int sum_cb = 0;
 	int sum_cr = 0;
 	int sum_a = 0;
@@ -801,8 +809,8 @@ kernel void LensBlur_Filter(global char* dst, global char* src, int scene_w, int
 				} else {
 					cor_a = 4096;
 				}
-				tofloat[0] = *(short*)&src[offset2];
-				tofloat[1] = *(short*)&src[offset2 + 2];
+				tofloat[0] = *(global short*)&src[offset2];
+				tofloat[1] = *(global short*)&src[offset2 + 2];
 				sum_y += *(float*)tofloat * (float)cor_a;
 				sum_cb += src[offset2 + 4] * cor_a;
 				sum_cr += src[offset2 + 5] * cor_a;
@@ -816,8 +824,8 @@ kernel void LensBlur_Filter(global char* dst, global char* src, int scene_w, int
 
 	dst += (x + y * scene_line) * 6;
 	*(float*)tofloat = sum_y / (float)sum_a;
-	*(short*)&dst[0] = tofloat[0];
-	*(short*)&dst[2] = tofloat[1];
+	*(global short*)&dst[0] = tofloat[0];
+	*(global short*)&dst[2] = tofloat[1];
 	dst[4] = (char)(((sum_a >> 1) + sum_cb) / sum_a);
 	dst[5] = (char)(((sum_a >> 1) + sum_cr) / sum_a);
 }
