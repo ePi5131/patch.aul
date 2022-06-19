@@ -40,7 +40,8 @@ inline static std::pair<std::vector<ModulesDataEntry>, std::string_view> getModu
 	std::vector<ModulesDataEntry> ret;
 	auto snapshot = CreateToolhelp32Snapshot(TH32CS_SNAPMODULE, 0);
 	if (snapshot != INVALID_HANDLE_VALUE) {
-		MODULEENTRY32 entry{ .dwSize = sizeof(MODULEENTRY32) };
+		MODULEENTRY32 entry{};
+		entry.dwSize = sizeof(MODULEENTRY32);
 		if (Module32First(snapshot, &entry)) {
 			do {
 				ret.emplace_back(
@@ -81,7 +82,8 @@ public:
 	static void update() {
 		auto snapshot = CreateToolhelp32Snapshot(TH32CS_SNAPMODULE, 0);
 		if (snapshot != INVALID_HANDLE_VALUE) {
-			MODULEENTRY32 entry{ .dwSize = sizeof(MODULEENTRY32) };
+			MODULEENTRY32 entry{};
+			entry.dwSize = sizeof(MODULEENTRY32);
 			if (Module32First(snapshot, &entry)) {
 				do {
 					if (!modules_data_cache_name.contains(entry.szModule)) {

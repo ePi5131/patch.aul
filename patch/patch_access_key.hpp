@@ -63,10 +63,9 @@ namespace patch {
 		inline static bool find_menu(HMENU hMenu, UINT id) {
 			auto menu_n = GetMenuItemCount(hMenu);
 			for (int i = 0; i < menu_n; i++) {
-				MENUITEMINFOW mii{
-					.cbSize = sizeof(mii),
-					.fMask = MIIM_ID | MIIM_SUBMENU,
-				};
+				MENUITEMINFOW mii{};
+				mii.cbSize = sizeof(mii);
+				mii.fMask = MIIM_ID | MIIM_SUBMENU;
 				GetMenuItemInfoW(hMenu, i, TRUE, &mii);
 				if (mii.hSubMenu != NULL) {
 					auto ret = find_menu(mii.hSubMenu, id);
@@ -111,30 +110,29 @@ namespace patch {
 
 			if (lstrcmpiA(key, "AVIUTL") != 0)return hMenu;
 
-			auto find_submenu = [](HMENU hMenu, int idx, UINT id) {
-				auto sub = GetSubMenu(hMenu, idx);
+			// auto find_submenu = [](HMENU hMenu, int idx, UINT id) {
+			// 	auto sub = GetSubMenu(hMenu, idx);
 
-				auto menu_n = GetMenuItemCount(sub);
-				for (int i = 0; i < menu_n; i++) {
-					MENUITEMINFOW mii{
-						.cbSize = sizeof(mii),
-						.fMask = MIIM_ID,
-					};
-					GetMenuItemInfoW(sub, i, TRUE, &mii);
-					if (mii.wID == id) return true;
-				}
+			// 	auto menu_n = GetMenuItemCount(sub);
+			// 	for (int i = 0; i < menu_n; i++) {
+			// 		MENUITEMINFOW mii{
+			// 			.cbSize = sizeof(mii),
+			// 			.fMask = MIIM_ID,
+			// 		};
+			// 		GetMenuItemInfoW(sub, i, TRUE, &mii);
+			// 		if (mii.wID == id) return true;
+			// 	}
 
-				return false;
-			};
+			// 	return false;
+			// };
 
 			for (int i = 0; i < Menu::Count; i++) {
 				auto menu_n = GetMenuItemCount(hMenu);
 				for (int j = 0; j < menu_n; j++) {
-					MENUITEMINFOW mii{
-						.cbSize = sizeof(mii),
-						.fMask = MIIM_STRING | MIIM_ID,
-						.dwTypeData = NULL
-					};
+					MENUITEMINFOW mii{};
+					mii.cbSize = sizeof(mii);
+					mii.fMask = MIIM_STRING | MIIM_ID;
+					mii.dwTypeData = NULL;
 					GetMenuItemInfoW(hMenu, j, TRUE, &mii);
 
 					if (find_menu(GetSubMenu(hMenu, j), mark_map[i])) {

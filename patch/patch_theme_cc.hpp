@@ -325,19 +325,19 @@ namespace patch {
 						else {
 							col = {
 								config_type::ColorBGR{
-									h.load_i32<int>(8),
-									h.load_i32<int>(4),
-									h.load_i32<int>(0)
+									uint8_t(h.load_i32<int>(8)),
+									uint8_t(h.load_i32<int>(4)),
+									uint8_t(h.load_i32<int>(0))
 								},
 								config_type::ColorBGR{
-									h.load_i32<int>(20),
-									h.load_i32<int>(16),
-									h.load_i32<int>(12)
+									uint8_t(h.load_i32<int>(20)),
+									uint8_t(h.load_i32<int>(16)),
+									uint8_t(h.load_i32<int>(12))
 								},
 								config_type::ColorBGR{
-									h.load_i32<int>(32),
-									h.load_i32<int>(28),
-									h.load_i32<int>(24)
+									uint8_t(h.load_i32<int>(32)),
+									uint8_t(h.load_i32<int>(28)),
+									uint8_t(h.load_i32<int>(24))
 								}
 							};
 						}

@@ -187,7 +187,7 @@ namespace patch {
 
 		static std::tuple<std::string, DWORD> get_module_address(void* address, const std::vector<ModulesDataEntry>& data) {
 			auto addr = reinterpret_cast<uintptr_t>(address);
-			ModulesDataEntry d{0u,addr,""};
+			ModulesDataEntry d{0u,addr,"", std::nullopt};
 			auto itr = std::lower_bound(data.begin(),data.end(),d,[](auto a, auto b){ return a.end < b.end; });
 			if(itr!=data.end()){
 				if(itr->begin <= addr && addr < itr->end) {

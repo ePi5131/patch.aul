@@ -242,7 +242,7 @@ inline void web_confirm(std::wstring_view url) {
 		.nDefaultButton = static_cast<int>(ID::Open),
 		.cRadioButtons = 0,
 		.pRadioButtons = nullptr,
-		.nDefaultRadioButton = NULL,
+		.nDefaultRadioButton = 0,
 		.pszVerificationText = nullptr,
 		.pszExpandedInformation = nullptr,
 		.pszExpandedControlText = nullptr,
@@ -250,7 +250,7 @@ inline void web_confirm(std::wstring_view url) {
 		.pszFooterIcon = NULL,
 		.pszFooter = nullptr,
 		.pfCallback = nullptr,
-		.lpCallbackData = NULL,
+		.lpCallbackData = 0,
 		.cxWidth = 0
 	};
 	int nButton;

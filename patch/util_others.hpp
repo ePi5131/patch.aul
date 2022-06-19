@@ -51,9 +51,11 @@ concept modify_menuitem_check_callback = requires(Func func) {
 
 template<modify_menuitem_check_callback Func>
 void modify_menuitem_check(HMENU menu, UINT item, BOOL position, Func func) {
-	MENUITEMINFOA info = { .cbSize = sizeof(MENUITEMINFO), .fMask = MIIM_STATE };
+	MENUITEMINFOA info = {};
+	info.cbSize = sizeof(MENUITEMINFO);
+	info.fMask = MIIM_STATE;
 	GetMenuItemInfoA(menu, item, position, &info);
-	info.fState = info.fState & ~MFS_CHECKED | (func(info.fState & MFS_CHECKED) ? MFS_CHECKED : 0);
+	info.fState = (info.fState & ~MFS_CHECKED) | (func(info.fState & MFS_CHECKED) ? MFS_CHECKED : 0);
 	SetMenuItemInfoA(menu, item, position, &info);
 }
 

@@ -13,7 +13,6 @@
     along with this program.  If not, see <https://www.gnu.org/licenses/>.
 */
 
-#pragma once
 #include "patch_fast_border.hpp"
 #ifdef PATCH_SWITCH_FAST_BORDER
 
@@ -148,7 +147,7 @@ namespace patch::fast {
 
     void efBorder_horizontal_convolution_alpha_simd(int thread_id, int thread_num, void* param1, void* param2) {
         auto& border = *reinterpret_cast<Border_t::efBorder_var*>(GLOBAL::exedit_base + OFS::ExEdit::efBorder_var_ptr);
-        auto efp = static_cast<ExEdit::Filter*>(param1);
+        // auto efp = static_cast<ExEdit::Filter*>(param1);
         auto efpip = static_cast<ExEdit::FilterProcInfo*>(param2);
 
         int begin_thread = efpip->obj_h * thread_id / thread_num;
@@ -256,7 +255,7 @@ namespace patch::fast {
         }
     }
 
-    void efBorder_horizontal_convolution_alpha_simd2(int thread_id, int thread_num, void* param1, void* param2) { // 51ae0
+    void efBorder_horizontal_convolution_alpha_simd2(int thread_id, int thread_num, void*, void* param2) { // 51ae0
         auto& border = *reinterpret_cast<Border_t::efBorder_var*>(GLOBAL::exedit_base + OFS::ExEdit::efBorder_var_ptr);
         // auto efp = static_cast<ExEdit::Filter*>(param1);
         auto efpip = static_cast<ExEdit::FilterProcInfo*>(param2);
@@ -562,7 +561,7 @@ namespace patch::fast {
         }
     }
 
-    void efBorder_vertical_convolution_alpha_simd(int thread_id, int thread_num, void* param1, void* param2) {
+    void efBorder_vertical_convolution_alpha_simd(int thread_id, int thread_num, void*, void* param2) {
         auto& border = *reinterpret_cast<Border_t::efBorder_var*>(GLOBAL::exedit_base + OFS::ExEdit::efBorder_var_ptr);
         // auto efp = static_cast<ExEdit::Filter*>(param1);
         auto efpip = static_cast<ExEdit::FilterProcInfo*>(param2);
@@ -696,7 +695,7 @@ namespace patch::fast {
 
     void efBorder_vertical_convolution_alpha_simd2(int thread_id, int thread_num, void* param1, void* param2) {
         auto& border = *reinterpret_cast<Border_t::efBorder_var*>(GLOBAL::exedit_base + OFS::ExEdit::efBorder_var_ptr);
-        auto efp = static_cast<ExEdit::Filter*>(param1);
+        // auto efp = static_cast<ExEdit::Filter*>(param1);
         auto efpip = static_cast<ExEdit::FilterProcInfo*>(param2);
 
         unsigned short* mem1;

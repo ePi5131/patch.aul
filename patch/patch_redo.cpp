@@ -33,7 +33,7 @@ void __cdecl redo_t::init_undo_patch() {
     pre_scene_idx = *SceneDisplaying_ptr;
 }
 
-int __cdecl redo_t::f8d290(void* ret, int object_idx, int flag) {
+int __cdecl redo_t::f8d290(void*, int object_idx, int flag) {
     int& UndoInfo_object_num = *UndoInfo_object_num_ptr;
     int& UndoInfo_write_offset = *UndoInfo_write_offset_ptr;
     int& UndoInfo_limit_mode = *UndoInfo_limit_mode_ptr;

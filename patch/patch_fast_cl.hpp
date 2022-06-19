@@ -32,11 +32,15 @@
 #define CL_VERSION_2_1                              0
 #define CL_VERSION_2_2                              0
 #define CL_VERSION_3_0                              0
+#ifdef _MSC_VER
 #pragma warning(push)
 #pragma warning(disable: 4005)
+#endif
 #include <CL/cl.hpp>
+#ifdef _MSC_VER
 #pragma warning(pop)
 #pragma comment(lib, "opencl.lib")
+#endif
 
 #include "cryptostring.hpp"
 #include "util.hpp"
@@ -46,7 +50,9 @@
 namespace patch::fast {
 
 inline class cl_t {
+#ifdef _MSC_VER
 #pragma region clprogram
+#endif
 	inline static auto program_str = make_cryptostring(R"(
 kernel void PolorTransform(global short* dst, global short* src, int src_w, int src_h, int exedit_buffer_line, int center, int radius, float angle, float uzu, float uzu_a) {
 	int x = get_global_id(0);
@@ -831,7 +837,9 @@ kernel void LensBlur_Filter(global char* dst, global char* src, int scene_w, int
 }
 
 )");
+#ifdef _MSC_VER
 #pragma endregion
+#endif
 
 	template<size_t i, class Head>
 	static void KernelSetArg(cl::Kernel& kernel, Head head) {
@@ -875,10 +883,10 @@ public:
 	}
 
 	inline static bool delay_load_exception_has_occured = false;
-	static inline LONG filter(int code) {
+	static inline LONG filter(DWORD code) {
 		if (
-			code == VcppException(ERROR_SEVERITY_ERROR, ERROR_MOD_NOT_FOUND) ||
-			code == VcppException(ERROR_SEVERITY_ERROR, ERROR_PROC_NOT_FOUND)
+			code == VcppException(DWORD{ERROR_SEVERITY_ERROR}, ERROR_MOD_NOT_FOUND) ||
+			code == VcppException(DWORD{ERROR_SEVERITY_ERROR}, ERROR_PROC_NOT_FOUND)
 		) {
 			return EXCEPTION_EXECUTE_HANDLER;
 		}
