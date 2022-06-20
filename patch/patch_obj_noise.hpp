@@ -26,7 +26,7 @@
 namespace patch {
 
     // init at exedit load
-    // ノイズの速度Xを移動無し以外に設定している時、正しい結果が得られないバグの修正
+    // ノイズの 速度X 変化速度 を移動無し以外に設定している時、速度Y の値をもとに計算されるバグの修正
     inline class obj_Noise_t {
         bool enabled = true;
         bool enabled_i;
