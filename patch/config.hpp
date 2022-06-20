@@ -113,6 +113,9 @@ public:
             #ifdef PATCH_SWITCH_OBJ_LENSBLUR
                 patch::LensBlur.switch_load(cr);
             #endif
+            #ifdef PATCH_SWITCH_OBJ_NOISE
+                patch::Noise.switch_load(cr);
+            #endif
             #ifdef PATCH_SWITCH_SETTINGDIALOG_EXCOLORCONFIG
                 patch::excolorconfig.switch_load(cr);
 		    #endif
@@ -366,6 +369,9 @@ public:
 		    #endif
             #ifdef PATCH_SWITCH_OBJ_LENSBLUR
                 patch::LensBlur.switch_store(switch_);
+            #endif
+            #ifdef PATCH_SWITCH_OBJ_NOISE
+                patch::Noise.switch_store(switch_);
             #endif
 		    #ifdef PATCH_SWITCH_SETTINGDIALOG_EXCOLORCONFIG
                 patch::excolorconfig.switch_store(switch_);
