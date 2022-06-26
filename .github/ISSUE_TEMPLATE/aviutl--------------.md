@@ -1,7 +1,7 @@
 ---
 name: AviUtl/周辺プラグインのバグの報告
 about: patch.aulに直してほしいバグ
-title: "*"
+title: "*〇〇〇〇〇〇"
 labels: enhancement
 assignees: ''
 
