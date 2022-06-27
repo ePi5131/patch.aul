@@ -38,9 +38,10 @@ struct ModulesDataEntry {
 
 inline static std::pair<std::vector<ModulesDataEntry>, std::string_view> getModulesData() {
 	std::vector<ModulesDataEntry> ret;
-	auto snapshot = CreateToolhelp32Snapshot(TH32CS_SNAPMODULE, NULL);
+	auto snapshot = CreateToolhelp32Snapshot(TH32CS_SNAPMODULE, 0);
 	if (snapshot != INVALID_HANDLE_VALUE) {
-		MODULEENTRY32 entry{ .dwSize = sizeof(MODULEENTRY32) };
+		MODULEENTRY32 entry{};
+		entry.dwSize = sizeof(MODULEENTRY32);
 		if (Module32First(snapshot, &entry)) {
 			do {
 				ret.emplace_back(
@@ -55,13 +56,13 @@ inline static std::pair<std::vector<ModulesDataEntry>, std::string_view> getModu
 		else {
 			auto err = GetLastError();
 			CloseHandle(snapshot);
-			return { ret,"LastError:{}"_fmt(err) };
+			return { ret,format("LastError:{}", err) };
 		}
 	}
 	else {
 		auto err = GetLastError();
 		CloseHandle(snapshot);
-		return { ret,"LastError:{}"_fmt(err) };
+		return { ret,format("LastError:{}", err) };
 	}
 	std::sort(ret.begin(), ret.end(), [](auto a, auto b) { return a.begin < b.begin; });
 	return { ret, "" };
@@ -79,9 +80,10 @@ public:
 	inline static std::mutex mtx;
 
 	static void update() {
-		auto snapshot = CreateToolhelp32Snapshot(TH32CS_SNAPMODULE, NULL);
+		auto snapshot = CreateToolhelp32Snapshot(TH32CS_SNAPMODULE, 0);
 		if (snapshot != INVALID_HANDLE_VALUE) {
-			MODULEENTRY32 entry{ .dwSize = sizeof(MODULEENTRY32) };
+			MODULEENTRY32 entry{};
+			entry.dwSize = sizeof(MODULEENTRY32);
 			if (Module32First(snapshot, &entry)) {
 				do {
 					if (!modules_data_cache_name.contains(entry.szModule)) {
@@ -97,12 +99,12 @@ public:
 				CloseHandle(snapshot);
 			}
 			else {
-				auto err = GetLastError();
+				// auto err = GetLastError();
 				CloseHandle(snapshot);
 			}
 		}
 		else {
-			auto err = GetLastError();
+			// auto err = GetLastError();
 			CloseHandle(snapshot);
 		}
 	}

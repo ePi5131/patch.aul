@@ -21,7 +21,7 @@
 #include <sstream>
 #include <fstream>
 #include <string>
-#include <format>
+#include "util_format.hpp"
 #include <variant>
 
 #include <Windows.h>
@@ -29,7 +29,9 @@
 #include <TlHelp32.h>
 
 #include <Shlwapi.h>
+#ifdef _MSC_VER
 #pragma comment(lib, "shlwapi.lib")
+#endif
 
 #include <boost/scope_exit.hpp>
 
@@ -84,13 +86,13 @@ namespace patch {
 		// 例外コードごとに何か特別なフォーマットをしたいとき用の関数を置く連想配列
 		static inline const std::unordered_map<DWORD, std::string(*)(PEXCEPTION_RECORD)> exception_format{
 			{ EXCEPTION_ACCESS_VIOLATION, [](PEXCEPTION_RECORD erp){
-				return "read/write : {}\r\naccessed address : 0x{:08x}\r\n"_fmt(
+				return format("read/write : {}\r\naccessed address : 0x{:08x}\r\n", 
 					erp->ExceptionInformation[0],
 					erp->ExceptionInformation[1]
 				);
 			}},
 			{ EXCEPTION_IN_PAGE_ERROR, [](PEXCEPTION_RECORD erp) {
-				return "read/write : {}\r\naccessed address : 0x{:08x}\r\nNTSTATUS : {:08x}\r\n"_fmt(
+				return format("read/write : {}\r\naccessed address : 0x{:08x}\r\nNTSTATUS : {:08x}\r\n", 
 					erp->ExceptionInformation[0],
 					erp->ExceptionInformation[1],
 					erp->ExceptionInformation[2]
@@ -102,7 +104,7 @@ namespace patch {
 				uint32_t d3 = load_i32(d2 + 4);
 				auto class_name = reinterpret_cast<const char*>(d3 + 8);
 				auto exception = erp->ExceptionInformation[1];
-				return "Information[0] : {:08x}\r\nclass_name : {}\r\nexception ptr : {:08x}\r\n"_fmt(
+				return format("Information[0] : {:08x}\r\nclass_name : {}\r\nexception ptr : {:08x}\r\n", 
 					erp->ExceptionInformation[0],
 					class_name,
 					exception
@@ -134,7 +136,8 @@ namespace patch {
 			def(10, DF);
 			def(11, OF);
 			#undef def
-			if(c++) ss << "|"; ss << "IOPL" << ((eflags >> 12) & 0b11);
+			if(c++) ss << "|";
+			ss << "IOPL" << ((eflags >> 12) & 0b11);
 			#define def(shift, name) if (eflags & (1 << shift)) {  ss << "|" << #name; }
 			def(14, NT);
 			def(16, RF);
@@ -184,7 +187,7 @@ namespace patch {
 
 		static std::tuple<std::string, DWORD> get_module_address(void* address, const std::vector<ModulesDataEntry>& data) {
 			auto addr = reinterpret_cast<uintptr_t>(address);
-			ModulesDataEntry d{0u,addr,""};
+			ModulesDataEntry d{0u,addr,"", std::nullopt};
 			auto itr = std::lower_bound(data.begin(),data.end(),d,[](auto a, auto b){ return a.end < b.end; });
 			if(itr!=data.end()){
 				if(itr->begin <= addr && addr < itr->end) {
@@ -201,12 +204,12 @@ namespace patch {
 			SYSTEMTIME st;
 			GetLocalTime(&st);
 			return std::make_tuple(
-				"{:04}-{:02}-{:02}_{:02}-{:02}-{:02}-{}_{}.txt"_fmt(
+				format("{:04}-{:02}-{:02}_{:02}-{:02}-{:02}-{}_{}.txt", 
 					st.wYear, st.wMonth,  st.wDay,
 					st.wHour, st.wMinute, st.wSecond, st.wMilliseconds,
 					tid
 				),
-				L"{:04}-{:02}-{:02}_{:02}-{:02}-{:02}-{}_{}.txt"_fmt(
+				format(L"{:04}-{:02}-{:02}_{:02}-{:02}-{:02}-{}_{}.txt", 
 					st.wYear, st.wMonth, st.wDay,
 					st.wHour, st.wMinute, st.wSecond, st.wMilliseconds,
 					tid
@@ -289,7 +292,7 @@ namespace patch {
 				return false;
 			}
 
-			const auto code = pExp->ExceptionRecord->ExceptionCode;
+			// const auto code = pExp->ExceptionRecord->ExceptionCode;
 
 			std::ostringstream ss;
 			ss << "patch.aul (" PATCH_VERSION_STR ") debug info file\r\n\r\n";
@@ -346,8 +349,8 @@ namespace patch {
 			log_dir += L"log\\";
 
 			OverWriteOnProtectHelper h(GLOBAL::aviutl_base + 0x5b8b0, 13);
-			h.store_i32(0, '\xff\x74\x24\x04'); // push [esp+4]
-			h.store_i32(4, '\x52\x51\xff\x15'); // push edx ; push ecx ; call [(i32)]
+			h.store_i32(0, { 0xff, 0x74, 0x24, 0x04 }); // push [esp+4]
+			h.store_i32(4, { 0x52, 0x51, 0xff, 0x15 }); // push edx ; push ecx ; call [(i32)]
 			h.store_i32(8, &exception_catch_ptr);
 			h.store_i8(12, '\xc3'); // ret
 

@@ -184,14 +184,14 @@ namespace patch {
 				return;
 			}
 			bool& console_flag = visible;
-			if (GetKeyState(VK_LCONTROL) & 0x8000 | GetKeyState(VK_RCONTROL) & 0x8000) {
+			if ((GetKeyState(VK_LCONTROL) & 0x8000) | (GetKeyState(VK_RCONTROL) & 0x8000)) {
 				console_flag = true;
 			}
 			else {
 				console_flag = !console_flag;
 			}
 
-			modify_menuitem_check(aviutl_hmwnu_disp, 20002, FALSE, [console_flag](bool state) {
+			modify_menuitem_check(aviutl_hmwnu_disp, 20002, FALSE, [console_flag](bool) {
 				return console_flag;
 			});
 
@@ -214,11 +214,11 @@ namespace patch {
 
 		// コンソールウィンドウを前面に移動させる
 		void front() const {
-			SetWindowPos(console_hwnd, HWND_NOTOPMOST, NULL, NULL, NULL, NULL, SWP_NOSIZE | SWP_NOMOVE);
+			SetWindowPos(console_hwnd, HWND_NOTOPMOST, 0, 0, 0, 0, SWP_NOSIZE | SWP_NOMOVE);
 		}
 
 		void update_visible_state(HMENU aviutl_hmwnu_disp) {
-			modify_menuitem_check(aviutl_hmwnu_disp, 20002, FALSE, [this](bool state) -> bool {
+			modify_menuitem_check(aviutl_hmwnu_disp, 20002, FALSE, [this](bool) -> bool {
 				if (input) {
 					visible = !IsIconic(console_hwnd);
 				}

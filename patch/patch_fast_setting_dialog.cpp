@@ -28,9 +28,9 @@ namespace patch {
 	void __cdecl fast_setting_dialog_t::FUN_10030500_Wrap() {
 		sw.start();
 		auto hwnd = load_i32<HWND>(GLOBAL::exedit_base + 0x1539c8);
-		SendMessageA(hwnd, WM_SETREDRAW, FALSE, NULL);
+		SendMessageA(hwnd, WM_SETREDRAW, FALSE, 0);
 		reinterpret_cast<void(__cdecl*)()>(GLOBAL::exedit_base + 0x030500)();
-		SendMessageA(hwnd, WM_SETREDRAW, TRUE, NULL);
+		SendMessageA(hwnd, WM_SETREDRAW, TRUE, 0);
 		UpdateWindow(hwnd);
 		sw.stop();
 	}
@@ -38,9 +38,9 @@ namespace patch {
 	BOOL __cdecl fast_setting_dialog_t::FUN_100305e0_Wrap(int param1) {
 		sw.start();
 		auto hwnd = load_i32<HWND>(GLOBAL::exedit_base + 0x1539c8);
-		SendMessageA(hwnd, WM_SETREDRAW, FALSE, NULL);
+		SendMessageA(hwnd, WM_SETREDRAW, FALSE, 0);
 		auto ret = reinterpret_cast<BOOL(__cdecl*)(int)>(GLOBAL::exedit_base + 0x0305e0)(param1);
-		SendMessageA(hwnd, WM_SETREDRAW, TRUE, NULL);
+		SendMessageA(hwnd, WM_SETREDRAW, TRUE, 0);
 		UpdateWindow(hwnd);
 		sw.stop();
 		return ret;
@@ -50,14 +50,14 @@ namespace patch {
 	void __cdecl fast_setting_dialog_t::FUN_10030500_Wrap2() {
 		sw.start();
 		auto hwnd = load_i32<HWND>(GLOBAL::exedit_base + 0x1539c8);
-		SendMessageA(hwnd, WM_SETREDRAW, FALSE, NULL);
+		SendMessageA(hwnd, WM_SETREDRAW, FALSE, 0);
 		reinterpret_cast<void(__cdecl*)()>(GLOBAL::exedit_base + 0x030500)();
 	}
 
 	BOOL __cdecl fast_setting_dialog_t::FUN_100305e0_Wrap2(int param1) {
 		auto hwnd = load_i32<HWND>(GLOBAL::exedit_base + 0x1539c8);
 		auto ret = reinterpret_cast<BOOL(__cdecl*)(int)>(GLOBAL::exedit_base + 0x0305e0)(param1);
-		SendMessageA(hwnd, WM_SETREDRAW, TRUE, NULL);
+		SendMessageA(hwnd, WM_SETREDRAW, TRUE, 0);
 		UpdateWindow(hwnd);
 		sw.stop();
 		return ret;

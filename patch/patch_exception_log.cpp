@@ -52,7 +52,7 @@ namespace patch {
 			})) return TRUE;
 
  			exception_log_dialog_window_t::Param param = {
-				.link = L"<a>log/{}</a>"_fmt(log_name_w),
+				.link = format(L"<a>log/{}</a>", log_name_w),
 				.info_dir = log_dir,
 				.info_path = log_name_w,
 				.detail = detail,

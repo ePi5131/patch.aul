@@ -13,7 +13,6 @@
     along with this program.  If not, see <https://www.gnu.org/licenses/>.
 */
 
-#pragma once
 #include "patch_fast_border.hpp"
 #ifdef PATCH_SWITCH_FAST_BORDER
 
@@ -148,7 +147,7 @@ namespace patch::fast {
 
     void efBorder_horizontal_convolution_alpha_simd(int thread_id, int thread_num, void* param1, void* param2) {
         auto& border = *reinterpret_cast<Border_t::efBorder_var*>(GLOBAL::exedit_base + OFS::ExEdit::efBorder_var_ptr);
-        auto efp = static_cast<ExEdit::Filter*>(param1);
+        // auto efp = static_cast<ExEdit::Filter*>(param1);
         auto efpip = static_cast<ExEdit::FilterProcInfo*>(param2);
 
         int begin_thread = efpip->obj_h * thread_id / thread_num;
@@ -175,9 +174,10 @@ namespace patch::fast {
                     a256 = _mm256_mullo_epi32(a_sum256, border_alpha256);
                     a256 = _mm256_srli_epi32(a256, border._alpha_shift);
                     a256 = _mm256_min_epu32(a256, a_mem_max256);
-
+                    alignas(32) std::uint32_t u32[8];
+                    _mm256_store_si256(reinterpret_cast<__m256i*>(u32), a256);
                     for (int i = 0; i < 8; i++) {
-                        mem[i * efpip->obj_line] = (unsigned short)a256.m256i_u32[i];
+                        mem[i * efpip->obj_line] = (unsigned short)u32[i];
                     }
 
                     pix1 += 2;
@@ -193,9 +193,10 @@ namespace patch::fast {
                     a256 = _mm256_mullo_epi32(a_sum256, border_alpha256);
                     a256 = _mm256_srli_epi32(a256, border._alpha_shift);
                     a256 = _mm256_min_epu32(a256, a_mem_max256);
-
+                    alignas(32) std::uint32_t u32[8];
+                    _mm256_store_si256(reinterpret_cast<__m256i*>(u32), a256);
                     for (int i = 0; i < 8; i++) {
-                        mem[i * efpip->obj_line] = (unsigned short)a256.m256i_u32[i];
+                        mem[i * efpip->obj_line] = (unsigned short)u32[i];
                     }
 
                     pix1 += 2;
@@ -209,9 +210,10 @@ namespace patch::fast {
                     a256 = _mm256_mullo_epi32(a_sum256, border_alpha256);
                     a256 = _mm256_srli_epi32(a256, border._alpha_shift);
                     a256 = _mm256_min_epu32(a256, a_mem_max256);
-
+                    alignas(32) std::uint32_t u32[8];
+                    _mm256_store_si256(reinterpret_cast<__m256i*>(u32), a256);
                     for (int i = 0; i < 8; i++) {
-                        mem[i * efpip->obj_line] = (unsigned short)a256.m256i_u32[i];
+                        mem[i * efpip->obj_line] = (unsigned short)u32[i];
                     }
 
                     pix2 += 2;
@@ -229,7 +231,7 @@ namespace patch::fast {
             int x;
             for (x = 0; x <= border.add_size; x++) {
                 a_sum += *pixa1;
-                *mem = (unsigned short)min(a_sum * border.alpha >> border._alpha_shift, ALPHA_TEMP_MAX);
+                *mem = std::min<unsigned short>(a_sum * border.alpha >> border._alpha_shift, ALPHA_TEMP_MAX);
 
                 pixa1 += 4;
                 mem++;
@@ -237,7 +239,7 @@ namespace patch::fast {
 
             for (; x < efpip->obj_w; x++) {
                 a_sum += *pixa1 - *pixa2;
-                *mem = (unsigned short)min(a_sum * border.alpha >> border._alpha_shift, ALPHA_TEMP_MAX);
+                *mem = std::min<unsigned short>(a_sum * border.alpha >> border._alpha_shift, ALPHA_TEMP_MAX);
 
                 pixa1 += 4;
                 pixa2 += 4;
@@ -245,7 +247,7 @@ namespace patch::fast {
             }
             for (x = 0; x < border.add_size; x++) {
                 a_sum -= *pixa2;
-                *mem = (unsigned short)min(a_sum * border.alpha >> border._alpha_shift, ALPHA_TEMP_MAX);
+                *mem = std::min<unsigned short>(a_sum * border.alpha >> border._alpha_shift, ALPHA_TEMP_MAX);
 
                 pixa2 += 4;
                 mem++;
@@ -253,9 +255,9 @@ namespace patch::fast {
         }
     }
 
-    void efBorder_horizontal_convolution_alpha_simd2(int thread_id, int thread_num, void* param1, void* param2) { // 51ae0
+    void efBorder_horizontal_convolution_alpha_simd2(int thread_id, int thread_num, void*, void* param2) { // 51ae0
         auto& border = *reinterpret_cast<Border_t::efBorder_var*>(GLOBAL::exedit_base + OFS::ExEdit::efBorder_var_ptr);
-        auto efp = static_cast<ExEdit::Filter*>(param1);
+        // auto efp = static_cast<ExEdit::Filter*>(param1);
         auto efpip = static_cast<ExEdit::FilterProcInfo*>(param2);
 
         int begin_thread = efpip->obj_h * thread_id / thread_num;
@@ -276,6 +278,7 @@ namespace patch::fast {
 
                 __m256i a_sum256 = _mm256_setzero_si256();
                 __m256i a256;
+                alignas(32) std::uint32_t u32[8];
                 int x;
                 for (x = 0; x < efpip->obj_w; x++) {
                     a256 = _mm256_srli_epi32(_mm256_i32gather_epi32(pix1, offset256, 4), 16);
@@ -283,9 +286,9 @@ namespace patch::fast {
                     a256 = _mm256_mullo_epi32(a_sum256, border_alpha256);
                     a256 = _mm256_srli_epi32(a256, border._alpha_shift);
                     a256 = _mm256_min_epu32(a256, a_mem_max256);
-
+                    _mm256_store_si256(reinterpret_cast<__m256i*>(u32), a256);
                     for (int i = 0; i < 8; i++) {
-                        mem[i * efpip->obj_line] = (unsigned short)a256.m256i_u32[i];
+                        mem[i * efpip->obj_line] = (unsigned short)u32[i];
                     }
 
                     pix1 += 2;
@@ -294,7 +297,7 @@ namespace patch::fast {
 
                 for (; x < border.add_size; x++) {
                     for (int i = 0; i < 8; i++) {
-                        mem[i * efpip->obj_line] = (unsigned short)a256.m256i_u32[i];
+                        mem[i * efpip->obj_line] = (unsigned short)u32[i];
                     }
                     mem++;
                 }
@@ -304,9 +307,9 @@ namespace patch::fast {
                     a256 = _mm256_mullo_epi32(a_sum256, border_alpha256);
                     a256 = _mm256_srli_epi32(a256, border._alpha_shift);
                     a256 = _mm256_min_epu32(a256, a_mem_max256);
-
+                    _mm256_store_si256(reinterpret_cast<__m256i*>(u32), a256);
                     for (int i = 0; i < 8; i++) {
-                        mem[i * efpip->obj_line] = (unsigned short)a256.m256i_u32[i];
+                        mem[i * efpip->obj_line] = (unsigned short)u32[i];
                     }
 
                     pix2 += 2;
@@ -325,7 +328,7 @@ namespace patch::fast {
             int x;
             for (x = 0; x < efpip->obj_w; x++) {
                 a_sum += *pixa1;
-                *mem = a = (unsigned short)min(a_sum * border.alpha >> border._alpha_shift, ALPHA_TEMP_MAX);
+                *mem = a = std::min<unsigned short>(a_sum * border.alpha >> border._alpha_shift, ALPHA_TEMP_MAX);
 
                 pixa1 += 4;
                 mem++;
@@ -337,7 +340,7 @@ namespace patch::fast {
             }
             for (x = 0; x < efpip->obj_w; x++) {
                 a_sum -= *pixa2;
-                *mem = (unsigned short)min(a_sum * border.alpha >> border._alpha_shift, ALPHA_TEMP_MAX);
+                *mem = std::min<unsigned short>(a_sum * border.alpha >> border._alpha_shift, ALPHA_TEMP_MAX);
 
                 pixa2 += 4;
                 mem++;
@@ -347,7 +350,7 @@ namespace patch::fast {
 
     void efBorder_vertical_convolution_alpha_and_put_color_simd(int thread_id, int thread_num, void* param1, void* param2) {
         auto& border = *reinterpret_cast<Border_t::efBorder_var*>(GLOBAL::exedit_base + OFS::ExEdit::efBorder_var_ptr);
-        auto efp = static_cast<ExEdit::Filter*>(param1);
+        //auto efp = static_cast<ExEdit::Filter*>(param1);
         auto efpip = static_cast<ExEdit::FilterProcInfo*>(param2);
 
         ExEdit::PixelYCA* pix;
@@ -423,7 +426,7 @@ namespace patch::fast {
                 if (a_sum == 0) {
                     pix->a = 0;
                 } else {
-                    color.a = (short)min(a_sum * border.alpha >> border._alpha_shift, 0x1000);
+                    color.a = std::min<short>(a_sum * border.alpha >> border._alpha_shift, 0x1000);
                     *pix = color;
                 }
 
@@ -435,7 +438,7 @@ namespace patch::fast {
                 if (a_sum == 0) {
                     pix->a = 0;
                 } else {
-                    color.a = (short)min(a_sum * border.alpha >> border._alpha_shift, 0x1000);
+                    color.a = std::min<short>(a_sum * border.alpha >> border._alpha_shift, 0x1000);
                     *pix = color;
                 }
 
@@ -449,7 +452,7 @@ namespace patch::fast {
                 if (a_sum == 0) {
                     pix->a = 0;
                 } else {
-                    color.a = (short)min(a_sum * border.alpha >> border._alpha_shift, 0x1000);
+                    color.a = std::min<short>(a_sum * border.alpha >> border._alpha_shift, 0x1000);
                     *pix = color;
                 }
 
@@ -461,7 +464,7 @@ namespace patch::fast {
 
     void efBorder_vertical_convolution_alpha_and_put_color_simd2(int thread_id, int thread_num, void* param1, void* param2) {
         auto& border = *reinterpret_cast<Border_t::efBorder_var*>(GLOBAL::exedit_base + OFS::ExEdit::efBorder_var_ptr);
-        auto efp = static_cast<ExEdit::Filter*>(param1);
+        // auto efp = static_cast<ExEdit::Filter*>(param1);
         auto efpip = static_cast<ExEdit::FilterProcInfo*>(param2);
 
         ExEdit::PixelYCA* pix;
@@ -530,7 +533,7 @@ namespace patch::fast {
                 if (a_sum == 0) {
                     pix->a = color.a = 0;
                 } else {
-                    color.a = (short)min(a_sum * border.alpha >> border._alpha_shift, 0x1000);
+                    color.a = std::min<short>(a_sum * border.alpha >> border._alpha_shift, 0x1000);
                     *pix = color;
                 }
 
@@ -548,7 +551,7 @@ namespace patch::fast {
                 if (a_sum == 0) {
                     pix->a = 0;
                 } else {
-                    color.a = (short)min(a_sum * border.alpha >> border._alpha_shift, 0x1000);
+                    color.a = std::min<short>(a_sum * border.alpha >> border._alpha_shift, 0x1000);
                     *pix = color;
                 }
 
@@ -558,9 +561,9 @@ namespace patch::fast {
         }
     }
 
-    void efBorder_vertical_convolution_alpha_simd(int thread_id, int thread_num, void* param1, void* param2) {
+    void efBorder_vertical_convolution_alpha_simd(int thread_id, int thread_num, void*, void* param2) {
         auto& border = *reinterpret_cast<Border_t::efBorder_var*>(GLOBAL::exedit_base + OFS::ExEdit::efBorder_var_ptr);
-        auto efp = static_cast<ExEdit::Filter*>(param1);
+        // auto efp = static_cast<ExEdit::Filter*>(param1);
         auto efpip = static_cast<ExEdit::FilterProcInfo*>(param2);
 
         unsigned short* mem1;
@@ -592,9 +595,11 @@ namespace patch::fast {
                     __m256i pixa256 = _mm256_srli_epi32(_mm256_i32gather_epi32(pixa, offset256, 4), 16);
                     a256 = _mm256_mullo_epi32(a256, pixa256);
                     a256 = _mm256_srli_epi32(a256, 12);
+                    alignas(32) std::uint32_t u32[8];
+                    _mm256_store_si256(reinterpret_cast<__m256i*>(u32), a256);
                     short* pixas = (short*)pixa + 1;
                     for (int i = 0; i < 8; i++) {
-                        pixas[i * 4] = (unsigned short)a256.m256i_u32[i];
+                        pixas[i * 4] = (unsigned short)u32[i];
                     }
 
                     pixa += efpip->obj_line * 2;
@@ -610,9 +615,11 @@ namespace patch::fast {
                     __m256i pixa256 = _mm256_srli_epi32(_mm256_i32gather_epi32(pixa, offset256, 4), 16);
                     a256 = _mm256_mullo_epi32(a256, pixa256);
                     a256 = _mm256_srli_epi32(a256, 12);
+                    alignas(32) std::uint32_t u32[8];
+                    _mm256_store_si256(reinterpret_cast<__m256i*>(u32), a256);
                     short* pixas = (short*)pixa + 1;
                     for (int i = 0; i < 8; i++) {
-                        pixas[i * 4] = (unsigned short)a256.m256i_u32[i];
+                        pixas[i * 4] = (unsigned short)u32[i];
                     }
 
                     pixa += efpip->obj_line * 2;
@@ -628,9 +635,11 @@ namespace patch::fast {
                     __m256i pixa256 = _mm256_srli_epi32(_mm256_i32gather_epi32(pixa, offset256, 4), 16);
                     a256 = _mm256_mullo_epi32(a256, pixa256);
                     a256 = _mm256_srli_epi32(a256, 12);
+                    alignas(32) std::uint32_t u32[8];
+                    _mm256_store_si256(reinterpret_cast<__m256i*>(u32), a256);
                     short* pixas = (short*)pixa + 1;
                     for (int i = 0; i < 8; i++) {
-                        pixas[i * 4] = (unsigned short)a256.m256i_u32[i];
+                        pixas[i * 4] = (unsigned short)u32[i];
                     }
 
                     pixa += efpip->obj_line * 2;
@@ -686,7 +695,7 @@ namespace patch::fast {
 
     void efBorder_vertical_convolution_alpha_simd2(int thread_id, int thread_num, void* param1, void* param2) {
         auto& border = *reinterpret_cast<Border_t::efBorder_var*>(GLOBAL::exedit_base + OFS::ExEdit::efBorder_var_ptr);
-        auto efp = static_cast<ExEdit::Filter*>(param1);
+        // auto efp = static_cast<ExEdit::Filter*>(param1);
         auto efpip = static_cast<ExEdit::FilterProcInfo*>(param2);
 
         unsigned short* mem1;
@@ -719,9 +728,11 @@ namespace patch::fast {
                     __m256i pixa256 = _mm256_srli_epi32(_mm256_i32gather_epi32(pixa, offset256, 4), 16);
                     pixa256 = _mm256_mullo_epi32(a256, pixa256);
                     pixa256 = _mm256_srli_epi32(pixa256, 12);
+                    alignas(32) std::uint32_t u32[8];
+                    _mm256_store_si256(reinterpret_cast<__m256i*>(u32), a256);
                     short* pixas = (short*)pixa + 1;
                     for (int i = 0; i < 8; i++) {
-                        pixas[i * 4] = (unsigned short)pixa256.m256i_u32[i];
+                        pixas[i * 4] = (unsigned short)u32[i];
                     }
 
                     pixa += efpip->obj_line * 2;
@@ -732,9 +743,11 @@ namespace patch::fast {
                     __m256i pixa256 = _mm256_srli_epi32(_mm256_i32gather_epi32(pixa, offset256, 4), 16);
                     pixa256 = _mm256_mullo_epi32(a256, pixa256);
                     pixa256 = _mm256_srli_epi32(pixa256, 12);
+                    alignas(32) std::uint32_t u32[8];
+                    _mm256_store_si256(reinterpret_cast<__m256i*>(u32), a256);
                     short* pixas = (short*)pixa + 1;
                     for (int i = 0; i < 8; i++) {
-                        pixas[i * 4] = (unsigned short)pixa256.m256i_u32[i];
+                        pixas[i * 4] = (unsigned short)u32[i];
                     }
 
                     pixa += efpip->obj_line * 2;
@@ -748,9 +761,11 @@ namespace patch::fast {
                     __m256i pixa256 = _mm256_srli_epi32(_mm256_i32gather_epi32(pixa, offset256, 4), 16);
                     pixa256 = _mm256_mullo_epi32(a256, pixa256);
                     pixa256 = _mm256_srli_epi32(pixa256, 12);
+                    alignas(32) std::uint32_t u32[8];
+                    _mm256_store_si256(reinterpret_cast<__m256i*>(u32), a256);
                     short* pixas = (short*)pixa + 1;
                     for (int i = 0; i < 8; i++) {
-                        pixas[i * 4] = (unsigned short)pixa256.m256i_u32[i];
+                        pixas[i * 4] = (unsigned short)u32[i];
                     }
 
                     pixa += efpip->obj_line * 2;

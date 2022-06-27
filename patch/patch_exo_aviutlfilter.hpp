@@ -37,9 +37,9 @@ namespace patch {
 		bool enabled = true;
 		inline static const char key[] = "exo_aviutlfilter";
 
-		std::optional<restorable_patch> rp1;
-		std::optional<restorable_patch> rp2;
-		std::optional<restorable_patch> rp3;
+		std::optional<restorable_patch<6>> rp1;
+		std::optional<restorable_patch<6>> rp2;
+		std::optional<restorable_patch<6>> rp3;
 
 	public:
 		void init() {
@@ -74,7 +74,7 @@ namespace patch {
 				10028a9c 
 			*/
 
-			auto apply = [&cursor](uint32_t ofs, uint32_t esp_add, std::optional<restorable_patch>& rp) {
+			auto apply = [&cursor](uint32_t ofs, uint32_t esp_add, std::optional<restorable_patch<6>>& rp) {
 				static const char code_put[] =
 					"\x83\xc4\x0c" // ADD ESP 0CH
 					"\x8a\x46\x03" // MOV AL, BYTE PTR [ESI + 3H]
@@ -91,11 +91,11 @@ namespace patch {
 					"\xe9XXXX" // JMP rel32
 					;
 
-				char injection[6];
+				std::array<char, 6> injection;
 				injection[0] = '\xe9'; // jmp rel32
-				store_i32(injection + 1, CalcNearJmp(ofs + 1, reinterpret_cast<i32>(cursor)));
+				store_i32(injection.data() + 1, CalcNearJmp(ofs + 1, reinterpret_cast<i32>(cursor)));
 				injection[5] = '\x90'; // nop
-				rp.emplace(ofs, injection, sizeof(injection));
+				rp.emplace(ofs, injection);
 
 				memcpy(cursor, code_put, sizeof(code_put) - 1);
 				auto ret = ofs + 0x18;

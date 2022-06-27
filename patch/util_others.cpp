@@ -16,7 +16,9 @@
 #include "util_others.hpp"
 
 #include <Shlwapi.h>
+#ifdef _MSC_VER
 #pragma comment(lib, "shlwapi.lib")
+#endif
 
 #include <aviutl.hpp>
 

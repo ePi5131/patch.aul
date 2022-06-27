@@ -75,13 +75,13 @@ namespace patch::fast {
 		};
 
 		inline std::strong_ordering operator<=>(const FontKey& a, const FontKey& b) {
-			#define comp(member) if (auto cmp = a.##member <=> b.##member; cmp != 0) do { return cmp; } while(0)
+			#define comp(member) if (auto cmp = a.member <=> b.member; cmp != 0) do { return cmp; } while(0)
 			#define compb(member) \
-			if(a.##member == TRUE) { \
-				if(b.##member != TRUE) \
+			if(a.member == TRUE) { \
+				if(b.member != TRUE) \
 					return std::strong_ordering::less; /*a==TRUE b==FALSE */ \
 			} else { \
-				if (b.##member == TRUE) \
+				if (b.member == TRUE) \
 					return std::strong_ordering::greater; /*a==FALSE b==TRUE */ \
 			}
 

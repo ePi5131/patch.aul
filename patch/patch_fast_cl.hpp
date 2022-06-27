@@ -32,11 +32,15 @@
 #define CL_VERSION_2_1                              0
 #define CL_VERSION_2_2                              0
 #define CL_VERSION_3_0                              0
+#ifdef _MSC_VER
 #pragma warning(push)
 #pragma warning(disable: 4005)
+#endif
 #include <CL/cl.hpp>
+#ifdef _MSC_VER
 #pragma warning(pop)
 #pragma comment(lib, "opencl.lib")
+#endif
 
 #include "cryptostring.hpp"
 #include "util.hpp"
@@ -46,7 +50,9 @@
 namespace patch::fast {
 
 inline class cl_t {
+#ifdef _MSC_VER
 #pragma region clprogram
+#endif
 	inline static auto program_str = make_cryptostring(R"(
 kernel void PolorTransform(global short* dst, global short* src, int src_w, int src_h, int exedit_buffer_line, int center, int radius, float angle, float uzu, float uzu_a) {
 	int x = get_global_id(0);
@@ -831,7 +837,9 @@ kernel void LensBlur_Filter(global char* dst, global char* src, int scene_w, int
 }
 
 )");
+#ifdef _MSC_VER
 #pragma endregion
+#endif
 
 	template<size_t i, class Head>
 	static void KernelSetArg(cl::Kernel& kernel, Head head) {
@@ -865,7 +873,7 @@ public:
 		Failed
 	} state;
 
-	cl_t() :state(State::NotYet), CLLib(NULL) {}
+	cl_t() : CLLib(NULL), state(State::NotYet) {}
 	~cl_t() {
 		FreeLibrary(CLLib);
 		if (program_opt) {
@@ -874,34 +882,63 @@ public:
 		}
 	}
 
+	inline static bool delay_load_exception_has_occured = false;
+	static inline LONG filter(DWORD code) {
+		if (
+			code == VcppException(DWORD{ERROR_SEVERITY_ERROR}, ERROR_MOD_NOT_FOUND) ||
+			code == VcppException(DWORD{ERROR_SEVERITY_ERROR}, ERROR_PROC_NOT_FOUND)
+		) {
+			return EXCEPTION_EXECUTE_HANDLER;
+		}
+		return EXCEPTION_CONTINUE_SEARCH;
+	}
+#ifndef _MSC_VER
+	static inline __stdcall LONG handler(_EXCEPTION_POINTERS* ExceptionInfo){
+		const LONG ret = filter(ExceptionInfo->ExceptionRecord->ExceptionCode);
+		//The handler should not call functions that acquire synchronization objects or allocate memory,
+		//because this can cause problems. Typically, the handler will simply access the exception record and return.
+		//
+		if (ret == EXCEPTION_EXECUTE_HANDLER) {
+			delay_load_exception_has_occured = true;
+		//	debug_log("OpenCL not available {}\n", "delay load exception");
+		}
+		return ret;
+	}
+#endif
 	bool init() {
 		enabled_i = enabled;
 
 		if (!enabled_i)return true;
 
 		if (![]() {
-			__try {
+			auto loader = [] {
 				auto load_ret = __HrLoadAllImportsForDll("OpenCL.dll");
 					if (FAILED(load_ret)) {
 						[load_ret]() {
-							debug_log("OpenCL not available {}", "delay load failed {}"_fmt(load_ret));
+							debug_log("OpenCL not available {}", format("delay load failed {}", load_ret));
 						}();
 						return false;
 					}
 				return true;
+			};
+#ifdef _MSC_VER
+			__try {
+				return loader();
 			}
-			__except ([](int code) {
-				if (
-					code == VcppException(ERROR_SEVERITY_ERROR, ERROR_MOD_NOT_FOUND) ||
-					code == VcppException(ERROR_SEVERITY_ERROR, ERROR_PROC_NOT_FOUND)
-				) {
-					return EXCEPTION_EXECUTE_HANDLER;
-				}
-				return EXCEPTION_CONTINUE_SEARCH;
-			} (GetExceptionCode())) {
+			__except (filter(GetExceptionCode())) {
 				debug_log("OpenCL not available {}\n", "delay load exception");
 				return false;
 			}
+#else
+			const auto h = AddVectoredExceptionHandler(1, handler);
+			const bool ret = loader();
+			RemoveVectoredExceptionHandler(h);
+			if (delay_load_exception_has_occured) {
+				debug_log("OpenCL not available {}\n", "delay load exception");
+				return false;
+			}
+			return ret;
+#endif
 		}()) {
 			state = State::Failed;
 			return false;

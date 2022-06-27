@@ -87,14 +87,14 @@ namespace patch {
 				// 0x02e70 の Init の ret にスプラッシュウィンドウを閉じる処理を仕込む
 
 				OverWriteOnProtectHelper h(GLOBAL::aviutl_base + 0x041af, 0x21);
-				store_i16(GLOBAL::aviutl_base + 0x041af, '\xeb\x11'); // jmp near +0x11
+				store_i16(GLOBAL::aviutl_base + 0x041af, { 0xeb, 0x11 }); // jmp near +0x11
 
-				store_i16(GLOBAL::aviutl_base + 0x041c2, '\x50\xb9'); // push eax | mov ecx, (i32)
+				store_i16(GLOBAL::aviutl_base + 0x041c2, { 0x50, 0xb9 }); // push eax | mov ecx, (i32)
 				store_i32(GLOBAL::aviutl_base + 0x041c4, &InitEnd);
 
-				store_i16(GLOBAL::aviutl_base + 0x041c8, '\xff\xd1'); // call ecx
+				store_i16(GLOBAL::aviutl_base + 0x041c8, { 0xff, 0xd1 }); // call ecx
 
-				store_i32(GLOBAL::aviutl_base + 0x041ca, '\x58\x8b\xe5\x5d'); // pop eax | mov esp, ebp | pop ebp
+				store_i32(GLOBAL::aviutl_base + 0x041ca, { 0x58, 0x8b, 0xe5, 0x5d }); // pop eax | mov esp, ebp | pop ebp
 				store_i8(GLOBAL::aviutl_base + 0x041ce, '\xc3'); // ret
 			}
 		}

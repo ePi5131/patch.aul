@@ -221,7 +221,7 @@ void init_t::InitAufBefore() {
 	patch::aviutl_wndproc_override.go();
 }
 
-BOOL WINAPI init_t::EnumResourceLanguagesA_Wrap(HMODULE hModule, LPCSTR lpType, LPCSTR lpName, ENUMRESLANGPROCA lpEnumFunc, LONG_PTR lParam) {
+BOOL WINAPI init_t::EnumResourceLanguagesA_Wrap(HMODULE, LPCSTR, LPCSTR, ENUMRESLANGPROCA, LONG_PTR) {
 	ExchangeFunction((HMODULE)GLOBAL::aviutl_base, cstr_kernel32_dll.get(), cstr_EnumResourceLanguagesA.get(), EnumResourceLanguagesA);
 
 	InitAtPatchLoaded();

@@ -24,6 +24,11 @@
 #include <unordered_map>
 #include <functional>
 #include <optional>
+#include <charconv>
+#ifndef __cpp_lib_to_chars
+#include <cmath>
+#include <cerrno>
+#endif
 
 #include "json.h"
 
@@ -32,32 +37,29 @@
 namespace config_type {
 
 	struct ColorBGR {
-		union {
-			struct {
-				uint8_t b, g, r;
-				uint8_t valid;
-			};
-			uint32_t val;
-		};
+		struct colors {
+			uint8_t b, g, r;
+			uint8_t valid;
+		} val;
 		ColorBGR() : val{} {}
 
-		ColorBGR(uint32_t x) : val(x) {
-			val = x;
-			valid = 1;
+		ColorBGR(uint32_t x) : val{} {
+			std::memcpy(&val, &x, sizeof(uint32_t));
+			val.valid = 1;
 		}
-		ColorBGR(int b, int g, int r) :b(b), g(g), r(r), valid(1) {}
+		ColorBGR(uint8_t b, uint8_t g, uint8_t r) : val{ b, g, r, 1} {}
 		ColorBGR(std::string_view x) {
 			if (x.size() < 6) {
-				b = g = r = valid = 0;
+				val = {};
 				return;
 			}
 			auto itr = x.data();
-			std::from_chars(itr, itr + 2, r, 16);
+			std::from_chars(itr, itr + 2, val.r, 16);
 			itr += 2;
-			std::from_chars(itr, itr + 2, g, 16);
+			std::from_chars(itr, itr + 2, val.g, 16);
 			itr += 2;
-			std::from_chars(itr, itr + 2, b, 16);
-			valid = 1;
+			std::from_chars(itr, itr + 2, val.b, 16);
+			val.valid = 1;
 		}
 		inline static ColorBGR from_rgb(uint32_t x) {
 			if (std::is_constant_evaluated()) {
@@ -69,31 +71,31 @@ namespace config_type {
 		}
 
 		constexpr uint32_t to_col() const noexcept {
-			return val & 0xffffff;
+			return std::bit_cast<uint32_t>(val) & 0xffffff;
 		}
 		constexpr uint32_t to_col_rgb() const noexcept {
 			if (std::is_constant_evaluated()) {
-				return b << 16 | g << 8 | r;
+				return val.b << 16 | val.g << 8 | val.r;
 			}
 			else {
-				return _byteswap_ulong(val) >> 8;
+				return _byteswap_ulong(std::bit_cast<uint32_t>(val)) >> 8;
 			}
 		}
 		std::string to_string() const {
-			return "{:02x}{:02x}{:02x}"_fmt(r, g, b);
+			return format("{:02x}{:02x}{:02x}", val.r, val.g, val.b);
 		}
 		std::string to_jsonstring() const {
-			return "\"{:02x}{:02x}{:02x}\""_fmt(r, g, b);
+			return format(R"("{:02x}{:02x}{:02x}")", val.r, val.g, val.b);
 		}
 		constexpr bool is_valid() const noexcept {
-			return valid;
+			return val.valid;
 		}
 		bool operator==(ColorBGR x) const {
-			if (this->valid) {
-				if (!x.valid)return false;
-				else return (this->val & 0xffffff) == (x.val & 0xffffff);
+			if (this->val.valid) {
+				if (!x.val.valid)return false;
+				else return (std::bit_cast<uint32_t>(val) & 0xffffff) == (std::bit_cast<uint32_t>(x.val) & 0xffffff);
 			}
-			else return !x.valid;
+			else return !x.val.valid;
 		}
 	};
 
@@ -107,16 +109,16 @@ namespace config_type {
 		inline void load(json_value_s* value) {
 			if (auto js = json_value_as_string(value)) {
 				ary[0] = std::string_view(js->string, js->string_size);
-				ary[1].valid = 0;
+				ary[1].val.valid = 0;
 			}
 			else if (auto ja = json_value_as_array(value)) {
 				if (ja->length == 0) {
-					ary[0].valid = 0;
+					ary[0].val.valid = 0;
 				}
 				else if (ja->length == 1) {
 					if (auto js = json_value_as_string(ja->start->value)) {
 						ary[0] = std::string_view(js->string, js->string_size);
-						ary[1].valid = 0;
+						ary[1].val.valid = 0;
 					}
 				}
 				else {
@@ -132,7 +134,7 @@ namespace config_type {
 						}
 						v = v->next;
 					}
-					if (!valid) ary[0].valid = 0;
+					if (!valid) ary[0].val.valid = 0;
 				}
 			}
 		}
@@ -140,7 +142,7 @@ namespace config_type {
 		std::string to_jsonstring() const {
 			if (ary[0].is_valid()) {
 				if (ary[1].is_valid())
-					return "[ {}, {} ]"_fmt(ary[0].to_jsonstring(), ary[1].to_jsonstring());
+					return format("[ {}, {} ]", ary[0].to_jsonstring(), ary[1].to_jsonstring());
 				else
 					return ary[0].to_jsonstring();
 			}
@@ -178,14 +180,14 @@ namespace config_type {
 						}
 						v = v->next;
 					}
-					if (!valid) ary[0].valid = 0;
+					if (!valid) ary[0].val.valid = 0;
 				}
 			}
 		}
 
 		std::string to_jsonstring() const {
 			if (ary[0].is_valid())
-				return "[ {}, {} ]"_fmt(ary[0].to_jsonstring(), ary[1].to_jsonstring());
+				return format("[ {}, {} ]", ary[0].to_jsonstring(), ary[1].to_jsonstring());
 			return std::string{};
 		}
 
@@ -219,7 +221,7 @@ namespace config_type {
 						}
 						v = v->next;
 					}
-					if (!valid) ary[0].valid = 0;
+					if (!valid) ary[0].val.valid = 0;
 				}
 			}
 		}
@@ -228,7 +230,7 @@ namespace config_type {
 		}
 		std::string to_jsonstring() const {
 			if (has_value())
-				return "[ {}, {}, {} ]"_fmt(ary[0].to_jsonstring(), ary[1].to_jsonstring(), ary[2].to_jsonstring());
+				return format("[ {}, {}, {} ]", ary[0].to_jsonstring(), ary[1].to_jsonstring(), ary[2].to_jsonstring());
 			return std::string{};
 		}
 	};
@@ -299,7 +301,7 @@ public:
 	}
 
 	void append(std::string_view key, const RECT& value) {
-		vkv.emplace_back(std::string(key), "[ {}, {}, {}, {} ]"_fmt(value.left, value.top, value.right, value.bottom));
+		vkv.emplace_back(std::string(key), format("[ {}, {}, {}, {} ]", value.left, value.top, value.right, value.bottom));
 	}
 
 	template<size_t N>
@@ -337,7 +339,7 @@ public:
 
 		WriteBlockBegin(ss);
 
-		for (size_t i = 0; i < s - 1; i++) {
+		for (std::size_t i = 0; i < s - 1; i++) {
 			WriteLevel(ss, level + 1);
 			WriteKey(ss, vkv[i].key);
 			ss << vkv[i].value;
@@ -410,8 +412,17 @@ public:
 	template<std::floating_point Float>
 	inline static bool load_variable(json_value_s* jv, Float& value) {
 		if (auto n = json_value_as_number(jv); n) {
+#ifdef __cpp_lib_to_chars
 			Float ret;
+			//__cpp_lib_to_chars
 			std::from_chars(n->number, n->number + n->number_size, ret);
+#else
+			std::string num{n->number, n->number};
+			const char* endptr = num.c_str();
+			errno = 0;
+			const auto ret = std::strtod(num.c_str(), const_cast<char**>(&endptr));
+			if (errno != 0 || (ret == 0 && num.c_str() == endptr)) return false;
+#endif
 			value = ret;
 			return true;
 		}
@@ -423,7 +434,7 @@ public:
 			value = config_type::ColorBGR(std::string_view(s->string, s->string_size));
 		}
 		else {
-			value.valid = 0;
+			value.val.valid = 0;
 		}
 	}
 

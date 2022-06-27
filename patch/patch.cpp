@@ -22,7 +22,7 @@
 #include "config.hpp"
 
 BOOL WINAPI DllMain(HINSTANCE hinstDLL, DWORD fdwReason, LPVOID lpReserved) {
-	static bool loading_self = false;
+	// static bool loading_self = false;
 	switch (fdwReason) {
 	case DLL_PROCESS_ATTACH:
 		DisableThreadLibraryCalls(hinstDLL);

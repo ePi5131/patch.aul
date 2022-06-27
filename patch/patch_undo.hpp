@@ -150,7 +150,7 @@ namespace patch {
 			ReplaceNearJmp(GLOBAL::exedit_base + 0x03e038, &set_undo_wrap_3e037);
 			
 			// 一部フィルタのファイル参照を変更→元に戻すで設定ダイアログが更新されない(音声波形など)
-			OverWriteOnProtectHelper(GLOBAL::exedit_base + 0x08d50e, 4).store_i32(0, '\x0f\x1f\x40\x00'); // nop
+			OverWriteOnProtectHelper(GLOBAL::exedit_base + 0x08d50e, 4).store_i32(0, { 0x0f, 0x1f, 0x40, 0x00 }); // nop
 
             // 部分フィルタのマスクの種類を変更してもUndoデータが生成されない
             ReplaceNearJmp(GLOBAL::exedit_base + 0x06e2b5, &efDraw_func_WndProc_wrap_06e2b4);
@@ -158,37 +158,37 @@ namespace patch {
             // テキストオブジェクトのフォントを変更してもUndoデータが生成されない
             {
                 OverWriteOnProtectHelper h(GLOBAL::exedit_base + 0x08b97c, 8);
-                h.store_i32(0, '\x90\x57\x51\xe8'); // nop; push edi=efp; push ecx; call (rel32)
+                h.store_i32(0, { 0x90, 0x57, 0x51, 0xe8 }); // nop; push edi=efp; push ecx; call (rel32)
                 h.replaceNearJmp(4, &f8b97f);
             }
 
             // テキストオブジェクトの影付き・縁付きを変更してもUndoデータが生成されない
             {
                 OverWriteOnProtectHelper h(GLOBAL::exedit_base + 0x08ba86, 2);
-                h.store_i16(0, '\x57\xe8'); // push edi=efp; call (rel32)
+                h.store_i16(0, { 0x57, 0xe8 }); // push edi=efp; call (rel32)
                 ReplaceNearJmp(GLOBAL::exedit_base + 0x08ba88, &f8ba87_8bad5);
             }
 
             // テキストオブジェクトの文字配置(左寄せ[上]など)を変更してもUndoデータが生成されない
             {
                 OverWriteOnProtectHelper h(GLOBAL::exedit_base + 0x08bad4, 6);
-                h.store_i16(0, '\x57\xe8'); // push edi=efp; call (rel32)
+                h.store_i16(0, { 0x57, 0xe8 }); // push edi=efp; call (rel32)
                 h.replaceNearJmp(2, &f8ba87_8bad5);
             }
 
             // テキストオブジェクトの字間を変更してもUndoデータが生成されない
             {
                 OverWriteOnProtectHelper h(GLOBAL::exedit_base + 0x08bb48, 10);
-                h.store_i32(0, '\x57\x6a\x05\x56'); // push edi=efp; push 5; push esi=exdata
-                h.store_i16(4, '\x50\xe8'); //  push eax=value; call rel32
+                h.store_i32(0, { 0x57, 0x6a, 0x05, 0x56 }); // push edi=efp; push 5; push esi=exdata
+                h.store_i16(4, { 0x50, 0xe8 }); //  push eax=value; call rel32
                 h.replaceNearJmp(6, &f8bb4d_8bbcc);
             }
 
             // テキストオブジェクトの行間を変更してもUndoデータが生成されない
             {
                 OverWriteOnProtectHelper h(GLOBAL::exedit_base + 0x08bbc7, 10);
-                h.store_i32(0, '\x57\x6a\x06\x56'); // push edi=efp; push 6; push esi=exdata
-                h.store_i16(4, '\x50\xe8'); //  push eax=value; call rel32
+                h.store_i32(0, { 0x57, 0x6a, 0x06, 0x56 }); // push edi=efp; push 6; push esi=exdata
+                h.store_i16(4, { 0x50, 0xe8 }); //  push eax=value; call rel32
                 h.replaceNearJmp(6, &f8bb4d_8bbcc);
             }
 
@@ -213,7 +213,7 @@ namespace patch {
             // テキストを変更してもUndoデータが生成されない
             {
                 OverWriteOnProtectHelper h(GLOBAL::exedit_base + 0x08b9ef, 6);
-                h.store_i16(0, '\x57\xe8'); // push edi; call (rel32)
+                h.store_i16(0, { 0x57, 0xe8 }); // push edi; call (rel32)
                 h.replaceNearJmp(2, &f8b9f0);
             }
 
@@ -231,8 +231,8 @@ namespace patch {
                 // 100875ee 52                PUSH EDX
                 // 100875ef e8 XXXX           CALL rel32
                 OverWriteOnProtectHelper h(GLOBAL::exedit_base + 0x0875e7, 13);
-                h.store_i32(0, '\x8b\x54\x24\x38');
-                h.store_i32(4, '\x90\x56\x51\x52');
+                h.store_i32(0, { 0x8b, 0x54, 0x24, 0x38 });
+                h.store_i32(4, { 0x90, 0x56, 0x51, 0x52 });
                 h.store_i8(8, '\xe8');
                 h.replaceNearJmp(9, &f875ef);
             }
@@ -266,13 +266,13 @@ namespace patch {
             // カメラ制御の対象 を切り替えてもUndoデータが生成されない
             {
                 OverWriteOnProtectHelper h(GLOBAL::exedit_base + 0x04355b, 6);
-                h.store_i16(0, '\x51\xe8'); // push ecx, call (rel32)
+                h.store_i16(0, { 0x51, 0xe8 }); // push ecx, call (rel32)
                 h.replaceNearJmp(2, &f4355c);
             }
             // 上のオブジェクトでクリッピング を切り替えてもUndoデータが生成されない
             {
                 OverWriteOnProtectHelper h(GLOBAL::exedit_base + 0x0435ba, 8);
-                h.store_i32(0, '\x90\x90\x50\xe8'); // nop, push eax, call (rel32)
+                h.store_i32(0, { 0x90, 0x90, 0x50, 0xe8 }); // nop, push eax, call (rel32)
                 h.replaceNearJmp(4, &f435bd);
             }
 

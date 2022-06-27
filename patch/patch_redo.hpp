@@ -134,7 +134,7 @@ namespace patch {
 
         // id1とid2の統合(重複部分はid1が優先)
         static void integrate_undodata(int id1, int id2) {
-            int& UndoInfo_write_offset = *UndoInfo_write_offset_ptr;
+            // int& UndoInfo_write_offset = *UndoInfo_write_offset_ptr;
 
             UndoData* undodata1 = UndoDataPtrArray[id1];
             UndoData* undodata2 = UndoDataPtrArray[id2];
@@ -189,8 +189,8 @@ namespace patch {
                 auto& ObjectArrayPointer = *ObjectArrayPointer_ptr;
                 auto& layer_setting_ofsptr = *layer_setting_ofsptr_ptr;
                 auto& exdata_buffer = *exdata_buffer_ptr;
-                auto& UndoInfo_object_num = *UndoInfo_object_num_ptr;
-                auto& UndoInfo_write_offset = *UndoInfo_write_offset_ptr;
+                // auto& UndoInfo_object_num = *UndoInfo_object_num_ptr;
+                // auto& UndoInfo_write_offset = *UndoInfo_write_offset_ptr;
 
                 UndoData* undodata = UndoDataPtrArray[id];
 
@@ -286,7 +286,7 @@ namespace patch {
         static void optimize_undo_data() {
             int& UndoInfo_current_id = *UndoInfo_current_id_ptr;
             int& UndoInfo_object_num = *UndoInfo_object_num_ptr;
-            int& UndoInfo_write_offset = *UndoInfo_write_offset_ptr;
+            // int& UndoInfo_write_offset = *UndoInfo_write_offset_ptr;
 
             if (new_object) {
                 new_object = FALSE;
@@ -505,7 +505,7 @@ namespace patch {
             */
             {
                 OverWriteOnProtectHelper h(GLOBAL::exedit_base + 0x08d723, 2);
-                h.store_i16(0, '\xeb\x15');
+                h.store_i16(0, { 0xeb, 0x15 });
             }
             {
                 OverWriteOnProtectHelper h(GLOBAL::exedit_base + 0x08d73a, 5);
@@ -574,16 +574,16 @@ namespace patch {
             */
             {
                 OverWriteOnProtectHelper h(GLOBAL::exedit_base + 0x08d21a, 6);
-                h.store_i16(0, '\x57\xe8');
+                h.store_i16(0, { 0x57, 0xe8 });
                 h.replaceNearJmp(2, &AllocUndoBuffer_patch);
             }
             {
                 OverWriteOnProtectHelper h(GLOBAL::exedit_base + 0x08d220, 2);
-                h.store_i16(0, '\xeb\x0d'); // jmp +0dh
+                h.store_i16(0, { 0xeb, 0x0d }); // jmp +0dh
             }
             {
                 OverWriteOnProtectHelper h(GLOBAL::exedit_base + 0x08d23b, 2);
-                h.store_i16(0, '\xeb\x99'); // jmp +99h
+                h.store_i16(0, { 0xeb, 0x99 }); // jmp +99h
             }
 
             // シーン切り替えてもUndoが継続できるようにする

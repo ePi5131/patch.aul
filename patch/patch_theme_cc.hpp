@@ -40,7 +40,7 @@ namespace patch {
 
 		inline static const char key[] = "theme_cc";
 
-		struct {
+		struct layer_t {
 			inline static const char name[] = "layer";
 
 			std::optional<int> height_large;
@@ -97,7 +97,7 @@ namespace patch {
 
 		} layer;
 
-		struct {
+		struct object_t{
 			inline static const char name[] = "object";
 
 			ColorBGR3 media_col;
@@ -170,7 +170,7 @@ namespace patch {
 
 		} object;
 
-		struct {
+		struct timeline_t{
 			inline static const char name[] = "timeline";
 
 			ColorBGR2 scale_col;
@@ -211,12 +211,12 @@ namespace patch {
 				store_i32(ptr + 4, load_i32(adr + 4));
 				store_i16(ptr + 6, '\x68'); // PUSH (i32)
 				store_i32(ptr + 7, 0); LayerLockBorder_ptr = reinterpret_cast<decltype(LayerLockBorder_ptr)>(ptr + 7);
-				store_i16(ptr + 11, '\xff\x25'); // jmp [i32]
+				store_i16(ptr + 11, { 0xff, 0x25 }); // jmp [i32]
 				store_i32(ptr + 13, &LayerLockBorder_mod_jmp_ret_adr);
 				
 				OverWriteOnProtectHelper h(adr, 6);
 				
-				h.store_i16(0, '\xff\x25'); // jmp [i32]
+				h.store_i16(0, { 0xff, 0x25 }); // jmp [i32]
 				h.store_i32(2, &LayerLockBorder_mod_jmp_adr);
 			}
 
@@ -312,32 +312,32 @@ namespace patch {
 					auto store = [](uint32_t adr, config_type::ColorBGR3& col) {
 						OverWriteOnProtectHelper h(adr, 36);
 						if (col.has_value()) {
-							h.store_i32(0 , col.ary[0].r);
-							h.store_i32(4 , col.ary[0].g);
-							h.store_i32(8 , col.ary[0].b);
-							h.store_i32(12, col.ary[1].r);
-							h.store_i32(16, col.ary[1].g);
-							h.store_i32(20, col.ary[1].b);
-							h.store_i32(24, col.ary[2].r);
-							h.store_i32(28, col.ary[2].g);
-							h.store_i32(32, col.ary[2].b);
+							h.store_i32(0 , col.ary[0].val.r);
+							h.store_i32(4 , col.ary[0].val.g);
+							h.store_i32(8 , col.ary[0].val.b);
+							h.store_i32(12, col.ary[1].val.r);
+							h.store_i32(16, col.ary[1].val.g);
+							h.store_i32(20, col.ary[1].val.b);
+							h.store_i32(24, col.ary[2].val.r);
+							h.store_i32(28, col.ary[2].val.g);
+							h.store_i32(32, col.ary[2].val.b);
 						}
 						else {
 							col = {
 								config_type::ColorBGR{
-									h.load_i32<int>(8),
-									h.load_i32<int>(4),
-									h.load_i32<int>(0)
+									uint8_t(h.load_i32<int>(8)),
+									uint8_t(h.load_i32<int>(4)),
+									uint8_t(h.load_i32<int>(0))
 								},
 								config_type::ColorBGR{
-									h.load_i32<int>(20),
-									h.load_i32<int>(16),
-									h.load_i32<int>(12)
+									uint8_t(h.load_i32<int>(20)),
+									uint8_t(h.load_i32<int>(16)),
+									uint8_t(h.load_i32<int>(12))
 								},
 								config_type::ColorBGR{
-									h.load_i32<int>(32),
-									h.load_i32<int>(28),
-									h.load_i32<int>(24)
+									uint8_t(h.load_i32<int>(32)),
+									uint8_t(h.load_i32<int>(28)),
+									uint8_t(h.load_i32<int>(24))
 								}
 							};
 						}
@@ -356,9 +356,9 @@ namespace patch {
 					//OverWriteOnProtectHelper hr(GLOBAL::exedit_base + OFS::ExEdit::ObjectClippingColorR, 1);
 
 					if (auto& o = object.clipping_col; o.is_valid()) {
-						hb.store_i8(0, o.b);
-						hb.store_i8(2, o.g);
-						hb.store_i8(4, o.r);
+						hb.store_i8(0, o.val.b);
+						hb.store_i8(2, o.val.g);
+						hb.store_i8(4, o.val.r);
 					}
 					else {
 						o = {
