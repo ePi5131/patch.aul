@@ -83,6 +83,11 @@ namespace OFS {
 		constexpr i32 exfunc_1c = 0x04ade0;
 		constexpr i32 GetCurrentProcessing = 0x047ba0;
 		constexpr i32 LoadedFilterTable = 0x187c98;
+		constexpr i32 splitted_object_new_group_belong = 0x034f90;
+		constexpr i32 DrawTimelineMask = 0x0392f0;
+		constexpr i32 disp_settingdialog = 0x039550;
+		constexpr i32 filter_sendmessage = 0x04a1a0;
+		constexpr i32 get_near_object_idx = 0x0445a0;
 		constexpr i32 TraScript_ProcessingObjectIndex = 0x1b2b04;
 		constexpr i32 TraScript_ProcessingTrackBarIndex = 0x1b21f4;
 		constexpr i32 TraScript_Time = 0x1b28c8;
