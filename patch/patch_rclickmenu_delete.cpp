@@ -30,8 +30,8 @@ namespace patch {
 	void __cdecl rclickmenu_delete_t::DrawTimelineMask_wrap3ff68(int* to_draw) {
 		if (0 <= last_id) {
 			reinterpret_cast<void(__cdecl*)(int)>(GLOBAL::exedit_base + OFS::ExEdit::disp_settingdialog)(last_id);
+			last_id = -1;
 		}
-		last_id = -1;
 		reinterpret_cast<void(__cdecl*)(int*)>(GLOBAL::exedit_base + OFS::ExEdit::DrawTimelineMask)(to_draw);
 	}
 
