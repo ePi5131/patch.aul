@@ -19,14 +19,14 @@
 namespace patch {
 
 	int __cdecl rclickmenu_split_t::filter_sendmessage_wrap3fd46(int object_idx, int wparam, int flag) {
-		if (last_id == -1) {
+		if (last_id < 0) {
 			last_id = object_idx;
 		}
 		return reinterpret_cast<int(__cdecl*)(int,int,int)>(GLOBAL::exedit_base + OFS::ExEdit::filter_sendmessage)(object_idx, wparam, flag);
 	}
 
 	void __cdecl rclickmenu_split_t::splitted_object_new_group_belong_wrap3fd5c() {
-		if (last_id != -1) {
+		if (0 <= last_id) {
 			reinterpret_cast<void(__cdecl*)(int)>(GLOBAL::exedit_base + OFS::ExEdit::disp_settingdialog)(last_id);
 			last_id = -1;
 		}
