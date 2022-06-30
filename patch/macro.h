@@ -119,6 +119,7 @@
 #define PATCH_SWITCH_OBJ_LENSBLUR obj_lensblur
 #define PATCH_SWITCH_RCLICKMENU_SPLIT rclickmenu_split
 #define PATCH_SWITCH_RCLICKMENU_DELETE rclickmenu_delete
+#define PATCH_SWITCH_BLEND blend
 
 #define PATCH_SWITCH_UNDO undo
 #ifdef PATCH_SWITCH_UNDO
