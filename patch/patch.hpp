@@ -62,3 +62,4 @@
 #include "patch_rclickmenu_delete.hpp"
 #include "patch_tra_change_drawfilter.hpp"
 #include "patch_tra_specified_speed.hpp"
+#include "patch_blend.hpp"
