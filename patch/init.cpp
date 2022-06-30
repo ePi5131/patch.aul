@@ -166,6 +166,9 @@ void init_t::InitAtExeditLoad() {
 #ifdef PATCH_SWITCH_RCLICKMENU_DELETE
 	patch::rclickmenu_delete.init();
 #endif
+#ifdef PATCH_SWITCH_BLEND
+	patch::blend.init();
+#endif
 	
 	patch::setting_dialog();
 
