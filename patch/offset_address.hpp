@@ -28,6 +28,9 @@ namespace OFS {
 	}
 
 	namespace ExEdit {
+		constexpr i32 blend_yca_normal_func = 0x007df0;
+		constexpr i32 blend_yc_normal_func = 0x007f20;
+		
 		constexpr i32 ConvertFilter2Exo_TrackScaleJudge_RangeBegin = 0x028a8d;
 		constexpr i32 ConvertFilter2Exo_TrackScaleJudge_Overwrite1 = 0x028a84;
 		constexpr i32 ConvertFilter2Exo_TrackScaleJudge_Overwrite2 = 0x0289cb;
