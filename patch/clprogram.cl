@@ -546,15 +546,14 @@ kernel void RadiationalBlur_Media(
 
 	int xi = get_global_id(0);
 	int yi = get_global_id(1);
+	int pixel_itr = x + y * buffer_line;
 
-	int x = xi + rb_obj_cx;
-	int y = yi + rb_obj_cy;
-
-	int pixel_itr = xi + yi * buffer_line;
+	x += rb_obj_cx;
+	y += rb_obj_cy;
 	int cx = rb_blur_cx - x;
 	int cy = rb_blur_cy - y;
 	int c_dist_times8 = (int)round(sqrt((float)(cx * cx + cy * cy)) * 8.0f);
-	int range = (rb_range * c_dist_times8) / 1000;
+	int range = rb_range * c_dist_times8 / 1000;
 
 	if (rb_pixel_range < c_dist_times8) {
 		range = rb_pixel_range * rb_range / 1000;
@@ -581,16 +580,15 @@ kernel void RadiationalBlur_Media(
 			int y_itr = y + i * cy / c_dist_times8;
 			if (0 <= x_itr && x_itr < src_w && 0 <= y_itr && y_itr < src_h) {
 				short4 itr = vload4(x_itr + y_itr * buffer_line, src);
-				int itr_a = itr.w;
-				if (itr_a != 0) {
-					sum_a += itr_a;
-					if (itr_a < 0x1000) {
-						itr_a = 0x1000;
-					}
-					sum_y += itr.x * itr_a / 4096;
-					sum_cb += itr.y * itr_a / 4096;
-					sum_cr += itr.z * itr_a / 4096;
+				int itr_a = itr.w
+				sum_a += itr_a;
+				if (0x1000 < itr_a) {
+					itr_a = 0x1000;
 				}
+				sum_y += itr.x * itr_a / 4096;
+				sum_cb += itr.y * itr_a / 4096;
+				sum_cr += itr.z * itr_a / 4096;
+				
 			}
 		}
 		if (sum_a != 0) {
@@ -604,7 +602,7 @@ kernel void RadiationalBlur_Media(
 				pixel_itr, dst
 			);
 		} else {
-			dst[pixel_itr * 4 + 3] = (short)(sum_a / range);
+			dst[pixel_itr * 4 + 3] = 0;
 		}
 	} else {
 		if (x < 0 || y < 0 || src_w <= x || src_h <= y) {
