@@ -15,7 +15,6 @@
 
 #pragma once
 #include "patch_get_fontname.hpp"
-#include "iostream"
 
 namespace patch {
         // フォント名の読み先を変える
@@ -28,9 +27,6 @@ namespace patch {
             static LONG& cxMax = load_i32<LONG&>(GLOBAL::exedit_base + 0x23638c);
             static HWND& sFont = load_i32<HWND&>(GLOBAL::exedit_base + 0x23630c);
             static int len;
-            std::cout << elf->elfFullName << std::endl;
-            std::cout << elf->elfLogFont.lfFaceName << std::endl;
-            std::cout << elf->elfStyle << "\n" << std::endl;
 
             if (*(char*)(elf->elfLogFont.lfFaceName) != '@') {
                 FontName = (LPCSTR)(elf->elfFullName);
