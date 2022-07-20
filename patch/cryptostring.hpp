@@ -85,3 +85,4 @@ inline cryptostring cstr_Module32First("Module32First");
 inline cryptostring cstr_Module32FirstW("Module32FirstW");
 inline cryptostring cstr_Module32Next("Module32Next");
 inline cryptostring cstr_Module32NextW("Module32NextW");
+inline cryptostring cstr_EnumFontFamiliesA("EnumFontFamiliesA");

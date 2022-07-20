@@ -128,7 +128,11 @@ void init_t::InitAtExeditLoad() {
 #ifdef PATCH_SWITCH_TEXT_OP_SIZE
 	patch::text_op_size.init();
 #endif
-	
+
+#ifdef PATCH_SWITCH_GET_FONTNAME
+	patch::get_fontname.init();
+#endif
+
 #ifdef PATCH_SWITCH_IGNORE_MEDIA_PARAM_RESET
 	patch::ignore_media_param_reset.init();
 #endif

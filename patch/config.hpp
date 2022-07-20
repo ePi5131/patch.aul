@@ -86,6 +86,9 @@ public:
 		    #ifdef PATCH_SWITCH_TEXT_OP_SIZE
                 patch::text_op_size.switch_load(cr);
 		    #endif
+            #ifdef PATCH_SWITCH_GET_FONTNAME
+                patch::get_fontname.switch_load(cr);
+            #endif
 		    #ifdef PATCH_SWITCH_IGNORE_MEDIA_PARAM_RESET
                 patch::ignore_media_param_reset.switch_load(cr);
 		    #endif
@@ -340,6 +343,10 @@ public:
 		    #ifdef PATCH_SWITCH_TEXT_OP_SIZE
                 patch::text_op_size.switch_store(switch_);
 		    #endif
+            #ifdef PATCH_SWITCH_GET_FONTNAME
+                patch::get_fontname.switch_store(switch_);
+            #endif
+
 		    #ifdef PATCH_SWITCH_IGNORE_MEDIA_PARAM_RESET
                 patch::ignore_media_param_reset.switch_store(switch_);
 		    #endif

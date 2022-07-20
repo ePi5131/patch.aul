@@ -38,6 +38,7 @@
 #define PATCH_SWITCH_EXO_TRACKPARAM exo_trackparam
 #define PATCH_SWITCH_EXO_SPECIALCOLORCONV exo_specialcolorconv
 #define PATCH_SWITCH_TEXT_OP_SIZE text_op_size
+#define PATCH_SWITCH_GET_FONTNAME get_fontname
 #define PATCH_SWITCH_IGNORE_MEDIA_PARAM_RESET ignore_media_param_reset
 #define PATCH_SWITCH_FONT_DIALOG font_dialog
 #define PATCH_SWITCH_SCROLL_OBJDLG scroll_objdlg
@@ -107,6 +108,7 @@
 #define PATCH_SWITCH_EXO_TRACKPARAM exo_trackparam
 #define PATCH_SWITCH_EXO_SPECIALCOLORCONV exo_specialcolorconv
 #define PATCH_SWITCH_TEXT_OP_SIZE text_op_size
+#define PATCH_SWITCH_GET_FONTNAME get_fontname
 #define PATCH_SWITCH_IGNORE_MEDIA_PARAM_RESET ignore_media_param_reset
 #define PATCH_SWITCH_THEME_CC theme_cc
 #define PATCH_SWITCH_EXEDITWINDOW_SIZING exeditwindow_sizing
