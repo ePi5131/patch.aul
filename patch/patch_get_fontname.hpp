@@ -30,7 +30,7 @@ namespace patch {
             bool enabled = true;
             bool enabled_i;
 
-            static int CALLBACK enumfontfamproc_wrap(ENUMLOGFONT* param_1, NEWTEXTMETRIC* param_2, DWORD param_3, HDC param_4);
+            static int CALLBACK enumfontfamproc_wrap(ENUMLOGFONT* param_1, ENUMTEXTMETRICA* param_2, DWORD param_3, HDC param_4);
             inline static auto enumfontfamproc_wrap_ptr = &enumfontfamproc_wrap;
             static int WINAPI EnumFontFamiliesA(HDC hdc, LPLOGFONTA lplf, FONTENUMPROCA enumfontfamproc, LPARAM lpfam);
 

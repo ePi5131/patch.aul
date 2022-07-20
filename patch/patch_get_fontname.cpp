@@ -1,5 +1,5 @@
 /*
-	This program is free software: you can redistribute it and/or modify
+    This program is free software: you can redistribute it and/or modify
     it under the terms of the GNU Lesser General Public License as published by
     the Free Software Foundation, either version 3 of the License, or
     (at your option) any later version.
@@ -18,30 +18,37 @@
 
 namespace patch {
         // フォント名の読み先を変える
-        // 文字数は64までなので32文字以上なら元の場所から読む
+        // 文字数は64までなので32文字より長いなら元の場所から読む
         // 両方長い場合は無理
-        int CALLBACK get_fontname_t::enumfontfamproc_wrap(ENUMLOGFONT* param_1, NEWTEXTMETRIC* param_2, DWORD param_3, HDC param_4) {
-            static LPCSTR lpString;
+        int CALLBACK get_fontname_t::enumfontfamproc_wrap(ENUMLOGFONT* elf, ENUMTEXTMETRICA* param_2, DWORD fonttype, HDC hdc) {
+            static LPCSTR FontName;
             static int c;
-            static tagSIZE* psizl;
-            static tagSIZE tStack8{};
+            static tagSIZE* psize;
+            static tagSIZE size{};
             static LONG& cxMax = load_i32<LONG&>(GLOBAL::exedit_base + 0x23638c);
             static HWND& sFont = load_i32<HWND&>(GLOBAL::exedit_base + 0x23630c);
             static int len;
 
-            psizl = &tStack8;
-            lpString = (LPCSTR)(param_1->elfFullName);
-            len = strlen(lpString);
-            if (len > 31) {
-                lpString = (LPCSTR)(param_1->elfLogFont.lfFaceName);
-            }
-            if (*(char*)(lpString) != '@') {
-                c = lstrlenA(lpString);
-                GetTextExtentPoint32A(param_4, lpString, c, psizl);
-                if (cxMax < tStack8.cx) {
-                    cxMax = tStack8.cx;
+            psize = &size;
+            FontName = (LPCSTR)(elf->elfFullName);
+            len = strlen(FontName);
+            if (len > 32) {
+                if (strlen(elf->elfLogFont.lfFaceName) > 32) {
+                    // なぜか\0が置かれずelfFullNameと繋がっちゃうパターンがある
+                    // 読めなくてもせめてテキストオブジェクトがバグらないようにしたい
+                    // 無効として無視する(リストに入れない) or 入る分だけ入れとく(読めない) or 無効であるとわかる文字列をねじ込む
+                    return 1;
+                } else {
+                    FontName = (LPCSTR)(elf->elfLogFont.lfFaceName);
                 }
-                SendMessageA(sFont, CB_ADDSTRING, 0, (LPARAM)lpString);
+            }
+            if (*(char*)(FontName) != '@') {
+                c = lstrlenA(FontName);
+                GetTextExtentPoint32A(hdc, FontName, c, psize);
+                if (cxMax < size.cx) {
+                    cxMax = size.cx;
+                }
+                SendMessageA(sFont, CB_ADDSTRING, 0, (LPARAM)FontName);
             }
             return 1;
         }
