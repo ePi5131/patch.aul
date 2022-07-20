@@ -15,6 +15,7 @@
 
 #pragma once
 #include "patch_get_fontname.hpp"
+#include "iostream"
 
 namespace patch {
         // フォント名の読み先を変える
@@ -23,28 +24,30 @@ namespace patch {
         int CALLBACK get_fontname_t::enumfontfamproc_wrap(ENUMLOGFONT* elf, ENUMTEXTMETRICA* param_2, DWORD fonttype, HDC hdc) {
             static LPCSTR FontName;
             static int c;
-            static tagSIZE* psize;
             static tagSIZE size{};
             static LONG& cxMax = load_i32<LONG&>(GLOBAL::exedit_base + 0x23638c);
             static HWND& sFont = load_i32<HWND&>(GLOBAL::exedit_base + 0x23630c);
             static int len;
+            std::cout << elf->elfFullName << std::endl;
+            std::cout << elf->elfLogFont.lfFaceName << std::endl;
+            std::cout << elf->elfStyle << "\n" << std::endl;
 
-            psize = &size;
-            FontName = (LPCSTR)(elf->elfFullName);
-            len = strlen(FontName);
-            if (len > 32) {
-                if (strlen(elf->elfLogFont.lfFaceName) > 32) {
-                    // なぜか\0が置かれずelfFullNameと繋がっちゃうパターンがある
-                    // 読めなくてもせめてテキストオブジェクトがバグらないようにしたい
-                    // 無効として無視する(リストに入れない) or 入る分だけ入れとく(読めない) or 無効であるとわかる文字列をねじ込む
-                    return 1;
-                } else {
-                    FontName = (LPCSTR)(elf->elfLogFont.lfFaceName);
+            if (*(char*)(elf->elfLogFont.lfFaceName) != '@') {
+                FontName = (LPCSTR)(elf->elfFullName);
+                len = strlen(FontName);
+                if (len > 32) {
+                    if (strlen(elf->elfLogFont.lfFaceName) > 32) {
+                        // なぜか\0が置かれずelfFullNameと繋がっちゃうパターンがある
+                        // 読めなくてもせめてテキストオブジェクトがバグらないようにしたい
+                        // 無効として無視する(リストに入れない) or 入る分だけ入れとく(読めない) or 無効であるとわかる文字列をねじ込む
+                        return 1;
+                    }
+                    else {
+                        FontName = (LPCSTR)(elf->elfLogFont.lfFaceName);
+                    }
                 }
-            }
-            if (*(char*)(FontName) != '@') {
                 c = lstrlenA(FontName);
-                GetTextExtentPoint32A(hdc, FontName, c, psize);
+                GetTextExtentPoint32A(hdc, FontName, c, &size);
                 if (cxMax < size.cx) {
                     cxMax = size.cx;
                 }
