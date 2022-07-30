@@ -147,6 +147,7 @@
 	#define PATCH_SWITCH_FAST_SETTINGDIALOG fast_settingdialog
 	#define PATCH_SWITCH_FAST_EXEDITWINDOW fast_exeditwindow
 	#define PATCH_SWITCH_FAST_TEXT fast_text
+	#define PATCH_SWITCH_FAST_CREATE_FIGURE fast_create_figure
 	#define PATCH_SWITCH_FAST_BORDER fast_border
 
 	#define PATCH_SWITCH_CL cl

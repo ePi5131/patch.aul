@@ -173,6 +173,9 @@ void init_t::InitAtExeditLoad() {
 		#ifdef PATCH_SWITCH_FAST_TEXT
 			patch::fast::text.init();
 		#endif
+		#ifdef PATCH_SWITCH_FAST_CREATE_FIGURE
+			patch::fast::create_figure.init();
+		#endif
 		#ifdef PATCH_SWITCH_FAST_BORDER
 			patch::fast::Border.init();
 		#endif
