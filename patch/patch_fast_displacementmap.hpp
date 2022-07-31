@@ -15,7 +15,7 @@
 
 #pragma once
 #include "macro.h"
-#ifdef PATCH_SWITCH_FAST_POLORTRANSFORM
+#ifdef PATCH_SWITCH_FAST_DISPLACEMENTMAP
 
 #include <aviutl.hpp>
 #include <exedit.hpp>
@@ -28,33 +28,31 @@
 
 namespace patch::fast {
 	// init at exedit load
-	// 極座標変換の高速化
-	inline class PolorTransform_t {
+	// ディスプレイスメントマップの高速化
+	inline class DisplacementMap_t {
 		static BOOL mt_func(AviUtl::MultiThreadFunc original_func_ptr, ExEdit::Filter* efp, ExEdit::FilterProcInfo* efpip);
+
+		inline static const char* cl_func_name[3] = { "DisplacementMap_move","DisplacementMap_zoom","DisplacementMap_rot" };
 
 		bool enabled = true;
 		bool enabled_i;
-		inline static const char key[] = "fast.polortransform";
+		inline static const char key[] = "fast.displacementmap";
 
 	public:
 
-		struct efPolorTransform_var { // 1e48c0
-			int src_h;
-			int radius;
-			int src_w;
-			int _padding;
-			double uzu;
-			double uzu_a;
-			double angle;
-			int center_length;
-			int output_size;
+		struct efDisplacementMap_var { // 11effc
+			int ox; // 11effc
+			int oy; // 11f000
+			void** mode_func; // 11f004
+			int param1; // 11f008
+			int param0; // 11f00c
 		};
 
 		void init() {
 			enabled_i = enabled;
 			if (!enabled_i)return;
 
-			OverWriteOnProtectHelper h(GLOBAL::exedit_base + OFS::ExEdit::efPolorTransform_mt_func_call, 6);
+			OverWriteOnProtectHelper h(GLOBAL::exedit_base + OFS::ExEdit::efDisplacementMap_mt_func_call, 6);
 			h.store_i16(0, '\x90\xe8'); // nop; call (rel32)
 			h.replaceNearJmp(2, &mt_func);
 
@@ -75,6 +73,6 @@ namespace patch::fast {
 			cw.append(key, enabled);
 		}
 
-	} PolorTransform;
+	} DisplacementMap;
 } // namespace patch::fast
-#endif // ifdef PATCH_SWITCH_FAST_POLORTRANSFORM
+#endif // ifdef PATCH_SWITCH_FAST_DISPLACEMENTMAP
