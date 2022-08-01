@@ -100,6 +100,13 @@ void init_t::InitAtExeditLoad() {
 #ifdef PATCH_SWITCH_TRA_AVIUTL_FILTER
 	patch::tra_aviutlfilter.init();
 #endif
+#ifdef PATCH_SWITCH_TRA_CHANGE_DRAWFILTER
+	patch::tra_change_drawfilter.init();
+#endif
+#ifdef PATCH_SWITCH_TRA_SPECIFIED_SPEED
+	patch::tra_specified_speed.init();
+#endif
+
 
 #ifdef PATCH_SWITCH_EXO_AVIUTL_FILTER
 	patch::exo_aviutlfilter.init();
@@ -151,6 +158,16 @@ void init_t::InitAtExeditLoad() {
 
 #ifdef PATCH_SWITCH_SETTINGDIALOG_EXCOLORCONFIG
 	patch::excolorconfig.init();
+#endif
+
+#ifdef PATCH_SWITCH_RCLICKMENU_SPLIT
+	patch::rclickmenu_split.init();
+#endif
+#ifdef PATCH_SWITCH_RCLICKMENU_DELETE
+	patch::rclickmenu_delete.init();
+#endif
+#ifdef PATCH_SWITCH_BLEND
+	patch::blend.init();
 #endif
 	
 	patch::setting_dialog();
