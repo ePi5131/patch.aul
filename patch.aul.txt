@@ -66,6 +66,7 @@ https://scrapbox.io/ePi5131/patch.aul
     ・拡張編集以外のフィルタのトラックバーにトラックバー変化方法スクリプトを適用していると例外になる問題
     ・小さい画像に対してサイズ固定で範囲の大きいレンズブラーを掛けると例外になるのを修正
     ・拡張色変換のウィンドウが下のフィルタに被るのを修正
+    ・ノイズの速度X、変化速度のトラック変化方法が移動無し以外の時に速度Yの値をもとに計算が行われてしまうのを修正
 
     追加
     ・コンソールの表示
@@ -166,6 +167,7 @@ https://scrapbox.io/ePi5131/patch.aul
 		"exeditwindow_sizing" : boolean, ; 拡張編集ウィンドウの上部をドラッグして正常にリサイズできるようにする (既定値: true)
         "settingdialog_move" : boolean, ; 設定ダイアログを高ポーリングレートマウス環境で移動すると重たい の解消 (既定値: true)
 		"obj_lensblur" : boolean, ; 小さい画像に対してサイズ固定で範囲の大きいレンズブラーを掛けると例外になるのを修正 (既定値: true)
+		"obj_noise" : boolean, ; ノイズの速度X、変化速度のトラック変化方法が移動無し以外の時に速度Yの値をもとに計算が行われてしまうのを修正 (既定値: true)
 		"settingdialog_excolorconfig" : boolean, ; 
         "undo" : boolean, ; 元に戻す 関連のバグ修正 (既定値: true)
         "undo.redo" : boolean, ; やり直す を追加 (既定値: true)
