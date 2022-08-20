@@ -74,6 +74,7 @@
     <ClInclude Include="patch_lua_randex.hpp" />
     <ClInclude Include="patch_obj_colorcorrection.hpp" />
     <ClInclude Include="patch_obj_lensblur.hpp" />
+    <ClInclude Include="patch_obj_noise.hpp" />
     <ClInclude Include="patch_rclickmenu_delete.hpp" />
     <ClInclude Include="patch_rclickmenu_split.hpp" />
     <ClInclude Include="patch_redo.hpp" />

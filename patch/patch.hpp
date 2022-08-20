@@ -57,6 +57,7 @@
 #include "patch_fast_text.hpp"
 #include "patch_fast_create_figure.hpp"
 #include "patch_obj_lensblur.hpp"
+#include "patch_obj_noise.hpp"
 #include "patch_setting_dialog_excolorconfig.hpp"
 #include "patch_fast_border.hpp"
 #include "patch_fast_directionalblur.hpp"
