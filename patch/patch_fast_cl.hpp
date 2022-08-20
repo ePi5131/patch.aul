@@ -196,12 +196,12 @@ kernel void DisplacementMap_move(global short* dst, global short* src, global sh
 	int yy_end = yy_range + yy_begin;
 
 	if (xx_range < 0x1000) {
-		xx_begin += xx_range - 0x1000 >> 1;
+		xx_begin += (xx_range - 0x1000) >> 1;
 		xx_end = xx_begin + 0x1000;
 		xx_range = 0x1000;
 	}
 	if (yy_range < 0x1000) {
-		yy_begin += yy_range - 0x1000 >> 1;
+		yy_begin += (yy_range - 0x1000) >> 1;
 		yy_end = yy_begin + 0x1000;
 		yy_range = 0x1000;
 	}
@@ -344,12 +344,12 @@ kernel void DisplacementMap_zoom(global short* dst, global short* src, global sh
 	int yy_range = yy_end - yy_begin;
 
 	if (xx_range < 0x1000) {
-		xx_begin += xx_range - 0x1000 >> 1;
+		xx_begin += (xx_range - 0x1000) >> 1;
 		xx_end = xx_begin + 0x1000;
 		xx_range = 0x1000;
 	}
 	if (yy_range < 0x1000) {
-		yy_begin += yy_range - 0x1000 >> 1;
+		yy_begin += (yy_range - 0x1000) >> 1;
 		yy_end = yy_begin + 0x1000;
 		yy_range = 0x1000;
 	}
@@ -488,12 +488,12 @@ kernel void DisplacementMap_rot(global short* dst, global short* src, global sho
 	int yy_range = yy_end - yy_begin;
 
 	if (xx_range < 0x1000) {
-		xx_begin += xx_range - 0x1000 >> 1;
+		xx_begin += (xx_range - 0x1000) >> 1;
 		xx_end = xx_begin + 0x1000;
 		xx_range = 0x1000;
 	}
 	if (yy_range < 0x1000) {
-		yy_begin += yy_range - 0x1000 >> 1;
+		yy_begin += (yy_range - 0x1000) >> 1;
 		yy_end = yy_begin + 0x1000;
 		yy_range = 0x1000;
 	}
@@ -616,7 +616,7 @@ kernel void RadiationalBlur_Media(
 			int y_itr = y + i * cy / c_dist_times8;
 			if (0 <= x_itr && x_itr < src_w && 0 <= y_itr && y_itr < src_h) {
 				short4 itr = vload4(x_itr + y_itr * buffer_line, src);
-				int itr_a = itr.w
+				int itr_a = itr.w;
 				sum_a += itr_a;
 				if (0x1000 < itr_a) {
 					itr_a = 0x1000;
@@ -648,7 +648,7 @@ kernel void RadiationalBlur_Media(
 		}
 	}
 }
-)" R"(
+
 kernel void RadiationalBlur_Filter(
 	global short* dst, global short* src, int buffer_line,
 	int rb_blur_cx, int rb_blur_cy, int rb_range, int rb_pixel_range) {
@@ -850,7 +850,6 @@ kernel void Flash(global short* dst, global short* src, int src_w, int src_h, in
 		}
 	}
 }
-)" R"(
 kernel void FlashColor(global short* dst, global short* src, int src_w, int src_h, int exedit_buffer_line,
 	int g_cx,
 	int g_cy,
@@ -969,8 +968,8 @@ kernel void DirectionalBlur_Media(global short* dst, global short* src, int obj_
 	int sum_cr = 0;
 	int sum_a = 0;
 
-	int x_itr = (x + x_begin << 16) + 0x8000 - range * x_step;
-	int y_itr = (y + y_begin << 16) + 0x8000 - range * y_step;
+	int x_itr = ((x + x_begin) << 16) + 0x8000 - range * x_step;
+	int y_itr = ((y + y_begin) << 16) + 0x8000 - range * y_step;
 
 	for (int n = 0; n < pix_range; n++) {
 		int xx = x_itr >> 16;
@@ -996,7 +995,6 @@ kernel void DirectionalBlur_Media(global short* dst, global short* src, int obj_
 	}
 	dst[3] = (short)(sum_a / pix_range);
 }
-)" R"(
 kernel void DirectionalBlur_original_size(global short* dst, global short* src, int obj_w, int obj_h, int obj_line,
 	int x_step, int y_step, int range) {
 	int x = get_global_id(0);
@@ -1040,7 +1038,6 @@ kernel void DirectionalBlur_original_size(global short* dst, global short* src, 
 	}
 	dst[3] = (short)(sum_a / cnt);
 }
-)" R"(
 kernel void DirectionalBlur_Filter(global short* dst, global short* src, int scene_w, int scene_h, int scene_line,
 	int x_step, int y_step, int range) {
 	int x = get_global_id(0);
@@ -1074,6 +1071,7 @@ kernel void DirectionalBlur_Filter(global short* dst, global short* src, int sce
 	dst[1] = (short)(sum_cb / cnt);
 	dst[2] = (short)(sum_cr / cnt);
 }
+)" R"(
 kernel void LensBlur_Media(global char* dst, global char* src, int obj_w, int obj_h, int obj_line,
 	int range, int rangep05_sqr, int range_t3m1, int rangem1_sqr) {
 
@@ -1101,7 +1099,7 @@ kernel void LensBlur_Media(global char* dst, global char* src, int obj_w, int ob
 			if (sqr < rangep05_sqr) {
 				int cor_a;
 				if (rangem1_sqr < sqr) {
-					cor_a = (rangep05_sqr - sqr << 12) / range_t3m1;
+					cor_a = ((rangep05_sqr - sqr) << 12) / range_t3m1;
 				} else {
 					cor_a = 4096;
 				}
@@ -1129,7 +1127,7 @@ kernel void LensBlur_Media(global char* dst, global char* src, int obj_w, int ob
 		*(global int*)&dst[4] = 0;
 	}
 }
-)" R"(
+
 kernel void LensBlur_Filter(global char* dst, global char* src, int scene_w, int scene_h, int scene_line,
 	int range, int rangep05_sqr, int range_t3m1, int rangem1_sqr) {
 
@@ -1158,7 +1156,7 @@ kernel void LensBlur_Filter(global char* dst, global char* src, int scene_w, int
 			if (sqr < rangep05_sqr) {
 				int cor_a;
 				if (rangem1_sqr < sqr) {
-					cor_a = (rangep05_sqr - sqr << 12) / range_t3m1;
+					cor_a = ((rangep05_sqr - sqr) << 12) / range_t3m1;
 				} else {
 					cor_a = 4096;
 				}
@@ -1182,7 +1180,6 @@ kernel void LensBlur_Filter(global char* dst, global char* src, int scene_w, int
 	dst[4] = (char)(((sum_a >> 1) + sum_cb) / sum_a);
 	dst[5] = (char)(((sum_a >> 1) + sum_cr) / sum_a);
 }
-
 )");
 #pragma endregion
 
