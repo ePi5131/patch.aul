@@ -220,6 +220,9 @@
     <ClInclude Include="patch_fast_create_figure.hpp">
       <Filter>feature\fast</Filter>
     </ClInclude>
+    <ClInclude Include="patch_obj_colorcorrection.hpp">
+      <Filter>feature</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="init.cpp" />
@@ -329,6 +332,9 @@
     </ClCompile>
     <ClCompile Include="patch_fast_create_figure.cpp">
       <Filter>feature\fast</Filter>
+    </ClCompile>
+    <ClCompile Include="patch_obj_colorcorrection.cpp">
+      <Filter>feature</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

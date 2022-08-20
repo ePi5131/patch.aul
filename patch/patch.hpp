@@ -66,3 +66,4 @@
 #include "patch_tra_specified_speed.hpp"
 #include "patch_blend.hpp"
 #include "patch_failed_sjis_msgbox.hpp"
+#include "patch_obj_colorcorrection.hpp"
