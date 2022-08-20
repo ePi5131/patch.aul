@@ -41,7 +41,7 @@ namespace patch {
     }
     void yc2rgb_12(int y, int cb, int cr, int* r, int* g, int* b) {
         *r = y + (cr * 11485 >> 13);
-        *g = y - (cb * 2818 + cr * 5849 >> 13);
+        *g = y - ((cb * 2818 + cr * 5849) >> 13);
         *b = y + (cb * 14516 >> 13);
     }
     void yc2hsv_12(int y, int cb, int cr, int* h, int* s, int* v) {
@@ -95,9 +95,9 @@ namespace patch {
     }
 
     void rgb2yc_12(int r, int g, int b, int* y, int* cb, int* cr) {
-        *y = r * 4898 + g * 9617 + b * 1867 >> 14;
-        *cb = r * -2768 + g * -5423 + b * 8192 >> 14;
-        *cr = r * 8192 + g * -6864 + b * -1327 >> 14;
+        *y  = (r *  4898 + g *  9617 + b *  1867) >> 14;
+        *cb = (r * -2768 + g * -5423 + b *  8192) >> 14;
+        *cr = (r *  8192 + g * -6864 + b * -1327) >> 14;
     }
     void hsv2yc_12(int h, int s, int v, int* y, int* cb, int* cr) {
         int r, g, b;
