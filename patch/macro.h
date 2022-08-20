@@ -158,6 +158,7 @@
 	#define PATCH_SWITCH_CL cl
 	#ifdef PATCH_SWITCH_CL
 		#define PATCH_SWITCH_FAST_POLORTRANSFORM fast_polortransform
+		#define PATCH_SWITCH_FAST_DISPLACEMENTMAP fast_displacementmap
 		#define PATCH_SWITCH_FAST_RADIATIONALBLUR fast_radiationalblur
 		#define PATCH_SWITCH_FAST_FLASH fast_flash
 		#define PATCH_SWITCH_FAST_DIRECTIONALBLUR fast_directionalblur

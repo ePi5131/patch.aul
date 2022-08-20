@@ -204,6 +204,9 @@ void init_t::InitAtExeditLoad() {
 					#ifdef PATCH_SWITCH_FAST_POLORTRANSFORM
 						patch::fast::PolorTransform.init();
 					#endif
+					#ifdef PATCH_SWITCH_FAST_DISPLACEMENTMAP
+						patch::fast::DisplacementMap.init();
+					#endif
 					#ifdef PATCH_SWITCH_FAST_RADIATIONALBLUR
 						patch::fast::RadiationalBlur.init();
 					#endif

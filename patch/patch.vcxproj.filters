@@ -214,6 +214,9 @@
     <ClInclude Include="patch_failed_sjis_msgbox.hpp">
       <Filter>feature</Filter>
     </ClInclude>
+    <ClInclude Include="patch_fast_displacementmap.hpp">
+      <Filter>feature\fast</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="init.cpp" />
@@ -317,6 +320,9 @@
     </ClCompile>
     <ClCompile Include="patch_failed_sjis_msgbox.cpp">
       <Filter>feature</Filter>
+    </ClCompile>
+    <ClCompile Include="patch_fast_displacementmap.cpp">
+      <Filter>feature\fast</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

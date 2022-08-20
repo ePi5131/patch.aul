@@ -48,176 +48,531 @@ namespace patch::fast {
 inline class cl_t {
 #pragma region clprogram
 	inline static auto program_str = make_cryptostring(R"(
-kernel void PolorTransform(global short* dst, global short* src, int src_w, int src_h, int exedit_buffer_line, int center, int radius, float angle, float uzu, float uzu_a) {
+kernel void PolorTransform(global short* dst, global short* src, int obj_w, int obj_h, int obj_line,
+	int center_length, int radius, float angle, float uzu, float uzu_a){
+	int x = get_global_id(0);
+	int y = get_global_id(1);
+	
+	int x_dist = x - radius;
+	int y_dist = y - radius;
+	float dist = sqrt((float)(x_dist * x_dist + y_dist * y_dist));
+
+	int range = (int)round((float)obj_w / max(dist, 1.0f) * 57.6115417480468f + uzu_a);
+				
+	int yy_t256 = (int)round((float)(((obj_h + center_length) << 8) / radius) * dist);
+	int yy_range_fr = 0x100 - (yy_t256 & 0xff);
+	int yy_begin = (yy_t256 >> 8) - center_length;
+				
+	int xx_t256 = (int)round((((float)radius - dist) * uzu + angle - atan2((float)y_dist, (float)x_dist)) * (float)obj_w * 40.7436637878417f) - range / 2;
+	int xx_range_fr = 0x100 - (xx_t256 & 0xff);
+	int xx_begin = (xx_t256 >> 8) % obj_w;
+				
+	range = max(0x100,range);
+	int yy = yy_begin;
+
+	int sum_y = 0;
+	int sum_cb = 0;
+	int sum_cr = 0;
+	int sum_a = 0;
+
+	global short* pix;
+	int src_a;
+
+	if (0 <= yy && yy < obj_h) {
+		int range_remain = range;
+		int xx = xx_begin;
+		if (xx_range_fr) {
+			pix = src + (xx + yy * obj_line) * 4;
+			sum_a = pix[3] * xx_range_fr * yy_range_fr >> 16;
+			sum_y = pix[0] * sum_a >> 12;
+			sum_cb = pix[1] * sum_a >> 12;
+			sum_cr = pix[2] * sum_a >> 12;
+			range_remain -= xx_range_fr;
+			xx++;
+			xx %= obj_w;
+		}
+		int pix_range = range_remain >> 8;
+		for(int i=0;i<pix_range;i++){
+			pix = src + (xx + yy * obj_line) * 4;
+			src_a = pix[3] * yy_range_fr >> 8;
+			sum_y += pix[0] * src_a >> 12;
+			sum_cb += pix[1] * src_a >> 12;
+			sum_cr += pix[2] * src_a >> 12;
+			sum_a += src_a;
+			xx++;
+			xx %= obj_w;
+		}
+		range_remain &= 0xff;
+		if (range_remain) {
+			pix = src + (xx + yy * obj_line) * 4;
+			src_a = pix[3] * range_remain * yy_range_fr >> 16;
+			sum_y += pix[0] * src_a >> 12;
+			sum_cb += pix[1] * src_a >> 12;
+			sum_cr += pix[2] * src_a >> 12;
+			sum_a += src_a;
+		}
+	}
+	yy++;
+	yy_range_fr = 0x100 - yy_range_fr;
+	if (0 <= yy && yy < obj_h) {
+		int range_remain = range;
+		int xx = xx_begin;
+		if (xx_range_fr != 0x100) {
+			pix = src + (xx + yy * obj_line) * 4;
+			src_a = pix[3] * xx_range_fr * yy_range_fr >> 16;
+			sum_y += pix[0] * src_a >> 12;
+			sum_cb += pix[1] * src_a >> 12;
+			sum_cr += pix[2] * src_a >> 12;
+			sum_a += src_a;
+			range_remain -= xx_range_fr;
+			xx++;
+			xx %= obj_w;
+		}
+		int pix_range = range_remain >> 8;
+		for(int i=0;i<pix_range;i++){
+			pix = src + (xx + yy * obj_line) * 4;
+			src_a = pix[3] * yy_range_fr >> 8;
+			sum_y += pix[0] * src_a>> 12;
+			sum_cb += pix[1] * src_a >> 12;
+			sum_cr += pix[2] * src_a >> 12;
+			sum_a += src_a;
+			xx++;
+			xx %= obj_w;
+		}
+		range_remain &= 0xff;
+		if (range_remain) {
+			pix = src + (xx + yy * obj_line) * 4;
+			src_a = pix[3] * range_remain * yy_range_fr >> 16;
+			sum_y += pix[0] * src_a >> 12;
+			sum_cb += pix[1] * src_a >> 12;
+			sum_cr += pix[2] * src_a >> 12;
+			sum_a += src_a;
+		}
+	}
+	dst += (x + y * obj_line) * 4;
+	if (sum_a) {
+		float a_float = 4096.0f / (float)sum_a;
+		dst[0] = (short)round((float)sum_y * a_float);
+		dst[1] = (short)round((float)sum_cb * a_float);
+		dst[2] = (short)round((float)sum_cr * a_float);
+		dst[3] = (short)((sum_a << 8) / range);
+	} else {
+		dst[0] = dst[1] = dst[2] = dst[3] = 0;
+	}
+}
+)" R"(
+kernel void DisplacementMap_move(global short* dst, global short* src, global short* mem,
+	int obj_w, int obj_h, int obj_line, int param0, int param1, int ox, int oy) {
 	int x = get_global_id(0);
 	int y = get_global_id(1);
 
-	float x_centered = x - radius;
-	float y_centered = y - radius;
-	
-	float r = sqrt(x_centered * x_centered + y_centered * y_centered);
-	float theta = atan2(y_centered, x_centered);
+	dst += (x + y * obj_line) * 4;
+	mem += (x + y * obj_line) * 4;
 
-	int uzu_const = (int)round(src_w * 256 * 1.414f / (max(1.f, r) * 3.1415927f * 2) + uzu_a);
-
-	int src_y_tmp = (int)round((center + src_h) * 256.0f / radius * r);
-	int src_ys = 256 - src_y_tmp % 256;
-	int src_y = (src_y_tmp / 256) - center;
-
-	int src_x_tmp = (int)round(((radius - r) * uzu + angle - theta) * src_w * 128 / 3.1415927f);
-	src_x_tmp -= uzu_const / 2;
-
-	int src_x = (src_x_tmp / 256) % src_w;
-	int src_xt = src_x_tmp % 256;
-
-	if (uzu_const < 258) {
-		int sum_y = 0;
-		int sum_cr = 0;
-		int sum_cb = 0;
-		int sum_a = 0;
-
-		global short* src_xl = src + (src_x + src_y * exedit_buffer_line) * 4;
-		global short* src_xr = src + ((src_x + 1) % src_w + src_y * exedit_buffer_line) * 4;
-
-		if (0 <= src_y && src_y < src_h) {
-			int s = (src_xl[3] * (256 - src_xt) * src_ys) / 65536;
-			int t = (src_xr[3] * src_xt         * src_ys) / 65536;
-
-			sum_y  = src_xl[0] * s + src_xr[0] * t;
-			sum_cb = src_xl[1] * s + src_xr[1] * t;
-			sum_cr = src_xl[2] * s + src_xr[2] * t;
-			sum_a  = t + s;
-		}
-
-		src_xl += exedit_buffer_line * 4;
-		src_xr += exedit_buffer_line * 4;
-
-		if (0 <= src_y + 1 && src_y + 1 < src_h) {
-			int s = (src_xl[3] * (256 - src_xt) * (256 - src_ys)) / 65536;
-			int t = (src_xr[3] * src_xt         * (256 - src_ys)) / 65536;
-
-			sum_y  += src_xl[0] * s + src_xr[0] * t;
-			sum_cb += src_xl[1] * s + src_xr[1] * t;
-			sum_cr += src_xl[2] * s + src_xr[2] * t;
-			sum_a  += t + s;
-		}
-		global short* dst_p = dst + (x + y * exedit_buffer_line) * 4;
-		if (sum_a == 0) {
-			dst_p[0] = 0;
-			dst_p[1] = 0;
-			dst_p[2] = 0;
-			dst_p[3] = 0;
-		}
-		else {
-			dst_p[0] = (short)(sum_y  / sum_a);
-			dst_p[1] = (short)(sum_cb / sum_a);
-			dst_p[2] = (short)(sum_cr / sum_a);
-			dst_p[3] = (short)(sum_a);
-		}
+	int p0 = min(mem[0], mem[obj_line * 4]);
+	int p1 = max(mem[4], mem[obj_line * 4 + 4]);
+	p0 = (p0 - 0x800) * param0 / 5;
+	p1 = (p1 - 0x800) * param0 / 5 + 0x1000;
+	if (p1 < p0) {
+		int tmp = p0;
+		p0 = p1;
+		p1 = tmp;
 	}
-	else {
-		int sum_y  = 0;
+	int xx_range = p1 - p0;
+	int xx_begin = p0 + (x << 12);
+	int xx_end = xx_range + xx_begin;
+
+	p0 = min(mem[1], mem[5]);
+	p1 = max(mem[obj_line * 4 + 1], mem[obj_line * 4 + 5]);
+	p0 = (p0 - 0x800) * param1 / 5;
+	p1 = (p1 - 0x800) * param1 / 5 + 0x1000;
+	if (p1 < p0) {
+		int tmp = p0;
+		p0 = p1;
+		p1 = tmp;
+	}
+	int yy_range = p1 - p0;
+	int yy_begin = p0 + (y << 12);
+	int yy_end = yy_range + yy_begin;
+
+	if (xx_range < 0x1000) {
+		xx_begin += (xx_range - 0x1000) >> 1;
+		xx_end = xx_begin + 0x1000;
+		xx_range = 0x1000;
+	}
+	if (yy_range < 0x1000) {
+		yy_begin += (yy_range - 0x1000) >> 1;
+		yy_end = yy_begin + 0x1000;
+		yy_range = 0x1000;
+	}
+
+	int xx_level = 12;
+	int yy_level = 12;
+	while (0x20000 < xx_range) {
+		xx_begin >>= 1;
+		xx_end++;
+		xx_end >>= 1;
+		xx_range = xx_end - xx_begin;
+		xx_level--;
+	}
+	while (0x20000 < yy_range) {
+		yy_begin >>= 1;
+		yy_end++;
+		yy_end >>= 1;
+		yy_range = yy_end - yy_begin;
+		yy_level--;
+	}
+	xx_level &= 0x1f;
+	yy_level &= 0x1f;
+
+	xx_begin = max(xx_begin, 0);
+	xx_end = min(xx_end, obj_w << xx_level);
+	yy_begin = max(yy_begin, 0);
+	yy_end = min(yy_end, obj_h << yy_level);
+
+	float dsum_y = 0.0f;
+	float dsum_cb = 0.0f;
+	float dsum_cr = 0.0f;
+	float dsum_a = 0.0f;
+	int yy = yy_begin;
+	while (yy < yy_end) {
+		int yy_itr = yy >> yy_level;
+		int sum_y = 0;
 		int sum_cb = 0;
 		int sum_cr = 0;
-		int sum_a  = 0;
-
-		if (0 <= src_y && src_y < src_h) {
-			int uzu_repeat = uzu_const;
-
-			global short* itr;
-			int x_itr = src_x;
-			if (src_xt != 0) {
-				itr = src + (x_itr + src_y * exedit_buffer_line) * 4;
-
-				x_itr = (x_itr + 1) % src_w;
-				
-				int s = (itr[3] * (256 - src_xt) * src_ys) / 65536;
-
-				sum_y  = (itr[0] * s) / 4096;
-				sum_cb = (itr[1] * s) / 4096;
-				sum_cr = (itr[2] * s) / 4096;
-				sum_a  = s;
-
-				uzu_repeat -= 256 - src_xt;
+		int sum_a = 0;
+		int xx = xx_begin;
+		while (xx < xx_end) {
+			int xx_itr = xx >> xx_level;
+			int fraction;
+			if (xx & 0xfff) {
+				fraction = -xx & 0xfff;
+			} else {
+				fraction = min(xx_end - xx, 0x1000);
 			}
-			for(int i = 0; i < uzu_repeat / 256; i++, x_itr = (x_itr + 1) % src_w) {
-				itr = src + (x_itr + src_y * exedit_buffer_line) * 4;
 
-				int c = (itr[3] * src_ys) / 256;
-
-				sum_y  += (itr[0] * c) / 4096;
-				sum_cb += (itr[1] * c) / 4096;
-				sum_cr += (itr[2] * c) / 4096;
-				sum_a  += c;
-			}
-			if (uzu_repeat % 256 != 0) {
-				itr = src + (x_itr + src_y * exedit_buffer_line) * 4;
-				int t = (itr[3] * (uzu_repeat % 256) * src_ys) / 65536;
-
-				sum_y  += itr[0] * t / 4096;
-				sum_cb += itr[1] * t / 4096;
-				sum_cr += itr[2] * t / 4096;
-				sum_a  += t;
-			}
+			global short* srct = src + (xx_itr + yy_itr * obj_line) * 4;
+			int src_a = srct[3] * fraction >> 8;
+			sum_y += srct[0] * src_a >> 16;
+			sum_cb += srct[1] * src_a >> 16;
+			sum_cr += srct[2] * src_a >> 16;
+			sum_a += src_a;
+			xx += fraction;
 		}
-
-		int src_yt = 256 - src_ys;
-		src_y += 1;
-		if (0 <= src_y && src_y < src_h) {
-			int uzu_repeat = uzu_const;
-
-			global short* itr;
-			int x_itr = src_x;
-			if (src_xt != 0) {
-				itr = src + (x_itr + src_y * exedit_buffer_line) * 4;
-
-				x_itr = (x_itr + 1) % src_w;
-
-				int s = (itr[3] * (256 - src_xt) * src_yt) / 65536;
-
-				sum_y  += (itr[0] * s) / 4096;
-				sum_cb += (itr[1] * s) / 4096;
-				sum_cr += (itr[2] * s) / 4096;
-				sum_a  += s;
-
-				uzu_repeat -= 256 - src_xt;
-			}
-			
-			for(int i = 0; i < uzu_repeat / 256; i++, x_itr = (x_itr + 1) % src_w) {
-				itr = src + (x_itr + src_y * exedit_buffer_line) * 4;
-
-				int c = (itr[3] * src_yt) / 256;
-
-				sum_y  += (itr[0] * c) / 4096;
-				sum_cb += (itr[1] * c) / 4096;
-				sum_cr += (itr[2] * c) / 4096;
-				sum_a  += c;
-			}
-			if (uzu_repeat % 256 != 0) {
-				itr = src + (x_itr + src_y * exedit_buffer_line) * 4;
-				int t = (itr[3] * (uzu_repeat % 256) * src_yt) / 65536;
-
-				sum_y  += (itr[0] * t) / 4096;
-				sum_cb += (itr[1] * t) / 4096;
-				sum_cr += (itr[2] * t) / 4096;
-				sum_a  += t;
-			}
+		int fraction;
+		if (yy & 0xfff) {
+			fraction = -yy & 0xfff;
+		} else {
+			fraction = min(yy_end - yy, 0x1000);
 		}
-		
-		global short* dst_p = dst + (x + y * exedit_buffer_line) * 4;
-		if (sum_a == 0) {
-			dst_p[0] = 0;
-			dst_p[1] = 0;
-			dst_p[2] = 0;
-			dst_p[3] = 0;
+		float fraction_rate = (float)fraction * 0.000244140625f;
+		dsum_y += (float)sum_y * fraction_rate;
+		dsum_cb += (float)sum_cb * fraction_rate;
+		dsum_cr += (float)sum_cr * fraction_rate;
+		dsum_a += (float)sum_a * fraction_rate;
+		yy += fraction;
+	}
+
+	if (256.0f <= dsum_a) {
+		float inv_a = 65536.0f / dsum_a;
+		dst[0] = (short)round(dsum_y * inv_a);
+		dst[1] = (short)round(dsum_cb * inv_a);
+		dst[2] = (short)round(dsum_cr * inv_a);
+		dst[3] = (short)round(dsum_a / ((float)yy_range / 1024.0f) / ((float)xx_range / 1024.0f));
+	} else {
+		dst[0] = dst[1] = dst[2] = dst[3] = 0;
+	}
+}
+kernel void DisplacementMap_zoom(global short* dst, global short* src, global short* mem,
+	int obj_w, int obj_h, int obj_line, int param0, int param1, int ox, int oy){
+	int x = get_global_id(0);
+	int y = get_global_id(1);
+
+	dst += (x + y * obj_line) * 4;
+	mem += (x + y * obj_line) * 4;
+
+	int xx_min, xx_max, yy_min, yy_max;
+	int xx_temp, yy_temp;
+
+	float zoom;
+	float xxd = (float)(x * 0x1000 - ox);
+	if (0 < param0) {
+		zoom = (1024.0f / (float)(param0 + 1000) - 1.0) * 0.00048828125f;
+	} else {
+		zoom = (float)param0 * -0.00000048828125f;
+	}
+	float temp = xxd * zoom;
+	xx_min = xx_max = x * 0x1000 + (int)((float)(mem[0] - 0x800) * temp);
+
+	xx_temp = x * 0x1000 + (int)((float)(mem[obj_line * 4] - 0x800) * temp);
+	xx_min = min(xx_min, xx_temp);
+	xx_max = max(xx_max, xx_temp);
+
+	temp = (xxd + 4096.0f) * zoom;
+	xx_temp = (x + 1) * 0x1000 + (int)((float)(mem[4] - 0x800) * temp);
+	xx_min = min(xx_min, xx_temp);
+	xx_max = max(xx_max, xx_temp);
+
+	xx_temp = (x + 1) * 0x1000 + (int)((float)(mem[(obj_line + 1) * 4] - 0x800) * temp);
+	int xx_begin = min(xx_min, xx_temp);
+	int xx_end = max(xx_max, xx_temp);
+
+
+	float yyd = (float)(y * 0x1000 - oy);
+	if (0 < param1) {
+		zoom = (1024.0f / (float)(param1 + 1000) - 1.0) * 0.00048828125f;
+	} else {
+		zoom = (float)param1 * -0.00000048828125f;
+	}
+	temp = yyd * zoom;
+	yy_min = yy_max = y * 0x1000 + (int)((float)(mem[1] - 0x800) * temp);
+
+	yy_temp = y * 0x1000 + (int)((float)(mem[5] - 0x800) * temp);
+	yy_min = min(yy_min, yy_temp);
+	yy_max = max(yy_max, yy_temp);
+
+	temp = (yyd + 4096.0f) * zoom;
+	yy_temp = (y + 1) * 0x1000 + (int)((float)(mem[(obj_line + 1) * 4] - 0x800) * temp);
+	yy_min = min(yy_min, yy_temp);
+	yy_max = max(yy_max, yy_temp);
+
+	yy_temp = (y + 1) * 0x1000 + (int)((float)(mem[obj_line * 4 + 5] - 0x800) * temp);
+	int yy_begin = min(yy_min, yy_temp);
+	int yy_end = max(yy_max, yy_temp);
+
+	int xx_range = xx_end - xx_begin;
+	int yy_range = yy_end - yy_begin;
+
+	if (xx_range < 0x1000) {
+		xx_begin += (xx_range - 0x1000) >> 1;
+		xx_end = xx_begin + 0x1000;
+		xx_range = 0x1000;
+	}
+	if (yy_range < 0x1000) {
+		yy_begin += (yy_range - 0x1000) >> 1;
+		yy_end = yy_begin + 0x1000;
+		yy_range = 0x1000;
+	}
+
+	int xx_level = 12;
+	int yy_level = 12;
+	while (0x20000 < xx_range) {
+		xx_begin >>= 1;
+		xx_end++;
+		xx_end >>= 1;
+		xx_range = xx_end - xx_begin;
+		xx_level--;
+	}
+	while (0x20000 < yy_range) {
+		yy_begin >>= 1;
+		yy_end++;
+		yy_end >>= 1;
+		yy_range = yy_end - yy_begin;
+		yy_level--;
+	}
+	xx_level &= 0x1f;
+	yy_level &= 0x1f;
+
+	xx_begin = max(xx_begin, 0);
+	xx_end = min(xx_end, obj_w << xx_level);
+	yy_begin = max(yy_begin, 0);
+	yy_end = min(yy_end, obj_h << yy_level);
+
+	float dsum_y = 0.0f;
+	float dsum_cb = 0.0f;
+	float dsum_cr = 0.0f;
+	float dsum_a = 0.0f;
+	int yy = yy_begin;
+	while (yy < yy_end) {
+		int yy_itr = yy >> yy_level;
+		int sum_y = 0;
+		int sum_cb = 0;
+		int sum_cr = 0;
+		int sum_a = 0;
+		int xx = xx_begin;
+		while (xx < xx_end) {
+			int xx_itr = xx >> xx_level;
+			int fraction;
+			if (xx & 0xfff) {
+				fraction = -xx & 0xfff;
+			} else {
+				fraction = min(xx_end - xx, 0x1000);
+			}
+
+			global short* srct = src + (xx_itr + yy_itr * obj_line) * 4;
+			int src_a = srct[3] * fraction >> 8;
+			sum_y += srct[0] * src_a >> 16;
+			sum_cb += srct[1] * src_a >> 16;
+			sum_cr += srct[2] * src_a >> 16;
+			sum_a += src_a;
+			xx += fraction;
 		}
-		else {
-			float dVar2 = 4096.0f / sum_a;
-			dst_p[0] = (short)(round(sum_y  * dVar2));
-			dst_p[1] = (short)(round(sum_cb * dVar2));
-			dst_p[2] = (short)(round(sum_cr * dVar2));
-			dst_p[3] = (short)(sum_a * 256 / uzu_const);
+		int fraction;
+		if (yy & 0xfff) {
+			fraction = -yy & 0xfff;
+		} else {
+			fraction = min(yy_end - yy, 0x1000);
 		}
+		float fraction_rate = (float)fraction * 0.000244140625f;
+		dsum_y += (float)sum_y * fraction_rate;
+		dsum_cb += (float)sum_cb * fraction_rate;
+		dsum_cr += (float)sum_cr * fraction_rate;
+		dsum_a += (float)sum_a * fraction_rate;
+		yy += fraction;
+	}
+
+	if (256.0f <= dsum_a) {
+		float inv_a = 65536.0f / dsum_a;
+		dst[0] = (short)round(dsum_y * inv_a);
+		dst[1] = (short)round(dsum_cb * inv_a);
+		dst[2] = (short)round(dsum_cr * inv_a);
+		dst[3] = (short)round(dsum_a / ((float)yy_range / 1024.0f) / ((float)xx_range / 1024.0f));
+	} else {
+		dst[0] = dst[1] = dst[2] = dst[3] = 0;
+	}
+}
+kernel void DisplacementMap_rot(global short* dst, global short* src, global short* mem,
+	int obj_w, int obj_h, int obj_line, int param0, int param1, int ox, int oy){
+	int x = get_global_id(0);
+	int y = get_global_id(1);
+
+	dst += (x + y * obj_line) * 4;
+	mem += (x + y * obj_line) * 4;
+
+	int xx_min, xx_max, yy_min, yy_max;
+	int xx_temp, yy_temp;
+
+	float xxd = (float)((x << 12) - ox);
+	float yyd = (float)((y << 12) - oy);
+	float xxd_next = xxd + 4096.0f;
+	float yyd_next = yyd + 4096.0f;
+	float paramrad = (float)param0 * (float)-0.000003067961642955197f;
+
+	float rad = (float)(mem[0] - 0x800) * paramrad;
+	float sinv = sin(rad);
+	float cosv = cos(rad);
+	xx_min = xx_max = (int)(xxd * cosv - yyd * sinv);
+	yy_min = yy_max = (int)(xxd * sinv + yyd * cosv);
+
+	rad = (float)(mem[4] - 0x800) * paramrad;
+	sinv = sin(rad);
+	cosv = cos(rad);
+	xx_temp = (int)(xxd_next * cosv - yyd * sinv);
+	yy_temp = (int)(xxd_next * sinv + yyd * cosv);
+	xx_min = min(xx_min, xx_temp);
+	xx_max = max(xx_max, xx_temp);
+	yy_min = min(yy_min, yy_temp);
+	yy_max = max(yy_max, yy_temp);
+
+	rad = (float)(mem[obj_line * 4] - 0x800) * paramrad;
+	sinv = sin(rad);
+	cosv = cos(rad);
+	xx_temp = (int)(xxd * cosv - yyd_next * sinv);
+	yy_temp = (int)(xxd * sinv + yyd_next * cosv);
+	xx_min = min(xx_min, xx_temp);
+	xx_max = max(xx_max, xx_temp);
+	yy_min = min(yy_min, yy_temp);
+	yy_max = max(yy_max, yy_temp);
+
+	rad = (float)(mem[(obj_line + 1) * 4] - 0x800) * paramrad;
+	sinv = sin(rad);
+	cosv = cos(rad);
+	xx_temp = (int)(xxd_next * cosv - yyd_next * sinv);
+	yy_temp = (int)(xxd_next * sinv + yyd_next * cosv);
+	int xx_begin = min(xx_min, xx_temp) + ox;
+	int xx_end = max(xx_max, xx_temp) + ox;
+	int yy_begin = min(yy_min, yy_temp) + oy;
+	int yy_end = max(yy_max, yy_temp) + oy;
+
+	int xx_range = xx_end - xx_begin;
+	int yy_range = yy_end - yy_begin;
+
+	if (xx_range < 0x1000) {
+		xx_begin += (xx_range - 0x1000) >> 1;
+		xx_end = xx_begin + 0x1000;
+		xx_range = 0x1000;
+	}
+	if (yy_range < 0x1000) {
+		yy_begin += (yy_range - 0x1000) >> 1;
+		yy_end = yy_begin + 0x1000;
+		yy_range = 0x1000;
+	}
+
+	int xx_level = 12;
+	int yy_level = 12;
+	while (0x20000 < xx_range) {
+		xx_begin >>= 1;
+		xx_end++;
+		xx_end >>= 1;
+		xx_range = xx_end - xx_begin;
+		xx_level--;
+	}
+	while (0x20000 < yy_range) {
+		yy_begin >>= 1;
+		yy_end++;
+		yy_end >>= 1;
+		yy_range = yy_end - yy_begin;
+		yy_level--;
+	}
+	xx_level &= 0x1f;
+	yy_level &= 0x1f;
+
+	xx_begin = max(xx_begin, 0);
+	xx_end = min(xx_end, obj_w << xx_level);
+	yy_begin = max(yy_begin, 0);
+	yy_end = min(yy_end, obj_h << yy_level);
+
+	float dsum_y = 0.0f;
+	float dsum_cb = 0.0f;
+	float dsum_cr = 0.0f;
+	float dsum_a = 0.0f;
+	int yy = yy_begin;
+	while (yy < yy_end) {
+		int yy_itr = yy >> yy_level;
+		int sum_y = 0;
+		int sum_cb = 0;
+		int sum_cr = 0;
+		int sum_a = 0;
+		int xx = xx_begin;
+		while (xx < xx_end) {
+			int xx_itr = xx >> xx_level;
+			int fraction;
+			if (xx & 0xfff) {
+				fraction = -xx & 0xfff;
+			} else {
+				fraction = min(xx_end - xx, 0x1000);
+			}
+
+			global short* srct = src + (xx_itr + yy_itr * obj_line) * 4;
+			int src_a = srct[3] * fraction >> 8;
+			sum_y += srct[0] * src_a >> 16;
+			sum_cb += srct[1] * src_a >> 16;
+			sum_cr += srct[2] * src_a >> 16;
+			sum_a += src_a;
+			xx += fraction;
+		}
+		int fraction;
+		if (yy & 0xfff) {
+			fraction = -yy & 0xfff;
+		} else {
+			fraction = min(yy_end - yy, 0x1000);
+		}
+		float fraction_rate = (float)fraction * 0.000244140625f;
+		dsum_y += (float)sum_y * fraction_rate;
+		dsum_cb += (float)sum_cb * fraction_rate;
+		dsum_cr += (float)sum_cr * fraction_rate;
+		dsum_a += (float)sum_a * fraction_rate;
+		yy += fraction;
+	}
+
+	if (256.0f <= dsum_a) {
+		float inv_a = 65536.0f / dsum_a;
+		dst[0] = (short)round(dsum_y * inv_a);
+		dst[1] = (short)round(dsum_cb * inv_a);
+		dst[2] = (short)round(dsum_cr * inv_a);
+		dst[3] = (short)round(dsum_a / ((float)yy_range / 1024.0f) / ((float)xx_range / 1024.0f));
+	} else {
+		dst[0] = dst[1] = dst[2] = dst[3] = 0;
 	}
 }
 )" R"(
@@ -225,17 +580,16 @@ kernel void RadiationalBlur_Media(
 	global short* dst, global short* src, int src_w, int src_h, int buffer_line,
 	int rb_blur_cx, int rb_blur_cy, int rb_obj_cx, int rb_obj_cy, int rb_range, int rb_pixel_range) {
 
-	int xi = get_global_id(0);
-	int yi = get_global_id(1);
+	int x = get_global_id(0);
+	int y = get_global_id(1);
+	int pixel_itr = x + y * buffer_line;
 
-	int x = xi + rb_obj_cx;
-	int y = yi + rb_obj_cy;
-
-	int pixel_itr = xi + yi * buffer_line;
+	x += rb_obj_cx;
+	y += rb_obj_cy;
 	int cx = rb_blur_cx - x;
 	int cy = rb_blur_cy - y;
 	int c_dist_times8 = (int)round(sqrt((float)(cx * cx + cy * cy)) * 8.0f);
-	int range = (rb_range * c_dist_times8) / 1000;
+	int range = rb_range * c_dist_times8 / 1000;
 
 	if (rb_pixel_range < c_dist_times8) {
 		range = rb_pixel_range * rb_range / 1000;
@@ -263,15 +617,14 @@ kernel void RadiationalBlur_Media(
 			if (0 <= x_itr && x_itr < src_w && 0 <= y_itr && y_itr < src_h) {
 				short4 itr = vload4(x_itr + y_itr * buffer_line, src);
 				int itr_a = itr.w;
-				if (itr_a != 0) {
-					sum_a += itr_a;
-					if (itr_a < 0x1000) {
-						itr_a = 0x1000;
-					}
-					sum_y += itr.x * itr_a / 4096;
-					sum_cb += itr.y * itr_a / 4096;
-					sum_cr += itr.z * itr_a / 4096;
+				sum_a += itr_a;
+				if (0x1000 < itr_a) {
+					itr_a = 0x1000;
 				}
+				sum_y += itr.x * itr_a / 4096;
+				sum_cb += itr.y * itr_a / 4096;
+				sum_cr += itr.z * itr_a / 4096;
+				
 			}
 		}
 		if (sum_a != 0) {
@@ -285,7 +638,7 @@ kernel void RadiationalBlur_Media(
 				pixel_itr, dst
 			);
 		} else {
-			dst[pixel_itr * 4 + 3] = (short)(sum_a / range);
+			dst[pixel_itr * 4 + 3] = 0;
 		}
 	} else {
 		if (x < 0 || y < 0 || src_w <= x || src_h <= y) {
@@ -295,7 +648,7 @@ kernel void RadiationalBlur_Media(
 		}
 	}
 }
-)" R"(
+
 kernel void RadiationalBlur_Filter(
 	global short* dst, global short* src, int buffer_line,
 	int rb_blur_cx, int rb_blur_cy, int rb_range, int rb_pixel_range) {
@@ -497,7 +850,6 @@ kernel void Flash(global short* dst, global short* src, int src_w, int src_h, in
 		}
 	}
 }
-)" R"(
 kernel void FlashColor(global short* dst, global short* src, int src_w, int src_h, int exedit_buffer_line,
 	int g_cx,
 	int g_cy,
@@ -616,8 +968,8 @@ kernel void DirectionalBlur_Media(global short* dst, global short* src, int obj_
 	int sum_cr = 0;
 	int sum_a = 0;
 
-	int x_itr = (x + x_begin << 16) + 0x8000 - range * x_step;
-	int y_itr = (y + y_begin << 16) + 0x8000 - range * y_step;
+	int x_itr = ((x + x_begin) << 16) + 0x8000 - range * x_step;
+	int y_itr = ((y + y_begin) << 16) + 0x8000 - range * y_step;
 
 	for (int n = 0; n < pix_range; n++) {
 		int xx = x_itr >> 16;
@@ -643,7 +995,6 @@ kernel void DirectionalBlur_Media(global short* dst, global short* src, int obj_
 	}
 	dst[3] = (short)(sum_a / pix_range);
 }
-)" R"(
 kernel void DirectionalBlur_original_size(global short* dst, global short* src, int obj_w, int obj_h, int obj_line,
 	int x_step, int y_step, int range) {
 	int x = get_global_id(0);
@@ -687,7 +1038,6 @@ kernel void DirectionalBlur_original_size(global short* dst, global short* src, 
 	}
 	dst[3] = (short)(sum_a / cnt);
 }
-)" R"(
 kernel void DirectionalBlur_Filter(global short* dst, global short* src, int scene_w, int scene_h, int scene_line,
 	int x_step, int y_step, int range) {
 	int x = get_global_id(0);
@@ -721,6 +1071,7 @@ kernel void DirectionalBlur_Filter(global short* dst, global short* src, int sce
 	dst[1] = (short)(sum_cb / cnt);
 	dst[2] = (short)(sum_cr / cnt);
 }
+)" R"(
 kernel void LensBlur_Media(global char* dst, global char* src, int obj_w, int obj_h, int obj_line,
 	int range, int rangep05_sqr, int range_t3m1, int rangem1_sqr) {
 
@@ -748,7 +1099,7 @@ kernel void LensBlur_Media(global char* dst, global char* src, int obj_w, int ob
 			if (sqr < rangep05_sqr) {
 				int cor_a;
 				if (rangem1_sqr < sqr) {
-					cor_a = (rangep05_sqr - sqr << 12) / range_t3m1;
+					cor_a = ((rangep05_sqr - sqr) << 12) / range_t3m1;
 				} else {
 					cor_a = 4096;
 				}
@@ -776,7 +1127,7 @@ kernel void LensBlur_Media(global char* dst, global char* src, int obj_w, int ob
 		*(global int*)&dst[4] = 0;
 	}
 }
-)" R"(
+
 kernel void LensBlur_Filter(global char* dst, global char* src, int scene_w, int scene_h, int scene_line,
 	int range, int rangep05_sqr, int range_t3m1, int rangem1_sqr) {
 
@@ -805,7 +1156,7 @@ kernel void LensBlur_Filter(global char* dst, global char* src, int scene_w, int
 			if (sqr < rangep05_sqr) {
 				int cor_a;
 				if (rangem1_sqr < sqr) {
-					cor_a = (rangep05_sqr - sqr << 12) / range_t3m1;
+					cor_a = ((rangep05_sqr - sqr) << 12) / range_t3m1;
 				} else {
 					cor_a = 4096;
 				}
@@ -829,7 +1180,6 @@ kernel void LensBlur_Filter(global char* dst, global char* src, int scene_w, int
 	dst[4] = (char)(((sum_a >> 1) + sum_cb) / sum_a);
 	dst[5] = (char)(((sum_a >> 1) + sum_cr) / sum_a);
 }
-
 )");
 #pragma endregion
 
