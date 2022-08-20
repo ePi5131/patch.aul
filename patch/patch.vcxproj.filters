@@ -217,6 +217,9 @@
     <ClInclude Include="patch_fast_displacementmap.hpp">
       <Filter>feature\fast</Filter>
     </ClInclude>
+    <ClInclude Include="patch_fast_create_figure.hpp">
+      <Filter>feature\fast</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="init.cpp" />
@@ -322,6 +325,9 @@
       <Filter>feature</Filter>
     </ClCompile>
     <ClCompile Include="patch_fast_displacementmap.cpp">
+      <Filter>feature\fast</Filter>
+    </ClCompile>
+    <ClCompile Include="patch_fast_create_figure.cpp">
       <Filter>feature\fast</Filter>
     </ClCompile>
   </ItemGroup>

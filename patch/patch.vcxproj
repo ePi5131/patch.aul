@@ -54,6 +54,7 @@
     <ClInclude Include="patch_fast.hpp" />
     <ClInclude Include="patch_fast_border.hpp" />
     <ClInclude Include="patch_fast_cl.hpp" />
+    <ClInclude Include="patch_fast_create_figure.hpp" />
     <ClInclude Include="patch_fast_directionalblur.hpp" />
     <ClInclude Include="patch_fast_displacementmap.hpp" />
     <ClInclude Include="patch_fast_exeditwindow.hpp" />
@@ -112,6 +113,7 @@
     <ClCompile Include="patch_exo_trackminusval.cpp" />
     <ClCompile Include="patch_failed_sjis_msgbox.cpp" />
     <ClCompile Include="patch_fast_border.cpp" />
+    <ClCompile Include="patch_fast_create_figure.cpp" />
     <ClCompile Include="patch_fast_directionalblur.cpp" />
     <ClCompile Include="patch_fast_displacementmap.cpp" />
     <ClCompile Include="patch_fast_exeditwindow.cpp" />

@@ -58,6 +58,12 @@ namespace OFS {
 
 		constexpr i32 memory_ptr = 0x01a5328;
 
+		constexpr i32 CreateFigure_var_ptr = 0x1e4798;
+		constexpr i32 CreateFigure_circle_func_call = 0x073882;
+		constexpr i32 CreateFigure_circle_func_mt_call = 0x0738ac;
+		constexpr i32 CreateFigure_polygons_func_call = 0x073949;
+		constexpr i32 CreateFigure_polygons_func_mt_call = 0x07395b;
+
 		constexpr i32 efBorder_func_proc_var_ptr = 0x0a5d28;
 		constexpr i32 efBorder_func_proc_ptr = 0x0515d0;
 		constexpr i32 efBorder_var_ptr = 0x1b1e30;
