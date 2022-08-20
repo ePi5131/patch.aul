@@ -28,6 +28,9 @@ namespace OFS {
 	}
 
 	namespace ExEdit {
+		constexpr i32 blend_yca_normal_func = 0x007df0;
+		constexpr i32 blend_yc_normal_func = 0x007f20;
+		
 		constexpr i32 ConvertFilter2Exo_TrackScaleJudge_RangeBegin = 0x028a8d;
 		constexpr i32 ConvertFilter2Exo_TrackScaleJudge_Overwrite1 = 0x028a84;
 		constexpr i32 ConvertFilter2Exo_TrackScaleJudge_Overwrite2 = 0x0289cb;
@@ -55,11 +58,21 @@ namespace OFS {
 
 		constexpr i32 memory_ptr = 0x01a5328;
 
+		constexpr i32 CreateFigure_var_ptr = 0x1e4798;
+		constexpr i32 CreateFigure_circle_func_call = 0x073882;
+		constexpr i32 CreateFigure_circle_func_mt_call = 0x0738ac;
+		constexpr i32 CreateFigure_polygons_func_call = 0x073949;
+		constexpr i32 CreateFigure_polygons_func_mt_call = 0x07395b;
+
 		constexpr i32 efBorder_func_proc_var_ptr = 0x0a5d28;
 		constexpr i32 efBorder_func_proc_ptr = 0x0515d0;
 		constexpr i32 efBorder_var_ptr = 0x1b1e30;
 		constexpr i32 efPolorTransform_func_proc = 0x0748a0;
 		constexpr i32 efPolorTransform_func_proc_ptr = 0x0add30;
+		constexpr i32 efPolorTransform_mt_func_call = 0x074a62;
+		constexpr i32 efPolorTransform_var_ptr = 0x1e48c0;
+		constexpr i32 efDisplacementMap_mt_func_call = 0x01f154;
+		constexpr i32 efDisplacementMap_var_ptr = 0x11effc;
 		constexpr i32 efRadiationalBlur_func_proc = 0x00b310;
 		constexpr i32 efRadiationalBlur_func_proc_ptr = 0x09fdb0;
 		constexpr i32 efRadiationalBlur_var_ptr = 0x0d75a8;
@@ -83,6 +96,11 @@ namespace OFS {
 		constexpr i32 exfunc_1c = 0x04ade0;
 		constexpr i32 GetCurrentProcessing = 0x047ba0;
 		constexpr i32 LoadedFilterTable = 0x187c98;
+		constexpr i32 splitted_object_new_group_belong = 0x034f90;
+		constexpr i32 DrawTimelineMask = 0x0392f0;
+		constexpr i32 disp_settingdialog = 0x039550;
+		constexpr i32 filter_sendmessage = 0x04a1a0;
+		constexpr i32 get_near_object_idx = 0x0445a0;
 		constexpr i32 TraScript_ProcessingObjectIndex = 0x1b2b04;
 		constexpr i32 TraScript_ProcessingTrackBarIndex = 0x1b21f4;
 		constexpr i32 TraScript_Time = 0x1b28c8;

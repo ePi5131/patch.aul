@@ -24,6 +24,7 @@
 #include <unordered_map>
 #include <functional>
 #include <optional>
+#include <charconv>
 
 #include "json.h"
 
@@ -83,7 +84,8 @@ namespace config_type {
 			return "{:02x}{:02x}{:02x}"_fmt(r, g, b);
 		}
 		std::string to_jsonstring() const {
-			return "\"{:02x}{:02x}{:02x}\""_fmt(r, g, b);
+			if(valid) return "\"{:02x}{:02x}{:02x}\""_fmt(r, g, b);
+			return std::string{};
 		}
 		constexpr bool is_valid() const noexcept {
 			return valid;
@@ -100,7 +102,7 @@ namespace config_type {
 	// ColorBGR2つの配列、またはColorBGR1つ、またはnulloptを表す
 	// [ "ffffff", "ffffff" ] や ["ffffff"]、"ffffff" など
 	struct ColorBGR2_Opt {
-		std::array<ColorBGR, 2> ary;
+		std::array<ColorBGR, 2> ary{};
 		ColorBGR2_Opt() : ary{} {}
 		ColorBGR2_Opt(ColorBGR c1, ColorBGR c2) : ary{ c1,c2 } {}
 
@@ -240,9 +242,23 @@ concept ConfigWriterHasToJsonString = requires (T x) {
 	x.to_jsonstring();
 };
 
+inline std::string mytostring(int x) {
+	std::string ret(std::numeric_limits<int>::digits10 + 2, '\0');
+	std::to_chars(ret.data(), ret.data() + ret.size(), x);
+	ret.resize(ret.find_first_of('\0'));
+	return ret;
+}
+
+inline std::string mytostring(double x) {
+	std::string ret(std::numeric_limits<double>::max_exponent10 + 9, '\0');
+	std::to_chars(ret.data(), ret.data() + ret.size(), x);
+	ret.resize(ret.find_first_of('\0'));
+	return ret;
+}
+
 template<class T>
-concept ConfigWriterCanToStirng = requires(T x) {
-	std::to_string(x);
+concept ConfigWriterCanToChars = requires(T x) {
+	mytostring(x);
 };
 
 template<class T>
@@ -286,12 +302,13 @@ public:
 	ConfigWriter(int level) : level(level) {}
 
 	void append(std::string_view key, std::string_view value) {
-		vkv.emplace_back(std::string(key), std::string(value));
+		if(value.size() && value[0] != '\0') vkv.emplace_back(std::string(key), std::string(value));
 	}
 
 	template<ConfigWriterHasToJsonString T>
 	void append(std::string_view key, const T& value) {
-		vkv.emplace_back(std::string(key), value.to_jsonstring());
+		auto result = value.to_jsonstring();
+		if(result[0] != '\0') vkv.emplace_back(std::string(key), result);
 	}
 
 	void append(std::string_view key, bool value) {
@@ -319,9 +336,9 @@ public:
 		}
 	}
 
-	template<ConfigWriterCanToStirng T>
+	template<ConfigWriterCanToChars T>
 	void append(std::string_view key, const T& value) {
-		vkv.emplace_back(std::string(key), std::to_string(value));
+		vkv.emplace_back(std::string(key), mytostring(value));
 	}
 
 	template<class T>

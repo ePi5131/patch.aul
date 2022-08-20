@@ -15,52 +15,47 @@
 
 #pragma once
 #include "macro.h"
-#ifdef PATCH_SWITCH_FAST_POLORTRANSFORM
 
-#include <aviutl.hpp>
+#ifdef PATCH_SWITCH_RCLICKMENU_SPLIT
+
+#include <memory>
 #include <exedit.hpp>
 
 #include "global.hpp"
 #include "offset_address.hpp"
 #include "util.hpp"
-#include "global.hpp"
+#include "restorable_patch.hpp"
+
 #include "config_rw.hpp"
 
-namespace patch::fast {
+namespace patch {
 	// init at exedit load
-	// 極座標変換の高速化
-	inline class PolorTransform_t {
-		static BOOL mt_func(AviUtl::MultiThreadFunc original_func_ptr, ExEdit::Filter* efp, ExEdit::FilterProcInfo* efpip);
+	// 右クリックメニューの分割で設定ダイアログの更新が行われないのを修正
+	inline class rclickmenu_split_t {
+		static int __cdecl filter_sendmessage_wrap3fd46(int object_idx, int wparam, int flag);
+		static void __cdecl splitted_object_new_group_belong_wrap3fd5c();
 
 		bool enabled = true;
 		bool enabled_i;
-		inline static const char key[] = "fast.polortransform";
+
+		inline static const char key[] = "r_click_menu_split";
+
+		inline static int last_id = -1;
 
 	public:
 
-		struct efPolorTransform_var { // 1e48c0
-			int src_h;
-			int radius;
-			int src_w;
-			int _padding;
-			double uzu;
-			double uzu_a;
-			double angle;
-			int center_length;
-			int output_size;
-		};
-
 		void init() {
 			enabled_i = enabled;
+
 			if (!enabled_i)return;
 
-			OverWriteOnProtectHelper h(GLOBAL::exedit_base + OFS::ExEdit::efPolorTransform_mt_func_call, 6);
-			h.store_i16(0, '\x90\xe8'); // nop; call (rel32)
-			h.replaceNearJmp(2, &mt_func);
+			ReplaceNearJmp(GLOBAL::exedit_base + 0x03fd46, &filter_sendmessage_wrap3fd46);
+			ReplaceNearJmp(GLOBAL::exedit_base + 0x03fd5c, &splitted_object_new_group_belong_wrap3fd5c);
 
 		}
-
-		void switching(bool flag) { enabled = flag; }
+		void switching(bool flag) {
+			enabled = flag;
+		}
 
 		bool is_enabled() { return enabled; }
 		bool is_enabled_i() { return enabled_i; }
@@ -75,6 +70,6 @@ namespace patch::fast {
 			cw.append(key, enabled);
 		}
 
-	} PolorTransform;
-} // namespace patch::fast
-#endif // ifdef PATCH_SWITCH_FAST_POLORTRANSFORM
+	} rclickmenu_split;
+} // namespace patch
+#endif // ifdef PATCH_SWITCH_RCLICKMENU_SPLIT

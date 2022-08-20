@@ -14,8 +14,8 @@
 */
 
 #pragma once
-#include "patch_fast_polortransform.hpp"
-#ifdef PATCH_SWITCH_FAST_POLORTRANSFORM
+#include "patch_fast_displacementmap.hpp"
+#ifdef PATCH_SWITCH_FAST_DISPLACEMENTMAP
 
 #include <numbers>
 
@@ -30,37 +30,45 @@
 static stopwatch_mem sw;
 
 namespace patch::fast {
-    BOOL PolorTransform_t::mt_func(AviUtl::MultiThreadFunc original_func_ptr, ExEdit::Filter* efp, ExEdit::FilterProcInfo* efpip) {
+    BOOL DisplacementMap_t::mt_func(AviUtl::MultiThreadFunc original_func_ptr, ExEdit::Filter* efp, ExEdit::FilterProcInfo* efpip) {
         if constexpr (true) {
             if (256 < efpip->obj_w * efpip->obj_h) {
                 sw.start();
                 try {
 
-                    efPolorTransform_var& polor = *reinterpret_cast<efPolorTransform_var*>(GLOBAL::exedit_base + OFS::ExEdit::efPolorTransform_var_ptr);
+                    efDisplacementMap_var& dmap = *reinterpret_cast<efDisplacementMap_var*>(GLOBAL::exedit_base + OFS::ExEdit::efDisplacementMap_var_ptr);
+                    auto& ExEditMemory = *(void**)(GLOBAL::exedit_base + OFS::ExEdit::memory_ptr);
 
-                    const auto src_size = efpip->obj_line * polor.src_h * sizeof(ExEdit::PixelYCA);
-                    cl::Buffer clmem_src(cl.context, CL_MEM_READ_ONLY, src_size);
-                    cl.queue.enqueueWriteBuffer(clmem_src, CL_TRUE, 0, src_size, efpip->obj_edit);
+                    const auto buf_size = efpip->obj_line * efpip->obj_h * sizeof(ExEdit::PixelYCA);
+                    cl::Buffer clmem_src1(cl.context, CL_MEM_READ_ONLY, buf_size);
+                    cl.queue.enqueueWriteBuffer(clmem_src1, CL_TRUE, 0, buf_size, efpip->obj_edit);
 
-                    const auto dst_size = efpip->obj_line * polor.output_size * 8;
-                    cl::Buffer clmem_dst(cl.context, CL_MEM_WRITE_ONLY, dst_size);
+                    cl::Buffer clmem_src2(cl.context, CL_MEM_READ_ONLY, buf_size);
+                    cl.queue.enqueueWriteBuffer(clmem_src2, CL_TRUE, 0, buf_size, ExEditMemory);
+
+                    cl::Buffer clmem_dst(cl.context, CL_MEM_WRITE_ONLY, buf_size);
+
+                    int calc_id = ((ExEdit::Exdata::efDisplacementMap*)efp->exdata_ptr)->calc;
+                    if (calc_id < 0 && 2 < calc_id) {
+                        calc_id = 0;
+                    }
 
                     auto kernel = cl.readyKernel(
-                        "PolorTransform",
+                        cl_func_name[calc_id],
                         clmem_dst,
-                        clmem_src,
-                        polor.src_w,
-                        polor.src_h,
+                        clmem_src1,
+                        clmem_src2,
+                        efpip->obj_w,
+                        efpip->obj_h,
                         efpip->obj_line,
-                        polor.center_length,
-                        polor.radius,
-                        static_cast<float>(polor.angle),
-                        static_cast<float>(polor.uzu),
-                        static_cast<float>(polor.uzu_a)
+                        dmap.param0,
+                        dmap.param1,
+                        dmap.ox,
+                        dmap.oy
                     );
-                    cl.queue.enqueueNDRangeKernel(kernel, { 0,0 }, { (size_t)polor.output_size ,(size_t)polor.output_size });
+                    cl.queue.enqueueNDRangeKernel(kernel, { 0,0 }, { (size_t)efpip->obj_w ,(size_t)efpip->obj_h });
 
-                    cl.queue.enqueueReadBuffer(clmem_dst, CL_TRUE, 0, dst_size, efpip->obj_temp);
+                    cl.queue.enqueueReadBuffer(clmem_dst, CL_TRUE, 0, buf_size, efpip->obj_temp);
                 }
                 catch (const cl::Error& err) {
                     debug_log("OpenCL Error\n({}) {}", err.err(), err.what());
@@ -79,4 +87,4 @@ namespace patch::fast {
         }
     }
 }
-#endif // ifdef PATCH_SWITCH_FAST_POLORTRANSFORM
+#endif // ifdef PATCH_SWITCH_FAST_DISPLACEMENTMAP
