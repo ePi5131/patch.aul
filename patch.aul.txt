@@ -31,6 +31,8 @@ https://scrapbox.io/ePi5131/patch.aul
         OpenCL/AVX2を使用します
         わずかにオリジナルと結果が変わってしまいます (floatとdoubleの差です)
         また、アーティファクトなどのバグを解消することもあります
+    ・図形の高速化
+        円/三角形/五角形/六角形/星形の計算を僅かに最適化
     ・テキストの軽量化
         キャッシュをとります
     ・Luaの環境が分かれてしまうことがある
@@ -185,7 +187,7 @@ https://scrapbox.io/ePi5131/patch.aul
 		"fast.exeditwindow" : boolean, ; 拡張編集ウィンドウの描画の最適化 (既定値: true)
 		"fast.settingdialog" : boolean, ; 設定ダイアログの描画の最適化 (既定値: true)
         "fast.text" : boolean, ; テキストの軽量化 (既定値: true)
-		"fast.create_figure" : boolean, ; 円、三角、五角、六角、星の計算を効率化し少しだけ速度アップ (既定値: true)
+		"fast.create_figure" : boolean, ; 図形の高速化 (既定値: true)
         "fast.border" : boolean, ; 縁取りの高速化/バグ修正 (既定値: true)
 		"fast.cl" : boolean, ; fast.*でOpenCLが必要なオプションに必要なオプション (既定値: true)
 		"fast.radiationalblur" : boolean, ; fast.clが前提 放射ブラーの高速化 (既定値: true)
@@ -383,3 +385,6 @@ Lua追加要素詳細
 
     r41
         タイムラインのアイテムが長すぎるときに描画色がおかしくなるのを再修正
+
+    draft
+        図形の高速化を追加
