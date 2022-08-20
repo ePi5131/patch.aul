@@ -15,8 +15,11 @@
 
 #include "patch_obj_colorcorrection.hpp"
 
+#include <numbers>
+
 #ifdef PATCH_SWITCH_OBJ_COLORCORRECTION
 namespace patch {
+    /**/
     void rgb2hsv_12(int r, int g, int b, int* h, int* s, int* v) {
         int rgbmax = (std::max)({ r, g, b });
         int rgbsub = rgbmax - (std::min)({ r, g, b });
@@ -39,6 +42,30 @@ namespace patch {
         }
         *v = rgbmax;
     }
+    /*/
+    void rgb2hsv_12(int r, int g, int b, int* h, int* s, int* v) {
+        constexpr auto half_sqrt3 = 0.86602540378443864676372317075294;
+
+        const auto vx = (r * 2 - (g + b)) * .5;
+        const auto vy = (g - b) * half_sqrt3;
+
+        const auto ht = static_cast<int>(std::round(std::atan2(vy, vx) * (3600 / (std::numbers::pi * 2))));
+        if (ht < 0) *h = ht + 3600;
+        else *h = ht;
+
+        const auto mx = (std::max)({ r,g,b });
+        const auto mn = (std::min)({ r,g,b });
+
+        if (mx) {
+            *s = (mx - mn) * 4096 / mx;
+        }
+        else {
+            *s = 0;
+        }
+        *v = mx;
+
+    }
+    //*/
     void yc2rgb_12(int y, int cb, int cr, int* r, int* g, int* b) {
         *r = y + (cr * 11485 >> 13);
         *g = y - ((cb * 2818 + cr * 5849) >> 13);
@@ -50,7 +77,7 @@ namespace patch {
         rgb2hsv_12(r, g, b, h, s, v);
     }
 
-
+    /**/
     void hsv2rgb_12(int h, int s, int v, int* r, int* g, int* b) {
         h %= 3600;
         if (h < 0) {
@@ -93,6 +120,79 @@ namespace patch {
             break;
         }
     }
+    /*/
+    void hsv2rgb_12(int h, int s, int v, int* r, int* g, int* b) {
+        h %= 3600;
+
+        const auto mx = v;
+        const auto mn = v * (4096 - s) / 4096;
+
+        const auto mxf = mx / 4096.;
+        const auto mnf = mn / 4096.;
+
+        constexpr auto pi = std::numbers::pi;
+
+        const auto h_rad = h * (pi * 2 / 3600.);
+        const auto sinh = std::sin(h_rad);
+        const auto cosh = std::cos(h_rad);
+
+        constexpr auto sqrt3_d2 = .86602540378443864676372317075294;
+
+        const auto ar = sinh;
+        const auto ag = cosh * sqrt3_d2 + sinh * .5;
+        const auto ab = cosh * sqrt3_d2 - sinh * .5;
+
+        double rf, gf, bf;
+        if (h_rad < pi / 3) {
+            *r = mx;
+            *b = mn;
+            rf = mxf;
+            bf = mnf;
+            gf = (ar * rf + ab * bf) / ag;
+            *g = static_cast<int>(std::round(gf * 4096));
+        }
+        else if (h_rad < pi * 2 / 3) {
+            *g = mx;
+            *b = mn;
+            gf = mxf;
+            bf = mnf;
+            rf = (ag * gf - ab * bf) / ar;
+            *r = static_cast<int>(std::round(rf * 4096));
+        }
+        else if (h_rad < pi) {
+            *g = mx;
+            *r = mn;
+            gf = mxf;
+            rf = mnf;
+            bf = (ag * gf - ar * rf) / ab;
+            *b = static_cast<int>(std::round(bf * 4096));
+        }
+        else if (h_rad < pi * 4 / 3) {
+            *b = mx;
+            *r = mn;
+            bf = mxf;
+            rf = mnf;
+            gf = (ar * rf + ab * bf) / ag;
+            *g = static_cast<int>(std::round(gf * 4096));
+        }
+        else if (h_rad < pi * 5 / 3) {
+            *b = mx;
+            *g = mn;
+            bf = mxf;
+            gf = mnf;
+            rf = (ag * gf - ab * bf) / ar;
+            *r = static_cast<int>(std::round(rf * 4096));
+        }
+        else {
+            *r = mx;
+            *g = mn;
+            rf = mxf;
+            gf = mnf;
+            bf = (ag * gf - ar * rf) / ab;
+            *b = static_cast<int>(std::round(bf * 4096));
+        }
+    }
+    //*/
 
     void rgb2yc_12(int r, int g, int b, int* y, int* cb, int* cr) {
         *y  = (r *  4898 + g *  9617 + b *  1867) >> 14;
