@@ -196,6 +196,9 @@
     <ClInclude Include="patch_obj_lensblur.hpp">
       <Filter>feature</Filter>
     </ClInclude>
+    <ClInclude Include="patch_obj_noise.hpp">
+      <Filter>feature</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="init.cpp" />

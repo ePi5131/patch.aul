@@ -69,6 +69,7 @@
     <ClInclude Include="patch_lua_rand.hpp" />
     <ClInclude Include="patch_lua_randex.hpp" />
     <ClInclude Include="patch_obj_lensblur.hpp" />
+    <ClInclude Include="patch_obj_noise.hpp" />
     <ClInclude Include="patch_redo.hpp" />
     <ClInclude Include="patch_scroll_objdlg.hpp" />
     <ClInclude Include="patch_setting_dialog_excolorconfig.hpp" />
