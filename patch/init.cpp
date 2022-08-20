@@ -152,6 +152,10 @@ void init_t::InitAtExeditLoad() {
 	patch::helpful_msgbox.init();
 #endif
 
+#ifdef PATCH_SWITCH_FAILED_SJIS_MSGBOX
+	patch::failed_sjis_msgbox.init();
+#endif
+
 #ifdef PATCH_SWITCH_OBJ_LENSBLUR
 	patch::LensBlur.init();
 #endif

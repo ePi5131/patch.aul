@@ -211,6 +211,9 @@
     <ClInclude Include="patch_tra_specified_speed.hpp">
       <Filter>feature</Filter>
     </ClInclude>
+    <ClInclude Include="patch_failed_sjis_msgbox.hpp">
+      <Filter>feature</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="init.cpp" />
@@ -310,6 +313,9 @@
       <Filter>feature</Filter>
     </ClCompile>
     <ClCompile Include="patch_tra_change_drawfilter.cpp">
+      <Filter>feature</Filter>
+    </ClCompile>
+    <ClCompile Include="patch_failed_sjis_msgbox.cpp">
       <Filter>feature</Filter>
     </ClCompile>
   </ItemGroup>

@@ -107,6 +107,9 @@ public:
 		    #ifdef PATCH_SWITCH_HELPFUL_MSGBOX
                 patch::helpful_msgbox.switch_load(cr);
 		    #endif
+		    #ifdef PATCH_SWITCH_FAILED_SJIS_MSGBOX
+                patch::failed_sjis_msgbox.switch_load(cr);
+		    #endif
 		    #ifdef PATCH_SWITCH_THEME_CC
                 patch::theme_cc.switch_load(cr);
 		    #endif
@@ -375,6 +378,9 @@ public:
 		    #endif
 		    #ifdef PATCH_SWITCH_HELPFUL_MSGBOX
                 patch::helpful_msgbox.switch_store(switch_);
+		    #endif
+		    #ifdef PATCH_SWITCH_FAILED_SJIS_MSGBOX
+                patch::failed_sjis_msgbox.switch_store(switch_);
 		    #endif
 		    #ifdef PATCH_SWITCH_THEME_CC
                 patch::theme_cc.switch_store(switch_);
