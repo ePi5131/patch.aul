@@ -53,6 +53,7 @@
     <ClInclude Include="patch_fast_border.hpp" />
     <ClInclude Include="patch_fast_cl.hpp" />
     <ClInclude Include="patch_fast_directionalblur.hpp" />
+    <ClInclude Include="patch_fast_displacementmap.hpp" />
     <ClInclude Include="patch_fast_exeditwindow.hpp" />
     <ClInclude Include="patch_fast_flash.hpp" />
     <ClInclude Include="patch_fast_getputpixeldata.hpp" />
@@ -104,6 +105,7 @@
     <ClCompile Include="patch_exo_trackminusval.cpp" />
     <ClCompile Include="patch_fast_border.cpp" />
     <ClCompile Include="patch_fast_directionalblur.cpp" />
+    <ClCompile Include="patch_fast_displacementmap.cpp" />
     <ClCompile Include="patch_fast_exeditwindow.cpp" />
     <ClCompile Include="patch_fast_flash.cpp" />
     <ClCompile Include="patch_fast_getputpixeldata.cpp" />
