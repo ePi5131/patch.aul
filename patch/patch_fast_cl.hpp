@@ -1267,9 +1267,9 @@ public:
 				cl::Platform::get(&platform);
 				platform.getDevices(CL_DEVICE_TYPE_ALL, &devices);
 				context = cl::Context(devices);
-				new (&program_mem[0]) cl::Program(context, program_str.get(), true);
+				new (&program_mem[0]) cl::Program(context, program_str.get(), false);
 				program_opt = true;
-				//program.build(devices);
+				reinterpret_cast<cl::Program*>(program_mem)->build();
 				program_str.re_encrypt();
 
 				struct DeviceInfo {
