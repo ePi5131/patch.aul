@@ -196,6 +196,9 @@
     <ClInclude Include="patch_obj_lensblur.hpp">
       <Filter>feature</Filter>
     </ClInclude>
+    <ClInclude Include="patch_failed_sjis_msgbox.hpp">
+      <Filter>feature</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="init.cpp" />
@@ -283,6 +286,9 @@
       <Filter>feature\fast</Filter>
     </ClCompile>
     <ClCompile Include="patch_obj_lensblur.cpp">
+      <Filter>feature</Filter>
+    </ClCompile>
+    <ClCompile Include="patch_failed_sjis_msgbox.cpp">
       <Filter>feature</Filter>
     </ClCompile>
   </ItemGroup>
