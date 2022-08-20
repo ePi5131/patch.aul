@@ -24,6 +24,7 @@
 #include <unordered_map>
 #include <functional>
 #include <optional>
+#include <charconv>
 
 #include "json.h"
 
@@ -240,9 +241,23 @@ concept ConfigWriterHasToJsonString = requires (T x) {
 	x.to_jsonstring();
 };
 
+inline std::string mytostring(int x) {
+	std::string ret(std::numeric_limits<int>::digits10 + 2, '\0');
+	std::to_chars(ret.data(), ret.data() + ret.size(), x);
+	ret.resize(ret.find_first_of('\0'));
+	return ret;
+}
+
+inline std::string mytostring(double x) {
+	std::string ret(std::numeric_limits<double>::max_exponent10 + 9, '\0');
+	std::to_chars(ret.data(), ret.data() + ret.size(), x);
+	ret.resize(ret.find_first_of('\0'));
+	return ret;
+}
+
 template<class T>
-concept ConfigWriterCanToStirng = requires(T x) {
-	std::to_string(x);
+concept ConfigWriterCanToChars = requires(T x) {
+	mytostring(x);
 };
 
 template<class T>
@@ -319,9 +334,9 @@ public:
 		}
 	}
 
-	template<ConfigWriterCanToStirng T>
+	template<ConfigWriterCanToChars T>
 	void append(std::string_view key, const T& value) {
-		vkv.emplace_back(std::string(key), std::to_string(value));
+		vkv.emplace_back(std::string(key), mytostring(value));
 	}
 
 	template<class T>
