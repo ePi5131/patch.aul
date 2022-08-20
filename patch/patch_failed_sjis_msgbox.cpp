@@ -18,20 +18,11 @@
 
 
 namespace patch {
-    int find_char(LPCSTR lpCaption, char c) {
-        char* s = (char*)lpCaption;
-        while (*s != '\0') {
-            if (*s == c) {
-                return (int)s - (int)lpCaption;
-            }
-            s++;
-        }
-        return -1;
-    }
-
     int __stdcall failed_sjis_msgbox_t::MessageBoxA_1(HWND hWnd, LPCSTR lpText, LPCSTR lpCaption, UINT uType) {
-        if (0 <= find_char(lpCaption, '?')) {
-            lpText = (LPCSTR)&str_new_failed_msg;
+        auto end = lpCaption + strlen(lpCaption);
+        // sjisに0x3fは含まれないのでこれでよい
+        if (std::find(lpCaption, end, '?') != end) {
+            lpText = str_new_failed_msg;
         }
         return MessageBoxA(hWnd, lpText, lpCaption, uType);
     }
@@ -41,7 +32,6 @@ namespace patch {
         *(char*)path = '\0';
         return ret;
     }
-
 
 } // namespace patch
 #endif // ifdef PATCH_SWITCH_FAILED_SJIS_MSGBOX

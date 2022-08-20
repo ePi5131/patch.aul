@@ -34,7 +34,7 @@ namespace patch {
 
     inline class failed_sjis_msgbox_t {
 
-        inline static const char str_new_failed_msg[] = "パス(ファイルもしくはフォルダ名)に使用できない文字が含まれています";
+        inline static const char str_new_failed_msg[] = "ファイルパスに使用できない文字が含まれています\nファイル名やフォルダ名を確認してください";
         static int __stdcall MessageBoxA_1(HWND hWnd, LPCSTR lpText, LPCSTR lpCaption, UINT uType);
         static int __stdcall MessageBoxA_2(LPCSTR path, HWND hWnd, LPCSTR lpText, LPCSTR lpCaption, UINT uType);
 
@@ -83,7 +83,7 @@ namespace patch {
         void switch_load(ConfigReader& cr) {
             cr.regist(key, [this](json_value_s* value) {
                 ConfigReader::load_variable(value, enabled);
-                });
+            });
         }
 
         void switch_store(ConfigWriter& cw) {
