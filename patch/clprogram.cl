@@ -1091,7 +1091,7 @@ kernel void LensBlur_Media(global char* dst, global char* src, int obj_w, int ob
 		*(global int*)&dst[4] = 0;
 	}
 }
-)" R"(
+
 kernel void LensBlur_Filter(global char* dst, global char* src, int scene_w, int scene_h, int scene_line,
 	int range, int rangep05_sqr, int range_t3m1, int rangem1_sqr) {
 
