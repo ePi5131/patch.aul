@@ -84,7 +84,8 @@ namespace config_type {
 			return "{:02x}{:02x}{:02x}"_fmt(r, g, b);
 		}
 		std::string to_jsonstring() const {
-			return "\"{:02x}{:02x}{:02x}\""_fmt(r, g, b);
+			if(valid) return "\"{:02x}{:02x}{:02x}\""_fmt(r, g, b);
+			return std::string{};
 		}
 		constexpr bool is_valid() const noexcept {
 			return valid;
@@ -101,7 +102,7 @@ namespace config_type {
 	// ColorBGR2つの配列、またはColorBGR1つ、またはnulloptを表す
 	// [ "ffffff", "ffffff" ] や ["ffffff"]、"ffffff" など
 	struct ColorBGR2_Opt {
-		std::array<ColorBGR, 2> ary;
+		std::array<ColorBGR, 2> ary{};
 		ColorBGR2_Opt() : ary{} {}
 		ColorBGR2_Opt(ColorBGR c1, ColorBGR c2) : ary{ c1,c2 } {}
 
@@ -301,12 +302,13 @@ public:
 	ConfigWriter(int level) : level(level) {}
 
 	void append(std::string_view key, std::string_view value) {
-		vkv.emplace_back(std::string(key), std::string(value));
+		if(value.size() && value[0] != '\0') vkv.emplace_back(std::string(key), std::string(value));
 	}
 
 	template<ConfigWriterHasToJsonString T>
 	void append(std::string_view key, const T& value) {
-		vkv.emplace_back(std::string(key), value.to_jsonstring());
+		auto result = value.to_jsonstring();
+		if(result[0] != '\0') vkv.emplace_back(std::string(key), result);
 	}
 
 	void append(std::string_view key, bool value) {
