@@ -580,8 +580,8 @@ kernel void RadiationalBlur_Media(
 	global short* dst, global short* src, int src_w, int src_h, int buffer_line,
 	int rb_blur_cx, int rb_blur_cy, int rb_obj_cx, int rb_obj_cy, int rb_range, int rb_pixel_range) {
 
-	int xi = get_global_id(0);
-	int yi = get_global_id(1);
+	int x = get_global_id(0);
+	int y = get_global_id(1);
 	int pixel_itr = x + y * buffer_line;
 
 	x += rb_obj_cx;
