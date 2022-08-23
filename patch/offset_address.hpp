@@ -25,6 +25,8 @@ namespace OFS {
 		constexpr i32 current_resource_hmod = 0x2d910c;
 		constexpr i32 edit_handle_ptr = 0x08717c;
 		constexpr i32 saveProjectFile = 0x024160;
+		
+		constexpr i32 str_dot_avi = 0x0745fc; // ".avi"
 	}
 
 	namespace ExEdit {
@@ -87,6 +89,10 @@ namespace OFS {
 		constexpr i32 efLensBlur_var_ptr = 0x11ec5c;
 
 		constexpr i32 ScriptProcessingFilter = 0x1b2b10;
+
+		constexpr i32 ini_extension_buf = 0x14cb58;
+		constexpr i32 str_DOUGAFILE = 0x09df6c; // "動画ファイル"
+		constexpr i32 str_ONSEIFILE = 0x0ba698; // "音声ファイル"
 
 		constexpr i32 exfunc_10 = 0x04abe0;
 		constexpr i32 exfunc_08 = 0x04ab40;
