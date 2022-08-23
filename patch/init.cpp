@@ -128,6 +128,10 @@ void init_t::InitAtExeditLoad() {
 	patch::exo_specialcolorconv.init();
 #endif
 
+#ifdef PATCH_SWITCH_EXO_FOLD_GUI
+	patch::exo_fold_gui.init();
+#endif
+
 #ifdef PATCH_SWITCH_CONSOLE
 	patch::console.init_at_exedit_init();
 #endif
