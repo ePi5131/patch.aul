@@ -179,6 +179,9 @@ void init_t::InitAtExeditLoad() {
 #ifdef PATCH_SWITCH_BLEND
 	patch::blend.init();
 #endif
+#ifdef PATCH_SWITCH_ADD_EXTENSION
+	patch::add_extension.init();
+#endif
 	
 	patch::setting_dialog();
 
