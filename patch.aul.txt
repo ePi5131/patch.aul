@@ -77,6 +77,7 @@ https://scrapbox.io/ePi5131/patch.aul
     ・アルファチャンネル有りシーンで合成モード「通常」以外を使用すると、他シーンで表示した時の結果が正しくないのを修正
     ・ファイルパスが原因の「対応していないフォーマット～」エラーのメッセージを変更する
     ・色調補正の色相計算を修正
+    ・特定色域変換で変換前色に黒色を指定すると0除算が起こることがあるのを修正
 
     追加
     ・コンソールの表示
@@ -182,6 +183,7 @@ https://scrapbox.io/ePi5131/patch.aul
 		"obj_colorcorrection" : boolean, ; 色調補正の色相計算を修正 (既定値: true)
 		"obj_lensblur" : boolean, ; 小さい画像に対してサイズ固定で範囲の大きいレンズブラーを掛けると例外になるのを修正 (既定値: true)
 		"obj_noise" : boolean, ; ノイズの速度X、変化速度のトラック変化方法が移動無し以外の時に速度Yの値をもとに計算が行われてしまうのを修正 (既定値: true)
+		"obj_specialcolorconv" : boolean, ; 特定色域変換で変換前色に黒色を指定すると0除算が起こることがあるのを修正 (既定値: true)
 		"settingdialog_excolorconfig" : boolean, ; 拡張色変換のウィンドウが下のフィルタに被るのを修正 (既定値: true)
 		"r_click_menu_split" : boolean, ; 右クリック分割で設定ダイアログが更新されないのを修正 (既定値: true)
 		"r_click_menu_delete" : boolean, ; 右クリック削除でテキストの字間行間が変わることがあるのを修正 (既定値: true)
