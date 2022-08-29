@@ -120,6 +120,7 @@
 #define PATCH_SWITCH_OBJ_COLORCORRECTION obj_colorcorrection
 #define PATCH_SWITCH_OBJ_LENSBLUR obj_lensblur
 #define PATCH_SWITCH_OBJ_NOISE obj_noise
+#define PATCH_SWITCH_OBJ_SPECIALCOLORCONV obj_specialcolorconv
 #define PATCH_SWITCH_RCLICKMENU_SPLIT rclickmenu_split
 #define PATCH_SWITCH_RCLICKMENU_DELETE rclickmenu_delete
 #define PATCH_SWITCH_BLEND blend
