@@ -77,6 +77,7 @@ https://scrapbox.io/ePi5131/patch.aul
     ・アルファチャンネル有りシーンで合成モード「通常」以外を使用すると、他シーンで表示した時の結果が正しくないのを修正
     ・ファイルパスが原因の「対応していないフォーマット～」エラーのメッセージを変更する
     ・色調補正の色相計算を修正
+    ・範囲の大きいレンズブラーを掛けると危険な処理が行われるのを修正
 
     追加
     ・コンソールの表示
@@ -180,7 +181,7 @@ https://scrapbox.io/ePi5131/patch.aul
 		"exeditwindow_sizing" : boolean, ; 拡張編集ウィンドウの上部をドラッグして正常にリサイズできるようにする (既定値: true)
         "settingdialog_move" : boolean, ; 設定ダイアログを高ポーリングレートマウス環境で移動すると重たい の解消 (既定値: true)
 		"obj_colorcorrection" : boolean, ; 色調補正の色相計算を修正 (既定値: true)
-		"obj_lensblur" : boolean, ; 小さい画像に対してサイズ固定で範囲の大きいレンズブラーを掛けると例外になるのを修正 (既定値: true)
+		"obj_lensblur" : boolean, ; レンズブラーのバグ修正 (既定値: true)
 		"obj_noise" : boolean, ; ノイズの速度X、変化速度のトラック変化方法が移動無し以外の時に速度Yの値をもとに計算が行われてしまうのを修正 (既定値: true)
 		"settingdialog_excolorconfig" : boolean, ; 拡張色変換のウィンドウが下のフィルタに被るのを修正 (既定値: true)
 		"r_click_menu_split" : boolean, ; 右クリック分割で設定ダイアログが更新されないのを修正 (既定値: true)
