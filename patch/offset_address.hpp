@@ -53,6 +53,9 @@ namespace OFS {
 		constexpr i32 exedit_max_h_add8 = 0x135c64;
 		constexpr i32 exedit_buffer_line = 0x135c68;
 
+		constexpr i32 exedit_YC_vram_w = 0x149840;
+		constexpr i32 exedit_YC_vram_h = 0x14ca4c;
+
 		constexpr i32 exedit_max_w = 0x196748;
 		constexpr i32 exedit_max_h = 0x1920e0;
 
