@@ -115,6 +115,9 @@ https://scrapbox.io/ePi5131/patch.aul
     ・やり直し 機能
         元に戻すの逆
 
+    ・新規プロジェクト作成ダイアログの画像サイズ入力欄の幅を広げる
+        ・環境によっては幅が小さいせいで3桁までしか入力できないらしいので（0.93rc1では幅が広がっている）
+    
 設定
     patch.aulと同じパスにpatch.aul.jsonが生成されて、これが設定ファイルになります。
     設定ファイルはAviUtlの起動時に1度だけ読み込まれて、終了時に1度だけ保存されるため、注意してください。
@@ -186,6 +189,7 @@ https://scrapbox.io/ePi5131/patch.aul
 		"r_click_menu_split" : boolean, ; 右クリック分割で設定ダイアログが更新されないのを修正 (既定値: true)
 		"r_click_menu_delete" : boolean, ; 右クリック削除でテキストの字間行間が変わることがあるのを修正 (既定値: true)
 		"blend" : boolean, ; アルファチャンネルのあるフレームバッファで合成モード「通常」以外を使用すると誤った結果になるのを修正 (既定値: true)
+		"new_project_editbox" : boolean, ; 新規プロジェクト作成ダイアログの画像サイズ入力欄の幅を広げる (既定値: true)
         "undo" : boolean, ; 元に戻す 関連のバグ修正 (既定値: true)
         "undo.redo" : boolean, ; やり直す を追加 (既定値: true)
 		"console" : boolean, ; コンソール (既定値: true)
