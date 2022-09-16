@@ -140,6 +140,9 @@ public:
             #ifdef PATCH_SWITCH_BLEND
                 patch::blend.switch_load(cr);
             #endif
+            #ifdef PATCH_SWITCH_DIALOG_NEW_FILE
+                patch::dialog_new_file.switch_load(cr);
+            #endif
 		
 		    #ifdef PATCH_SWITCH_UNDO
                 patch::undo.switch_load(cr);
