@@ -427,6 +427,9 @@ public:
             #ifdef PATCH_SWITCH_BLEND
                 patch::blend.switch_store(switch_);
             #endif
+            #ifdef PATCH_SWITCH_DIALOG_NEW_FILE
+                patch::dialog_new_file .switch_store(switch_);
+            #endif
 
 		    #ifdef PATCH_SWITCH_UNDO
                 patch::undo.switch_store(switch_);
