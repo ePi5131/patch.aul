@@ -107,6 +107,7 @@
 #define PATCH_SWITCH_EXO_TRACK_MINUSVAL exo_track_minusval
 #define PATCH_SWITCH_EXO_SCENEIDX exo_sceneidx
 #define PATCH_SWITCH_EXO_TRACKPARAM exo_trackparam
+#define PATCH_SWITCH_EXO_MIDPT_AND_TRA exo_midpt_tra
 #define PATCH_SWITCH_EXO_SPECIALCOLORCONV exo_specialcolorconv
 #define PATCH_SWITCH_TEXT_OP_SIZE text_op_size
 #define PATCH_SWITCH_IGNORE_MEDIA_PARAM_RESET ignore_media_param_reset
