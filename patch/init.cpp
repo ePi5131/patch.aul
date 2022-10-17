@@ -124,6 +124,10 @@ void init_t::InitAtExeditLoad() {
 	patch::exo_trackminusval.init();
 #endif
 
+#ifdef PATCH_SWITCH_EXO_MIDPT_AND_TRA
+	patch::exo_midpt_and_tra.init();
+#endif
+
 #ifdef PATCH_SWITCH_EXO_SPECIALCOLORCONV
 	patch::exo_specialcolorconv.init();
 #endif
