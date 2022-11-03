@@ -24,7 +24,7 @@
 
 namespace patch {
 
-    // init at exedit load
+    // init at patch load
     // ファイルの情報を開くと落ちるのを修正
     inline class fileinfo_t {
         bool enabled = true;
