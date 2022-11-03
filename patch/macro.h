@@ -29,6 +29,7 @@
 
 
 #define PATCH_SWITCH_ACCESS_KEY access_key
+#define PATCH_SWITCH_FILEINFO file_info
 #define PATCH_SWITCH_SUSIE_LOAD susie_load
 #define PATCH_SWITCH_SPLASH splash
 #define PATCH_SWITCH_TRA_AVIUTL_FILTER tra_aviutl_filter
