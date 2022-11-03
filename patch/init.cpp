@@ -88,6 +88,10 @@ void init_t::InitAtPatchLoaded() {
 	patch::access_key.init();
 #endif
 
+#ifdef PATCH_SWITCH_FILEINFO
+	patch::fileinfo.init();
+#endif
+
 }
 
 void init_t::InitAtExeditLoad() {
