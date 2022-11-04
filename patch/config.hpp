@@ -424,6 +424,9 @@ public:
             #ifdef PATCH_SWITCH_BLEND
                 patch::blend.switch_store(switch_);
             #endif
+            #ifdef PATCH_SWITCH_PLAYBACK_SPEED
+                patch::playback_speed.switch_store(switch_);
+            #endif
 
 		    #ifdef PATCH_SWITCH_UNDO
                 patch::undo.switch_store(switch_);
