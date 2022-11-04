@@ -140,6 +140,9 @@ public:
             #ifdef PATCH_SWITCH_BLEND
                 patch::blend.switch_load(cr);
             #endif
+            #ifdef PATCH_SWITCH_PLAYBACK_SPEED
+                patch::playback_speed.switch_load(cr);
+            #endif
 		
 		    #ifdef PATCH_SWITCH_UNDO
                 patch::undo.switch_load(cr);
