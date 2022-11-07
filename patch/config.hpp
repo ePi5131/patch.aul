@@ -65,6 +65,9 @@ public:
 		    #ifdef PATCH_SWITCH_SPLASH
                 patch::splash.switch_load(cr);
 		    #endif
+		    #ifdef PATCH_SWITCH_AUP_LAYER_SETTING
+                patch::aup_layer_setting.switch_load(cr);
+		    #endif
 		    #ifdef PATCH_SWITCH_EXO_AVIUTL_FILTER
                 patch::exo_aviutlfilter.switch_load(cr);
 		    #endif
@@ -348,6 +351,9 @@ public:
 		    #endif
 		    #ifdef PATCH_SWITCH_SPLASH
                 patch::splash.switch_store(switch_);
+		    #endif
+		    #ifdef PATCH_SWITCH_AUP_LAYER_SETTING
+                patch::aup_layer_setting.switch_store(switch_);
 		    #endif
 		    #ifdef PATCH_SWITCH_EXO_AVIUTL_FILTER
                 patch::exo_aviutlfilter.switch_store(switch_);
