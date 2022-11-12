@@ -159,6 +159,9 @@ void init_t::InitAtExeditLoad() {
 #ifdef PATCH_SWITCH_OBJ_COLORCORRECTION
 	patch::ColorCorrection.init();
 #endif
+#ifdef PATCH_SWITCH_OBJ_GLOW
+	patch::Glow.init();
+#endif
 #ifdef PATCH_SWITCH_OBJ_LENSBLUR
 	patch::LensBlur.init();
 #endif
@@ -205,6 +208,9 @@ void init_t::InitAtExeditLoad() {
 		#endif
 		#ifdef PATCH_SWITCH_FAST_BORDER
 			patch::fast::Border.init();
+		#endif
+		#ifdef PATCH_SWITCH_FAST_GLOW
+			patch::fast::Glow.init();
 		#endif
 		
 		#ifdef PATCH_SWITCH_CL
