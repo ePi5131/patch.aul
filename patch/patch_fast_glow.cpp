@@ -29,6 +29,34 @@
 namespace patch::fast {
 
 
+    void __cdecl Glow_t::lower_right_convolution1_wrap(int thread_id, int thread_num, ExEdit::Filter* efp, ExEdit::FilterProcInfo* efpip) {
+        thread_num *= 2;
+        int func_ptr = GLOBAL::exedit_base + 0x570d0;
+        reinterpret_cast<void(__cdecl*)(int, int, ExEdit::Filter*, ExEdit::FilterProcInfo*)>(func_ptr)(thread_id, thread_num, efp, efpip);
+        reinterpret_cast<void(__cdecl*)(int, int, ExEdit::Filter*, ExEdit::FilterProcInfo*)>(func_ptr)(thread_num - thread_id - 1, thread_num, efp, efpip);
+    }
+    void __cdecl Glow_t::lower_right_convolution2_wrap(int thread_id, int thread_num, ExEdit::Filter* efp, ExEdit::FilterProcInfo* efpip) {
+        thread_num *= 2;
+        int func_ptr = GLOBAL::exedit_base + 0x57730;
+        reinterpret_cast<void(__cdecl*)(int, int, ExEdit::Filter*, ExEdit::FilterProcInfo*)>(func_ptr)(thread_id, thread_num, efp, efpip);
+        reinterpret_cast<void(__cdecl*)(int, int, ExEdit::Filter*, ExEdit::FilterProcInfo*)>(func_ptr)(thread_num - thread_id - 1, thread_num, efp, efpip);
+    }
+    void __cdecl Glow_t::lower_left_convolution1_wrap(int thread_id, int thread_num, ExEdit::Filter* efp, ExEdit::FilterProcInfo* efpip) {
+        thread_num *= 2;
+        int func_ptr = GLOBAL::exedit_base + 0x57d90;
+        reinterpret_cast<void(__cdecl*)(int, int, ExEdit::Filter*, ExEdit::FilterProcInfo*)>(func_ptr)(thread_id, thread_num, efp, efpip);
+        reinterpret_cast<void(__cdecl*)(int, int, ExEdit::Filter*, ExEdit::FilterProcInfo*)>(func_ptr)(thread_num - thread_id - 1, thread_num, efp, efpip);
+    }
+    void __cdecl Glow_t::lower_left_convolution2_wrap(int thread_id, int thread_num, ExEdit::Filter* efp, ExEdit::FilterProcInfo* efpip) {
+        thread_num *= 2;
+        int func_ptr = GLOBAL::exedit_base + 0x58430;
+        reinterpret_cast<void(__cdecl*)(int, int, ExEdit::Filter*, ExEdit::FilterProcInfo*)>(func_ptr)(thread_id, thread_num, efp, efpip);
+        reinterpret_cast<void(__cdecl*)(int, int, ExEdit::Filter*, ExEdit::FilterProcInfo*)>(func_ptr)(thread_num - thread_id - 1, thread_num, efp, efpip);
+    }
+
+
+
+
     struct fastGlow256 {
         __m256i data;
         __m256i y, cb, cr;
@@ -653,7 +681,6 @@ namespace patch::fast {
         horizontal_convolution_intensity_main(thi, thn, 2, efpip);
         horizontal_convolution_intensity_main(thi, thn, 4, efpip);
     }
-
 
 }
 #endif // ifdef PATCH_SWITCH_FAST_GLOW

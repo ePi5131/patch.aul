@@ -37,18 +37,8 @@ namespace patch {
         スレッド数より小さいオブジェクトに効果が乗らない
     */
 
-    /* マルチスレッド処理で効率が悪かった部分を修正
-        スレッドIDによってループ数に大きく差が出る部分があったのでなるべく均等になるように分担
-        理想的な均等にするなら「正方形」と「残り」の形にしてから行う必要がある。（関数の作り変えも必要）
-        簡易的に実装し元の関数を再利用する。(元より悪くなることは無いはず)
-    */
 
     inline class obj_Glow_t {
-
-        static void __cdecl lower_right_convolution1_wrap(int thread_id, int thread_num, ExEdit::Filter* efp, ExEdit::FilterProcInfo* efpip);
-        static void __cdecl lower_right_convolution2_wrap(int thread_id, int thread_num, ExEdit::Filter* efp, ExEdit::FilterProcInfo* efpip);
-        static void __cdecl lower_left_convolution1_wrap(int thread_id, int thread_num, ExEdit::Filter* efp, ExEdit::FilterProcInfo* efpip);
-        static void __cdecl lower_left_convolution2_wrap(int thread_id, int thread_num, ExEdit::Filter* efp, ExEdit::FilterProcInfo* efpip);
 
         bool enabled = true;
         bool enabled_i;
@@ -148,48 +138,6 @@ namespace patch {
                 }
             }
 
-            { // マルチスレッド処理で効率が悪かった部分を修正
-                {
-                    {
-                        OverWriteOnProtectHelper h(GLOBAL::exedit_base + 0x55363, 4);
-                        h.store_i32(0, &lower_right_convolution1_wrap);
-                    }
-                    {
-                        OverWriteOnProtectHelper h(GLOBAL::exedit_base + 0x553cb, 4);
-                        h.store_i32(0, &lower_right_convolution1_wrap);
-                    }
-                }
-                {
-                    {
-                        OverWriteOnProtectHelper h(GLOBAL::exedit_base + 0x55373, 4);
-                        h.store_i32(0, &lower_right_convolution2_wrap);
-                    }
-                    {
-                        OverWriteOnProtectHelper h(GLOBAL::exedit_base + 0x553db, 4);
-                        h.store_i32(0, &lower_right_convolution2_wrap);
-                    }
-                }
-                {
-                    {
-                        OverWriteOnProtectHelper h(GLOBAL::exedit_base + 0x55383, 4);
-                        h.store_i32(0, &lower_left_convolution1_wrap);
-                    }
-                    {
-                        OverWriteOnProtectHelper h(GLOBAL::exedit_base + 0x553eb, 4);
-                        h.store_i32(0, &lower_left_convolution1_wrap);
-                    }
-                }
-                {
-                    {
-                        OverWriteOnProtectHelper h(GLOBAL::exedit_base + 0x55393, 4);
-                        h.store_i32(0, &lower_left_convolution2_wrap);
-                    }
-                    {
-                        OverWriteOnProtectHelper h(GLOBAL::exedit_base + 0x553fb, 4);
-                        h.store_i32(0, &lower_left_convolution2_wrap);
-                    }
-                }
-            }
         }
 
         void switching(bool flag) {
