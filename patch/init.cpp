@@ -106,6 +106,9 @@ void init_t::InitAtExeditLoad() {
 #ifdef PATCH_SWITCH_TRA_SPECIFIED_SPEED
 	patch::tra_specified_speed.init();
 #endif
+#ifdef PATCH_SWITCH_SETTING_NEW_PROJECT
+	patch::setting_new_project.init();
+#endif
 
 
 #ifdef PATCH_SWITCH_EXO_AVIUTL_FILTER
