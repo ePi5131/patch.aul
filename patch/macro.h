@@ -123,6 +123,7 @@
 #define PATCH_SWITCH_RCLICKMENU_SPLIT rclickmenu_split
 #define PATCH_SWITCH_RCLICKMENU_DELETE rclickmenu_delete
 #define PATCH_SWITCH_BLEND blend
+#define PATCH_SWITCH_SETTING_NEW_PROJECT setting_newproject
 
 #define PATCH_SWITCH_UNDO undo
 #ifdef PATCH_SWITCH_UNDO
