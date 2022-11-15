@@ -145,8 +145,8 @@ namespace patch {
                     "\x90"                        // nop
                 };
 
-                *(int*)(&code_put[1]) += GLOBAL::exedit_base;
-                *(int*)(&code_put[18]) += GLOBAL::exedit_base;
+                *(int*)(&code_put[1]) = GLOBAL::exedit_base + 0x146250;
+                *(int*)(&code_put[18]) = GLOBAL::exedit_base + 0x188498;
 
                 OverWriteOnProtectHelper h(GLOBAL::exedit_base + 0x0326c3, 61);
                 h.store_i8(0, 0x1c);
