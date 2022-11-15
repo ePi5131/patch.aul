@@ -32,7 +32,7 @@ namespace patch {
 
     inline class failed_longer_path_t {
 
-        inline static const char str_new_longer_msg[] = "ファイルパスが長いため失敗しました\nファイル名やフォルダ名を短くしてください";
+        inline static const char str_new_longer_msg[] = "ファイルパスが長いため失敗しました\nファイルやフォルダ名を短くするか、Cドライブ直下などの浅い階層に移動して下さい";
         
         static BOOL __cdecl dlg_get_load_name_wrap(AviUtl::ExFunc* a_exfunc, LPSTR name, LPSTR filter, LPSTR def);
         static UINT __stdcall DragQueryFileA_exedit_wrap(HDROP hDrop, UINT iFile, LPSTR lpszFile, UINT cch);
