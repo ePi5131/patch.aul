@@ -155,6 +155,12 @@ void init_t::InitAtExeditLoad() {
 #ifdef PATCH_SWITCH_FAILED_SJIS_MSGBOX
 	patch::failed_sjis_msgbox.init();
 #endif
+#ifdef PATCH_SWITCH_FAILED_LONGER_PATH
+	patch::failed_longer_path.init();
+#endif
+#ifdef PATCH_SWITCH_FAILED_FILE_DROP
+	patch::failed_file_drop.init();
+#endif
 
 #ifdef PATCH_SWITCH_OBJ_COLORCORRECTION
 	patch::ColorCorrection.init();
