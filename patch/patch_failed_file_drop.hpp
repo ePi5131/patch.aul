@@ -69,7 +69,7 @@ namespace patch {
                 "\xa1\x44\x7a\x17\x00"        //  mov     eax,[exedit+exedit_hwnd]
                 "\x50"                        //  push    eax
                 "\xff\x15\x20\xa3\x09\x00"    //  call    dword ptr [exedit+MessageBoxA]
-                "\x0f\x84"                    //  jz      10043b4c
+                "\xe9"                        //  jmp     10043b4c
                 ;
 
             memcpy(cursor, code_put, sizeof(code_put) - 1);
