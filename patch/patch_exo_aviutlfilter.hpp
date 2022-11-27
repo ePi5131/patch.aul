@@ -50,64 +50,45 @@ namespace patch {
 
 			OverWriteOnProtectHelper h(GLOBAL::exedit_base + OFS::ExEdit::ConvertFilter2Exo_TrackScaleJudge_RangeBegin, 30);
 			/*
-				10028a80 CALL EBX ; wsprintfA
-				10028a82 ADD EBP, EAX
-					  84 JMP [mycode]
-				         ADD ESP 0CH
+				10028a84 MOV EAX, DWORD PTR [ESI + CCH] ; filter_param_ptr->track_scale
+				↓
 
-						 MOV AL, BYTE PTR [ESI + 3H]
+				10028a84 NOP
+				10028a85 CALL func
+
+				func	 MOV AL, BYTE PTR [ESI + 3H]
 						 TEST AL, 04H
-						 JZ ASSIGN_ZERO
-
-				         MOV EAX, DWORD PTR [ESI + CCH] ; filter_param_ptr->track_scale
-				         TEST EAX, EAX
-						 JZ ASSIGN_ZERO
-
-						 MOV ECX, DWORD PTR [ESP + 2CH] ; count
-						 MOV EAX, DWORD PTR [EAX + ECX * 4] ; track_scale[count]
-						 JMP [original]
-						 
-						 ASSIGN_ZERO:
+						 JNZ SKIP, 03H
 						 XOR EAX, EAX
-						 JMP [original]
-
-				10028a9c 
+						 RET
+						 MOV EAX, DWORD PTR [ESI + CCH] ; filter_param_ptr->track_scale
+						 RET
 			*/
 
-			auto apply = [&cursor](uint32_t ofs, uint32_t esp_add, std::optional<restorable_patch>& rp) {
-				static const char code_put[] =
-					"\x83\xc4\x0c" // ADD ESP 0CH
-					"\x8a\x46\x03" // MOV AL, BYTE PTR [ESI + 3H]
-					"\xa8\x04" // TEST AL, 04H
-					"\x74\x16" // JZ ASSIGN_ZERO
-					"\x8b\x86\xcc\x00\x00\x00" // MOV EAX, DWORD PTR [ESI + CCH] ; filter_param_ptr->track_scale
-					"\x85\xc0" // TEST EAX, EAX
-					"\x74\x0c" // JZ ASSIGN_ZERO
-					"\x8b\x4c\x24\x2c" // MOV ECX, DWORD PTR [ESP + 2CH] ; count
-					"\x8b\x04\x88" // MOV EAX, DWORD PTR [EAX + ECX * 4] ; track_scale[count]
-					"\xe9XXXX" // JMP rel32
-					// ASSIGN_ZERO:
-					"\x31\xc0" // XOR EAX, EAX
-					"\xe9XXXX" // JMP rel32
-					;
+			static const char code_put[] =
+				"\x8a\x46\x03"				// MOV AL, BYTE PTR [ESI + 3H]
+				"\xa8\x04"					// TEST AL, 04H
+				"\x75\x03"					// JNZ SKIP, 03H
+				"\x33\xc0"					// XOR EAX, EAX
+				"\xc3"						// RET
+				"\x8b\x86\xcc\x00\x00\x00"	// MOV EAX, DWORD PTR [ESI + CCH] ; filter_param_ptr->track_scale
+				"\xc3"						// RET
+				;
+			memcpy(cursor, code_put, sizeof(code_put) - 1);
 
+			auto apply = [&cursor](uint32_t ofs, std::optional<restorable_patch>& rp) {
 				char injection[6];
-				injection[0] = '\xe9'; // jmp rel32
-				store_i32(injection + 1, CalcNearJmp(ofs + 1, reinterpret_cast<i32>(cursor)));
-				injection[5] = '\x90'; // nop
+				injection[0] = '\x90'; // nop
+				injection[1] = '\xe8'; // call rel32
+				store_i32(&injection[2], CalcNearJmp(ofs + 2, reinterpret_cast<i32>(cursor)));
 				rp.emplace(ofs, injection, sizeof(injection));
-
-				memcpy(cursor, code_put, sizeof(code_put) - 1);
-				auto ret = ofs + 0x18;
-				store_i8(cursor + 2, esp_add);
-				store_i32(cursor + 0x1c, CalcNearJmp(reinterpret_cast<i32>(cursor + 0x1c), ret));
-				store_i32(cursor + 0x23, CalcNearJmp(reinterpret_cast<i32>(cursor + 0x23), ret));
-				cursor += sizeof(code_put) - 1;
 			};
 
-			apply(GLOBAL::exedit_base + OFS::ExEdit::ConvertFilter2Exo_TrackScaleJudge_Overwrite1, 0xc, rp1);
-			apply(GLOBAL::exedit_base + OFS::ExEdit::ConvertFilter2Exo_TrackScaleJudge_Overwrite2, 0xc, rp2);
-			apply(GLOBAL::exedit_base + OFS::ExEdit::ConvertFilter2Exo_TrackScaleJudge_Overwrite3, 0x18, rp3);
+			apply(GLOBAL::exedit_base + OFS::ExEdit::ConvertFilter2Exo_TrackScaleJudge_Overwrite1, rp1);
+			apply(GLOBAL::exedit_base + OFS::ExEdit::ConvertFilter2Exo_TrackScaleJudge_Overwrite2, rp2);
+			apply(GLOBAL::exedit_base + OFS::ExEdit::ConvertFilter2Exo_TrackScaleJudge_Overwrite3, rp3);
+
+			cursor += sizeof(code_put) - 1;
 
 			rp1->switching(enabled);
 			rp2->switching(enabled);
