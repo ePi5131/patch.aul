@@ -36,6 +36,7 @@
     <ClInclude Include="patch.hpp" />
     <ClInclude Include="patch_access_key.hpp" />
     <ClInclude Include="patch_alpha_bg.hpp" />
+    <ClInclude Include="patch_aup_scene_setting.hpp" />
     <ClInclude Include="patch_aviutl_wndproc_override.hpp" />
     <ClInclude Include="patch_base.hpp" />
     <ClInclude Include="patch_blend.hpp" />
