@@ -80,6 +80,7 @@ https://scrapbox.io/ePi5131/patch.aul
     ・プロジェクトの保存/読み込み時にシーン設定の一部情報（グリッド設定など）が欠けるのを修正
     ・exa,exo生成時、設定ダイアログの▼（折り畳み）とマウスマーク（GUI表示）の情報を追加する
     ・BMP File Readerを使うと、正しくない画像データをキャッシュしてしまうことがあるのを修正
+    ・動画、音声ファイル参照の時、exedit.iniにある拡張子を追加する
 
     追加
     ・コンソールの表示
@@ -192,6 +193,7 @@ https://scrapbox.io/ePi5131/patch.aul
 		"r_click_menu_split" : boolean, ; 右クリック分割で設定ダイアログが更新されないのを修正 (既定値: true)
 		"r_click_menu_delete" : boolean, ; 右クリック削除でテキストの字間行間が変わることがあるのを修正 (既定値: true)
 		"blend" : boolean, ; アルファチャンネルのあるフレームバッファで合成モード「通常」以外を使用すると誤った結果になるのを修正 (既定値: true)
+		"add_extension" : boolean, ; 動画、音声ファイル参照の時、exedit.iniにある拡張子を追加する (既定値: true)
         "undo" : boolean, ; 元に戻す 関連のバグ修正 (既定値: true)
         "undo.redo" : boolean, ; やり直す を追加 (既定値: true)
 		"console" : boolean, ; コンソール (既定値: true)

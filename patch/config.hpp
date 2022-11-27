@@ -149,6 +149,9 @@ public:
             #ifdef PATCH_SWITCH_BLEND
                 patch::blend.switch_load(cr);
             #endif
+            #ifdef PATCH_SWITCH_ADD_EXTENSION
+                patch::add_extension.switch_load(cr);
+            #endif
 		
 		    #ifdef PATCH_SWITCH_UNDO
                 patch::undo.switch_load(cr);
@@ -441,6 +444,9 @@ public:
             #endif
             #ifdef PATCH_SWITCH_BLEND
                 patch::blend.switch_store(switch_);
+            #endif
+            #ifdef PATCH_SWITCH_ADD_EXTENSION
+                patch::add_extension.switch_store(switch_);
             #endif
 
 		    #ifdef PATCH_SWITCH_UNDO
