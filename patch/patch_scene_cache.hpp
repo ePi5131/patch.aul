@@ -28,6 +28,7 @@ namespace patch {
 
     // init at exedit load
     // Rootで取得した場合のみシーンのキャッシュをとる
+    // 仕様：シーンの画像構成に掛かった時間が64msを超えた時にキャッシュを生成する。シーンを切り替えた時点でキャッシュは破棄されます。
 
     inline class scene_cache_t {
 
@@ -36,6 +37,8 @@ namespace patch {
 
         inline static void* (__cdecl* get_scene_image)(ExEdit::ObjectFilterIndex, ExEdit::FilterProcInfo*, int, int, int, int*, int*);
 
+        inline static unsigned int time_shreshold = 64;
+        
         bool enabled = true;
         bool enabled_i;
         inline static const char key[] = "scene_cache";
