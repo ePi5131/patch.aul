@@ -71,6 +71,7 @@
     <ClInclude Include="patch_fast_radiationalblur.hpp" />
     <ClInclude Include="patch_fast_setting_dialog.hpp" />
     <ClInclude Include="patch_fast_text.hpp" />
+    <ClInclude Include="patch_fileinfo.hpp" />
     <ClInclude Include="patch_font_dialog.hpp" />
     <ClInclude Include="patch_helpful_msgbox.hpp" />
     <ClInclude Include="patch_ignore_media_param_reset.hpp" />
