@@ -128,6 +128,7 @@
 #define PATCH_SWITCH_RCLICKMENU_DELETE rclickmenu_delete
 #define PATCH_SWITCH_BLEND blend
 #define PATCH_SWITCH_ADD_EXTENSION add_extension
+#define PATCH_SWITCH_DIALOG_NEW_FILE dlg_newfile
 
 #define PATCH_SWITCH_UNDO undo
 #ifdef PATCH_SWITCH_UNDO

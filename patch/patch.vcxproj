@@ -44,6 +44,7 @@
     <ClInclude Include="patch_colorpalette_cache.hpp" />
     <ClInclude Include="patch_console.hpp" />
     <ClInclude Include="patch_copybuffer_smem.hpp" />
+    <ClInclude Include="patch_dialog_new_file.hpp" />
     <ClInclude Include="patch_exception_history.hpp" />
     <ClInclude Include="patch_exception_log.hpp" />
     <ClInclude Include="patch_exception_log_dialog.hpp" />

@@ -196,6 +196,9 @@ void init_t::InitAtExeditLoad() {
 #ifdef PATCH_SWITCH_ADD_EXTENSION
 	patch::add_extension.init();
 #endif
+#ifdef PATCH_SWITCH_DIALOG_NEW_FILE
+	patch::dialog_new_file.init();
+#endif
 	
 	patch::setting_dialog();
 
