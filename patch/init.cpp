@@ -88,6 +88,14 @@ void init_t::InitAtPatchLoaded() {
 	patch::access_key.init();
 #endif
 
+#ifdef PATCH_SWITCH_COLORPALETTE_CACHE
+	patch::colorpalette_cache.init();
+#endif
+
+#ifdef PATCH_SWITCH_FILEINFO
+	patch::fileinfo.init();
+#endif
+
 }
 
 void init_t::InitAtExeditLoad() {
@@ -97,6 +105,9 @@ void init_t::InitAtExeditLoad() {
 	patch::theme_cc.init();
 #endif
 
+#ifdef PATCH_SWITCH_AUP_SCENE_SETTING
+	patch::aup_scene_setting.init();
+#endif
 #ifdef PATCH_SWITCH_TRA_AVIUTL_FILTER
 	patch::tra_aviutlfilter.init();
 #endif
@@ -124,8 +135,16 @@ void init_t::InitAtExeditLoad() {
 	patch::exo_trackminusval.init();
 #endif
 
+#ifdef PATCH_SWITCH_EXO_MIDPT_AND_TRA
+	patch::exo_midpt_and_tra.init();
+#endif
+
 #ifdef PATCH_SWITCH_EXO_SPECIALCOLORCONV
 	patch::exo_specialcolorconv.init();
+#endif
+
+#ifdef PATCH_SWITCH_EXO_FOLD_GUI
+	patch::exo_fold_gui.init();
 #endif
 
 #ifdef PATCH_SWITCH_CONSOLE
@@ -165,6 +184,9 @@ void init_t::InitAtExeditLoad() {
 #ifdef PATCH_SWITCH_OBJ_NOISE
 	patch::Noise.init();
 #endif
+#ifdef PATCH_SWITCH_OBJ_SPECIALCOLORCONV
+	patch::obj_specialcolorconv.init();
+#endif
 
 #ifdef PATCH_SWITCH_SETTINGDIALOG_EXCOLORCONFIG
 	patch::excolorconfig.init();
@@ -178,6 +200,15 @@ void init_t::InitAtExeditLoad() {
 #endif
 #ifdef PATCH_SWITCH_BLEND
 	patch::blend.init();
+#endif
+#ifdef PATCH_SWITCH_ADD_EXTENSION
+	patch::add_extension.init();
+#endif
+#ifdef PATCH_SWITCH_DIALOG_NEW_FILE
+	patch::dialog_new_file.init();
+#endif
+#ifdef PATCH_SWITCH_PLAYBACK_SPEED
+	patch::playback_speed.init();
 #endif
 	
 	patch::setting_dialog();
