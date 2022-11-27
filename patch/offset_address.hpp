@@ -25,6 +25,10 @@ namespace OFS {
 		constexpr i32 current_resource_hmod = 0x2d910c;
 		constexpr i32 edit_handle_ptr = 0x08717c;
 		constexpr i32 saveProjectFile = 0x024160;
+		
+		constexpr i32 str_dot_avi = 0x0745fc; // ".avi"
+		
+		constexpr i32 filter_clipping_and_resize_ptr = 0x07ad58;
 	}
 
 	namespace ExEdit {
@@ -59,6 +63,9 @@ namespace OFS {
 		constexpr i32 exedit_max_h_add8 = 0x135c64;
 		constexpr i32 exedit_buffer_line = 0x135c68;
 
+		constexpr i32 exedit_YC_vram_w = 0x149840;
+		constexpr i32 exedit_YC_vram_h = 0x14ca4c;
+
 		constexpr i32 exedit_max_w = 0x196748;
 		constexpr i32 exedit_max_h = 0x1920e0;
 
@@ -73,6 +80,7 @@ namespace OFS {
 		constexpr i32 efBorder_func_proc_var_ptr = 0x0a5d28;
 		constexpr i32 efBorder_func_proc_ptr = 0x0515d0;
 		constexpr i32 efBorder_var_ptr = 0x1b1e30;
+		constexpr i32 efGlow_var_ptr = 0x1b2010;
 		constexpr i32 efPolorTransform_func_proc = 0x0748a0;
 		constexpr i32 efPolorTransform_func_proc_ptr = 0x0add30;
 		constexpr i32 efPolorTransform_mt_func_call = 0x074a62;
@@ -93,6 +101,13 @@ namespace OFS {
 		constexpr i32 efLensBlur_var_ptr = 0x11ec5c;
 
 		constexpr i32 ScriptProcessingFilter = 0x1b2b10;
+
+		constexpr i32 ini_extension_buf = 0x14cb58;
+		constexpr i32 str_DOUGAFILE = 0x09df6c; // "動画ファイル"
+		constexpr i32 str_ONSEIFILE = 0x0ba698; // "音声ファイル"
+
+		
+		constexpr i32 exedit_edit_open = 0x03ac30;
 
 		constexpr i32 exfunc_10 = 0x04abe0;
 		constexpr i32 exfunc_08 = 0x04ab40;
@@ -158,6 +173,7 @@ namespace OFS {
 		constexpr i32 specialcolorconv_status2 = 0x0a14f4;
 
 		constexpr i32 ObjectArrayPointer = 0x1e0fa4;
+		constexpr i32 NextObjectIdxArray = 0x1592d8;
 
 		constexpr i32 ScaleColorBackGround = 0x0a4048;
 		constexpr i32 ScaleColorForeGround = 0x0a404c;
