@@ -59,11 +59,17 @@ public:
 		    #ifdef PATCH_SWITCH_ACCESS_KEY
                 patch::access_key.switch_load(cr);
 		    #endif
+		    #ifdef PATCH_SWITCH_COLORPALETTE_CACHE
+                patch::colorpalette_cache.switch_load(cr);
+		    #endif
 		    #ifdef PATCH_SWITCH_SUSIE_LOAD
                 patch::susie_load.switch_load(cr);
 		    #endif
 		    #ifdef PATCH_SWITCH_SPLASH
                 patch::splash.switch_load(cr);
+		    #endif
+		    #ifdef PATCH_SWITCH_AUP_SCENE_SETTING
+                patch::aup_scene_setting.switch_load(cr);
 		    #endif
 		    #ifdef PATCH_SWITCH_EXO_AVIUTL_FILTER
                 patch::exo_aviutlfilter.switch_load(cr);
@@ -79,6 +85,9 @@ public:
 		    #endif
 		    #ifdef PATCH_SWITCH_EXO_SPECIALCOLORCONV
                 patch::exo_specialcolorconv.switch_load(cr);
+		    #endif
+		    #ifdef PATCH_SWITCH_EXO_FOLD_GUI
+                patch::exo_fold_gui.switch_load(cr);
 		    #endif
             #ifdef PATCH_SWITCH_TRA_AVIUTL_FILTER
                 patch::tra_aviutlfilter.switch_load(cr);
@@ -142,6 +151,9 @@ public:
             #endif
             #ifdef PATCH_SWITCH_BLEND
                 patch::blend.switch_load(cr);
+            #endif
+            #ifdef PATCH_SWITCH_ADD_EXTENSION
+                patch::add_extension.switch_load(cr);
             #endif
 		
 		    #ifdef PATCH_SWITCH_UNDO
@@ -346,11 +358,17 @@ public:
 		    #ifdef PATCH_SWITCH_ACCESS_KEY
                 patch::access_key.switch_store(switch_);
 		    #endif
+		    #ifdef PATCH_SWITCH_COLORPALETTE_CACHE
+                patch::colorpalette_cache.switch_store(switch_);
+		    #endif
 		    #ifdef PATCH_SWITCH_SUSIE_LOAD
                 patch::susie_load.switch_store(switch_);
 		    #endif
 		    #ifdef PATCH_SWITCH_SPLASH
                 patch::splash.switch_store(switch_);
+		    #endif
+		    #ifdef PATCH_SWITCH_AUP_SCENE_SETTING
+                patch::aup_scene_setting.switch_store(switch_);
 		    #endif
 		    #ifdef PATCH_SWITCH_EXO_AVIUTL_FILTER
                 patch::exo_aviutlfilter.switch_store(switch_);
@@ -366,6 +384,9 @@ public:
 		    #endif
 		    #ifdef PATCH_SWITCH_EXO_SPECIALCOLORCONV
                 patch::exo_specialcolorconv.switch_store(switch_);
+		    #endif
+		    #ifdef PATCH_SWITCH_EXO_FOLD_GUI
+                patch::exo_fold_gui.switch_store(switch_);
 		    #endif
             #ifdef PATCH_SWITCH_TRA_AVIUTL_FILTER
                 patch::tra_aviutlfilter.switch_store(switch_);
@@ -429,6 +450,9 @@ public:
             #endif
             #ifdef PATCH_SWITCH_BLEND
                 patch::blend.switch_store(switch_);
+            #endif
+            #ifdef PATCH_SWITCH_ADD_EXTENSION
+                patch::add_extension.switch_store(switch_);
             #endif
 
 		    #ifdef PATCH_SWITCH_UNDO
