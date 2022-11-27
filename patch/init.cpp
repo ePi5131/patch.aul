@@ -97,6 +97,9 @@ void init_t::InitAtExeditLoad() {
 	patch::theme_cc.init();
 #endif
 
+#ifdef PATCH_SWITCH_AUP_SCENE_SETTING
+	patch::aup_scene_setting.init();
+#endif
 #ifdef PATCH_SWITCH_TRA_AVIUTL_FILTER
 	patch::tra_aviutlfilter.init();
 #endif
