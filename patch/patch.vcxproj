@@ -57,6 +57,8 @@
     <ClInclude Include="patch_exo_specialcolorconv.hpp" />
     <ClInclude Include="patch_exo_trackminusval.hpp" />
     <ClInclude Include="patch_exo_trackparam.hpp" />
+    <ClInclude Include="patch_failed_file_drop.hpp" />
+    <ClInclude Include="patch_failed_longer_path.hpp" />
     <ClInclude Include="patch_failed_sjis_msgbox.hpp" />
     <ClInclude Include="patch_fast.hpp" />
     <ClInclude Include="patch_fast_border.hpp" />
@@ -127,6 +129,7 @@
     <ClCompile Include="patch_exception_log.cpp" />
     <ClCompile Include="patch_exception_log_dialog.cpp" />
     <ClCompile Include="patch_exo_trackminusval.cpp" />
+    <ClCompile Include="patch_failed_longer_path.cpp" />
     <ClCompile Include="patch_failed_sjis_msgbox.cpp" />
     <ClCompile Include="patch_fast_border.cpp" />
     <ClCompile Include="patch_fast_create_figure.cpp" />
