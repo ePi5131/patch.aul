@@ -74,3 +74,4 @@
 #include "patch_add_extension.hpp"
 #include "patch_obj_specialcolorconv.hpp"
 #include "patch_dialog_new_file.hpp"
+#include "patch_exo_midpt_and_tra.hpp"

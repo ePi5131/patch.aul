@@ -83,6 +83,9 @@ public:
 		    #ifdef PATCH_SWITCH_EXO_TRACK_MINUSVAL
                 patch::exo_trackminusval.switch_load(cr);
 		    #endif
+            #ifdef PATCH_SWITCH_EXO_MIDPT_AND_TRA
+                patch::exo_midpt_and_tra.switch_load(cr);
+            #endif
 		    #ifdef PATCH_SWITCH_EXO_SPECIALCOLORCONV
                 patch::exo_specialcolorconv.switch_load(cr);
 		    #endif
@@ -385,6 +388,9 @@ public:
 		    #ifdef PATCH_SWITCH_EXO_TRACK_MINUSVAL
                 patch::exo_trackminusval.switch_store(switch_);
 		    #endif
+            #ifdef PATCH_SWITCH_EXO_MIDPT_AND_TRA
+                patch::exo_midpt_and_tra.switch_store(switch_);
+            #endif
 		    #ifdef PATCH_SWITCH_EXO_SPECIALCOLORCONV
                 patch::exo_specialcolorconv.switch_store(switch_);
 		    #endif
