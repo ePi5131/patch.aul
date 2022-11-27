@@ -80,4 +80,4 @@
 #include "patch_fast_glow.hpp"
 #include "patch_obj_glow.hpp"
 #include "patch_setting_new_project.hpp"
-
+#include "patch_aup_layer_setting.hpp"

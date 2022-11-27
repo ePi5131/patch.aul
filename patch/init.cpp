@@ -122,6 +122,9 @@ void init_t::InitAtExeditLoad() {
 #endif
 
 
+#ifdef PATCH_SWITCH_AUP_LAYER_SETTING
+	patch::aup_layer_setting.init();
+#endif
 #ifdef PATCH_SWITCH_EXO_AVIUTL_FILTER
 	patch::exo_aviutlfilter.init();
 #endif
