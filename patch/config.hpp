@@ -137,6 +137,9 @@ public:
             #ifdef PATCH_SWITCH_OBJ_COLORCORRECTION
                 patch::ColorCorrection.switch_load(cr);
             #endif
+            #ifdef PATCH_SWITCH_OBJ_GLOW
+                patch::Glow.switch_load(cr);
+            #endif
             #ifdef PATCH_SWITCH_OBJ_LENSBLUR
                 patch::LensBlur.switch_load(cr);
             #endif
@@ -211,6 +214,9 @@ public:
                 #endif
                 #ifdef PATCH_SWITCH_FAST_BORDER
                     patch::fast::Border.switch_load(cr);
+                #endif
+                #ifdef PATCH_SWITCH_FAST_GLOW
+                    patch::fast::Glow.switch_load(cr);
                 #endif
 		
                 #ifdef PATCH_SWITCH_CL
@@ -448,6 +454,9 @@ public:
             #ifdef PATCH_SWITCH_OBJ_COLORCORRECTION
                 patch::ColorCorrection.switch_store(switch_);
             #endif
+            #ifdef PATCH_SWITCH_OBJ_GLOW
+                patch::Glow.switch_store(switch_);
+            #endif
             #ifdef PATCH_SWITCH_OBJ_LENSBLUR
                 patch::LensBlur.switch_store(switch_);
             #endif
@@ -522,6 +531,9 @@ public:
                 #endif
                 #ifdef PATCH_SWITCH_FAST_BORDER
                     patch::fast::Border.switch_store(switch_);
+                #endif
+                #ifdef PATCH_SWITCH_FAST_GLOW
+                    patch::fast::Glow.switch_store(switch_);
                 #endif
 		
                 #ifdef PATCH_SWITCH_CL

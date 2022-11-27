@@ -72,6 +72,7 @@ namespace OFS {
 		constexpr i32 efBorder_func_proc_var_ptr = 0x0a5d28;
 		constexpr i32 efBorder_func_proc_ptr = 0x0515d0;
 		constexpr i32 efBorder_var_ptr = 0x1b1e30;
+		constexpr i32 efGlow_var_ptr = 0x1b2010;
 		constexpr i32 efPolorTransform_func_proc = 0x0748a0;
 		constexpr i32 efPolorTransform_func_proc_ptr = 0x0add30;
 		constexpr i32 efPolorTransform_mt_func_call = 0x074a62;

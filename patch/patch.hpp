@@ -77,3 +77,5 @@
 #include "patch_exo_midpt_and_tra.hpp"
 #include "patch_fileinfo.hpp"
 #include "patch_playback_speed.hpp"
+#include "patch_fast_glow.hpp"
+#include "patch_obj_glow.hpp"
