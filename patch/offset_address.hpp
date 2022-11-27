@@ -32,7 +32,11 @@ namespace OFS {
 	}
 
 	namespace ExEdit {
+		constexpr i32 exedit_fp = 0x14d4b4;
+		
 		constexpr i32 aviutl_hwnd = 0x135c6c;
+		constexpr i32 exedit_hwnd = 0x177a44;
+		constexpr i32 settingdialog_hwnd = 0x1539c8;
 		
 		constexpr i32 blend_yca_normal_func = 0x007df0;
 		constexpr i32 blend_yc_normal_func = 0x007f20;
