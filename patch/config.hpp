@@ -59,6 +59,9 @@ public:
 		    #ifdef PATCH_SWITCH_ACCESS_KEY
                 patch::access_key.switch_load(cr);
 		    #endif
+		    #ifdef PATCH_SWITCH_COLORPALETTE_CACHE
+                patch::colorpalette_cache.switch_load(cr);
+		    #endif
 		    #ifdef PATCH_SWITCH_SUSIE_LOAD
                 patch::susie_load.switch_load(cr);
 		    #endif
@@ -348,6 +351,9 @@ public:
             
 		    #ifdef PATCH_SWITCH_ACCESS_KEY
                 patch::access_key.switch_store(switch_);
+		    #endif
+		    #ifdef PATCH_SWITCH_COLORPALETTE_CACHE
+                patch::colorpalette_cache.switch_store(switch_);
 		    #endif
 		    #ifdef PATCH_SWITCH_SUSIE_LOAD
                 patch::susie_load.switch_store(switch_);

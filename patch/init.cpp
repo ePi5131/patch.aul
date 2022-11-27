@@ -88,6 +88,10 @@ void init_t::InitAtPatchLoaded() {
 	patch::access_key.init();
 #endif
 
+#ifdef PATCH_SWITCH_COLORPALETTE_CACHE
+	patch::colorpalette_cache.init();
+#endif
+
 }
 
 void init_t::InitAtExeditLoad() {
