@@ -36,7 +36,7 @@ namespace patch {
 		if (img_ptr == NULL) {
 			return NULL;
 		}
-		if (64 < GetTickCount() - t0) {
+		if (time_shreshold < GetTickCount() - t0) {
 			int yc_size, flag;
 			if (reinterpret_cast<BOOL(__cdecl*)(int)>(GLOBAL::exedit_base + OFS::ExEdit::scene_has_alpha)(scene_idx)) {
 				yc_size = 8;
