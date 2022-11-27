@@ -76,3 +76,4 @@
 #include "patch_dialog_new_file.hpp"
 #include "patch_exo_midpt_and_tra.hpp"
 #include "patch_fileinfo.hpp"
+#include "patch_playback_speed.hpp"

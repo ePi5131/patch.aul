@@ -164,6 +164,9 @@ public:
             #ifdef PATCH_SWITCH_DIALOG_NEW_FILE
                 patch::dialog_new_file.switch_load(cr);
             #endif
+            #ifdef PATCH_SWITCH_PLAYBACK_SPEED
+                patch::playback_speed.switch_load(cr);
+            #endif
 		
 		    #ifdef PATCH_SWITCH_UNDO
                 patch::undo.switch_load(cr);
@@ -471,6 +474,9 @@ public:
             #endif
             #ifdef PATCH_SWITCH_DIALOG_NEW_FILE
                 patch::dialog_new_file .switch_store(switch_);
+            #endif
+            #ifdef PATCH_SWITCH_PLAYBACK_SPEED
+                patch::playback_speed.switch_store(switch_);
             #endif
 
 		    #ifdef PATCH_SWITCH_UNDO
