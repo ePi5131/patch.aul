@@ -182,6 +182,9 @@ public:
             #ifdef PATCH_SWITCH_PLAYBACK_SPEED
                 patch::playback_speed.switch_load(cr);
             #endif
+            #ifdef PATCH_SWITCH_SCENE_CACHE
+                patch::scene_cache.switch_load(cr);
+            #endif
 		
 		    #ifdef PATCH_SWITCH_UNDO
                 patch::undo.switch_load(cr);
@@ -510,6 +513,9 @@ public:
             #endif
             #ifdef PATCH_SWITCH_PLAYBACK_SPEED
                 patch::playback_speed.switch_store(switch_);
+            #endif
+            #ifdef PATCH_SWITCH_SCENE_CACHE
+                patch::scene_cache.switch_store(switch_);
             #endif
 
 		    #ifdef PATCH_SWITCH_UNDO
