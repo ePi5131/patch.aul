@@ -27,10 +27,10 @@ namespace patch {
 	inline class colorpalette_cache_t {
 
 
-		inline static int __cdecl fix_size_2a6a(HANDLE avi_file_handle) {
-			int video_decode_w = *(int*)((int)avi_file_handle + 20);
-			int video_decode_h = *(int*)((int)avi_file_handle + 24);
-			short video_decode_bit = *(short*)((int)avi_file_handle + 30);
+		inline static int __cdecl fix_size_2a6a(uintptr_t avi_file_handle) {
+			int video_decode_w = *(int*)(avi_file_handle + 20);
+			int video_decode_h = *(int*)(avi_file_handle + 24);
+			short video_decode_bit = *(short*)(avi_file_handle + 30);
 
 			int size = (video_decode_bit * video_decode_w + 7) >> 3;
 			size = (size + 3 & 0xfffffffc) * video_decode_h;
@@ -101,7 +101,7 @@ namespace patch {
 		void switch_load(ConfigReader& cr) {
 			cr.regist(key, [this](json_value_s* value) {
 				ConfigReader::load_variable(value, enabled);
-				});
+			});
 		}
 
 		void switch_store(ConfigWriter& cw) {
