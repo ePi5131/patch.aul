@@ -25,6 +25,7 @@ namespace OFS {
 		constexpr i32 current_resource_hmod = 0x2d910c;
 		constexpr i32 edit_handle_ptr = 0x08717c;
 		constexpr i32 saveProjectFile = 0x024160;
+		constexpr i32 exfunc = 0x0a8c78;
 		
 		constexpr i32 str_dot_avi = 0x0745fc; // ".avi"
 		
@@ -106,6 +107,11 @@ namespace OFS {
 		constexpr i32 str_DOUGAFILE = 0x09df6c; // "動画ファイル"
 		constexpr i32 str_ONSEIFILE = 0x0ba698; // "音声ファイル"
 
+		constexpr i32 SceneDisplaying = 0x1a5310;
+		constexpr i32 SceneSetting = 0x177a50;
+		constexpr i32 get_scene_image = 0x04ce20;
+		constexpr i32 get_scene_size = 0x02b980;
+		constexpr i32 scene_has_alpha = 0x02ba00;
 		
 		constexpr i32 exedit_edit_open = 0x03ac30;
 
