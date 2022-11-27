@@ -92,6 +92,10 @@ void init_t::InitAtPatchLoaded() {
 	patch::colorpalette_cache.init();
 #endif
 
+#ifdef PATCH_SWITCH_FILEINFO
+	patch::fileinfo.init();
+#endif
+
 }
 
 void init_t::InitAtExeditLoad() {
