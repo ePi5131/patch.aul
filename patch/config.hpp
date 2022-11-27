@@ -104,6 +104,9 @@ public:
             #ifdef PATCH_SWITCH_TRA_SPECIFIED_SPEED
                 patch::tra_specified_speed.switch_load(cr);
             #endif
+            #ifdef PATCH_SWITCH_SETTING_NEW_PROJECT
+                patch::setting_new_project.switch_load(cr);
+            #endif
 		    #ifdef PATCH_SWITCH_TEXT_OP_SIZE
                 patch::text_op_size.switch_load(cr);
 		    #endif
@@ -420,6 +423,9 @@ public:
             #endif
             #ifdef PATCH_SWITCH_TRA_SPECIFIED_SPEED
                 patch::tra_specified_speed.switch_store(switch_);
+            #endif
+            #ifdef PATCH_SWITCH_SETTING_NEW_PROJECT
+                patch::setting_new_project.switch_store(switch_);
             #endif
 		    #ifdef PATCH_SWITCH_TEXT_OP_SIZE
                 patch::text_op_size.switch_store(switch_);

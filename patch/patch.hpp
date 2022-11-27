@@ -79,3 +79,5 @@
 #include "patch_playback_speed.hpp"
 #include "patch_fast_glow.hpp"
 #include "patch_obj_glow.hpp"
+#include "patch_setting_new_project.hpp"
+

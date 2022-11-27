@@ -133,6 +133,7 @@
 #define PATCH_SWITCH_ADD_EXTENSION add_extension
 #define PATCH_SWITCH_DIALOG_NEW_FILE dlg_newfile
 #define PATCH_SWITCH_PLAYBACK_SPEED pb_speed
+#define PATCH_SWITCH_SETTING_NEW_PROJECT setting_newproject
 
 #define PATCH_SWITCH_UNDO undo
 #ifdef PATCH_SWITCH_UNDO
