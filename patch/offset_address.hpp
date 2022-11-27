@@ -161,6 +161,7 @@ namespace OFS {
 		constexpr i32 specialcolorconv_status2 = 0x0a14f4;
 
 		constexpr i32 ObjectArrayPointer = 0x1e0fa4;
+		constexpr i32 NextObjectIdxArray = 0x1592d8;
 
 		constexpr i32 ScaleColorBackGround = 0x0a4048;
 		constexpr i32 ScaleColorForeGround = 0x0a404c;
