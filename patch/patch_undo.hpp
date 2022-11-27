@@ -31,6 +31,7 @@ namespace patch {
     inline class undo_t {
 
         inline static ExEdit::Object** ObjectArrayPointer_ptr;
+        inline static int* NextObjectIdxArray;
         inline static ExEdit::LayerSetting** layer_setting_ofsptr_ptr;
         inline static void** exdata_buffer_ptr;
         inline static int* timeline_obj_click_mode_ptr;
@@ -120,6 +121,7 @@ namespace patch {
             if (!enabled_i) return;
 
             ObjectArrayPointer_ptr = reinterpret_cast<decltype(ObjectArrayPointer_ptr)>(GLOBAL::exedit_base + OFS::ExEdit::ObjectArrayPointer);
+            NextObjectIdxArray = reinterpret_cast<int*>(GLOBAL::exedit_base + OFS::ExEdit::NextObjectIdxArray);
             layer_setting_ofsptr_ptr = reinterpret_cast<decltype(layer_setting_ofsptr_ptr)>(GLOBAL::exedit_base + 0x0a4058);
             exdata_buffer_ptr = reinterpret_cast<void**>(GLOBAL::exedit_base + 0x1e0fa8);
             timeline_obj_click_mode_ptr = reinterpret_cast<int*>(GLOBAL::exedit_base + 0x177a24);

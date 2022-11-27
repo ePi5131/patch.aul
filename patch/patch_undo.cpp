@@ -93,8 +93,21 @@ namespace patch {
         };
 
         if (*timeline_obj_click_mode_ptr == 2 || (*timeline_obj_click_mode_ptr == 3 && (*timeline_edit_both_adjacent_ptr & 1))) { // 左端 || (右端 && 環境設定の隣接するオブジェクトも選択がON )
-            if (exists_movable_playback_pos(object_idx)) {
-                set_undo(object_idx, 0);
+            auto eop = &(*ObjectArrayPointer_ptr)[object_idx];
+            int obj_idx = eop->index_midpt_leader;
+            if (obj_idx == -1) {
+                if (exists_movable_playback_pos(object_idx)) {
+                    set_undo(object_idx, 0);
+                    return;
+                }
+            } else if (obj_idx == object_idx) {
+                if (exists_movable_playback_pos(obj_idx)) {
+                    while (0 <= obj_idx) {
+                        set_undo(obj_idx, 0);
+                        obj_idx = NextObjectIdxArray[obj_idx];
+                    }
+                    return;
+                }
             }
         }
         set_undo(object_idx, flag);
