@@ -82,6 +82,7 @@ https://scrapbox.io/ePi5131/patch.aul
     ・BMP File Readerを使うと、正しくない画像データをキャッシュしてしまうことがあるのを修正
     ・動画、音声ファイル参照の時、exedit.iniにある拡張子を追加する
     ・特定色域変換で変換前色に黒色を指定すると0除算が起こることがあるのを修正
+    ・範囲の大きいレンズブラーを掛けると危険な処理が行われるのを修正
 
     追加
     ・コンソールの表示
@@ -188,7 +189,7 @@ https://scrapbox.io/ePi5131/patch.aul
 		"exeditwindow_sizing" : boolean, ; 拡張編集ウィンドウの上部をドラッグして正常にリサイズできるようにする (既定値: true)
         "settingdialog_move" : boolean, ; 設定ダイアログを高ポーリングレートマウス環境で移動すると重たい の解消 (既定値: true)
 		"obj_colorcorrection" : boolean, ; 色調補正の色相計算を修正 (既定値: true)
-		"obj_lensblur" : boolean, ; 小さい画像に対してサイズ固定で範囲の大きいレンズブラーを掛けると例外になるのを修正 (既定値: true)
+		"obj_lensblur" : boolean, ; レンズブラーのバグ修正 (既定値: true)
 		"obj_noise" : boolean, ; ノイズの速度X、変化速度のトラック変化方法が移動無し以外の時に速度Yの値をもとに計算が行われてしまうのを修正 (既定値: true)
 		"obj_specialcolorconv" : boolean, ; 特定色域変換で変換前色に黒色を指定すると0除算が起こることがあるのを修正 (既定値: true)
 		"settingdialog_excolorconfig" : boolean, ; 拡張色変換のウィンドウが下のフィルタに被るのを修正 (既定値: true)
