@@ -35,10 +35,13 @@
     <ClInclude Include="overwrite_resource.hpp" />
     <ClInclude Include="patch.hpp" />
     <ClInclude Include="patch_access_key.hpp" />
+    <ClInclude Include="patch_add_extension.hpp" />
     <ClInclude Include="patch_alpha_bg.hpp" />
+    <ClInclude Include="patch_aup_scene_setting.hpp" />
     <ClInclude Include="patch_aviutl_wndproc_override.hpp" />
     <ClInclude Include="patch_base.hpp" />
     <ClInclude Include="patch_blend.hpp" />
+    <ClInclude Include="patch_colorpalette_cache.hpp" />
     <ClInclude Include="patch_console.hpp" />
     <ClInclude Include="patch_copybuffer_smem.hpp" />
     <ClInclude Include="patch_exception_history.hpp" />
@@ -46,6 +49,7 @@
     <ClInclude Include="patch_exception_log_dialog.hpp" />
     <ClInclude Include="patch_exeditwindow_sizing.hpp" />
     <ClInclude Include="patch_exo_aviutlfilter.hpp" />
+    <ClInclude Include="patch_exo_fold_gui.hpp" />
     <ClInclude Include="patch_exo_sceneidx.hpp" />
     <ClInclude Include="patch_exo_specialcolorconv.hpp" />
     <ClInclude Include="patch_exo_trackminusval.hpp" />
@@ -75,6 +79,7 @@
     <ClInclude Include="patch_obj_colorcorrection.hpp" />
     <ClInclude Include="patch_obj_lensblur.hpp" />
     <ClInclude Include="patch_obj_noise.hpp" />
+    <ClInclude Include="patch_obj_specialcolorconv.hpp" />
     <ClInclude Include="patch_rclickmenu_delete.hpp" />
     <ClInclude Include="patch_rclickmenu_split.hpp" />
     <ClInclude Include="patch_redo.hpp" />
@@ -108,6 +113,7 @@
     <ClCompile Include="init.cpp" />
     <ClCompile Include="overwrite_resource.cpp" />
     <ClCompile Include="patch.cpp" />
+    <ClCompile Include="patch_add_extension.cpp" />
     <ClCompile Include="patch_aviutl_wndproc_override.cpp" />
     <ClCompile Include="patch_blend.cpp" />
     <ClCompile Include="patch_exception_log.cpp" />

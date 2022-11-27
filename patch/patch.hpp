@@ -68,3 +68,8 @@
 #include "patch_blend.hpp"
 #include "patch_failed_sjis_msgbox.hpp"
 #include "patch_obj_colorcorrection.hpp"
+#include "patch_aup_scene_setting.hpp"
+#include "patch_exo_fold_gui.hpp"
+#include "patch_colorpalette_cache.hpp"
+#include "patch_add_extension.hpp"
+#include "patch_obj_specialcolorconv.hpp"
