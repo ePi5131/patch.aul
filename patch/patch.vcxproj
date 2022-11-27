@@ -48,6 +48,7 @@
     <ClInclude Include="patch_exception_log_dialog.hpp" />
     <ClInclude Include="patch_exeditwindow_sizing.hpp" />
     <ClInclude Include="patch_exo_aviutlfilter.hpp" />
+    <ClInclude Include="patch_exo_fold_gui.hpp" />
     <ClInclude Include="patch_exo_sceneidx.hpp" />
     <ClInclude Include="patch_exo_specialcolorconv.hpp" />
     <ClInclude Include="patch_exo_trackminusval.hpp" />
