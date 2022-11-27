@@ -100,14 +100,17 @@
 #define PATCH_SWITCH_SYSINFO_MODIFY
 
 #define PATCH_SWITCH_ACCESS_KEY access_key
+#define PATCH_SWITCH_COLORPALETTE_CACHE colorpalette_cache
 #define PATCH_SWITCH_TRA_AVIUTL_FILTER tra_aviutl_filter
 #define PATCH_SWITCH_TRA_CHANGE_DRAWFILTER tra_change_drawfilter
 #define PATCH_SWITCH_TRA_SPECIFIED_SPEED tra_specified_speed
+#define PATCH_SWITCH_AUP_SCENE_SETTING aup_scene_setting
 #define PATCH_SWITCH_EXO_AVIUTL_FILTER exo_aviutl_filter
 #define PATCH_SWITCH_EXO_TRACK_MINUSVAL exo_track_minusval
 #define PATCH_SWITCH_EXO_SCENEIDX exo_sceneidx
 #define PATCH_SWITCH_EXO_TRACKPARAM exo_trackparam
 #define PATCH_SWITCH_EXO_SPECIALCOLORCONV exo_specialcolorconv
+#define PATCH_SWITCH_EXO_FOLD_GUI exo_fold_gui
 #define PATCH_SWITCH_TEXT_OP_SIZE text_op_size
 #define PATCH_SWITCH_IGNORE_MEDIA_PARAM_RESET ignore_media_param_reset
 #define PATCH_SWITCH_THEME_CC theme_cc
