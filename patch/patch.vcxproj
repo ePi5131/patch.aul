@@ -39,6 +39,7 @@
     <ClInclude Include="patch_aviutl_wndproc_override.hpp" />
     <ClInclude Include="patch_base.hpp" />
     <ClInclude Include="patch_blend.hpp" />
+    <ClInclude Include="patch_colorpalette_cache.hpp" />
     <ClInclude Include="patch_console.hpp" />
     <ClInclude Include="patch_copybuffer_smem.hpp" />
     <ClInclude Include="patch_exception_history.hpp" />
