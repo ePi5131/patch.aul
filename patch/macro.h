@@ -29,6 +29,7 @@
 
 
 #define PATCH_SWITCH_ACCESS_KEY access_key
+#define PATCH_SWITCH_FILEINFO file_info
 #define PATCH_SWITCH_SUSIE_LOAD susie_load
 #define PATCH_SWITCH_SPLASH splash
 #define PATCH_SWITCH_TRA_AVIUTL_FILTER tra_aviutl_filter
@@ -100,14 +101,18 @@
 #define PATCH_SWITCH_SYSINFO_MODIFY
 
 #define PATCH_SWITCH_ACCESS_KEY access_key
+#define PATCH_SWITCH_COLORPALETTE_CACHE colorpalette_cache
 #define PATCH_SWITCH_TRA_AVIUTL_FILTER tra_aviutl_filter
 #define PATCH_SWITCH_TRA_CHANGE_DRAWFILTER tra_change_drawfilter
 #define PATCH_SWITCH_TRA_SPECIFIED_SPEED tra_specified_speed
+#define PATCH_SWITCH_AUP_SCENE_SETTING aup_scene_setting
 #define PATCH_SWITCH_EXO_AVIUTL_FILTER exo_aviutl_filter
 #define PATCH_SWITCH_EXO_TRACK_MINUSVAL exo_track_minusval
 #define PATCH_SWITCH_EXO_SCENEIDX exo_sceneidx
 #define PATCH_SWITCH_EXO_TRACKPARAM exo_trackparam
+#define PATCH_SWITCH_EXO_MIDPT_AND_TRA exo_midpt_tra
 #define PATCH_SWITCH_EXO_SPECIALCOLORCONV exo_specialcolorconv
+#define PATCH_SWITCH_EXO_FOLD_GUI exo_fold_gui
 #define PATCH_SWITCH_TEXT_OP_SIZE text_op_size
 #define PATCH_SWITCH_IGNORE_MEDIA_PARAM_RESET ignore_media_param_reset
 #define PATCH_SWITCH_THEME_CC theme_cc
@@ -118,11 +123,16 @@
 #define PATCH_SWITCH_WARNING_OLD_LSW
 #define PATCH_SWITCH_FAILED_SJIS_MSGBOX failed_sjis
 #define PATCH_SWITCH_OBJ_COLORCORRECTION obj_colorcorrection
+#define PATCH_SWITCH_OBJ_GLOW obj_glow
 #define PATCH_SWITCH_OBJ_LENSBLUR obj_lensblur
 #define PATCH_SWITCH_OBJ_NOISE obj_noise
+#define PATCH_SWITCH_OBJ_SPECIALCOLORCONV obj_specialcolorconv
 #define PATCH_SWITCH_RCLICKMENU_SPLIT rclickmenu_split
 #define PATCH_SWITCH_RCLICKMENU_DELETE rclickmenu_delete
 #define PATCH_SWITCH_BLEND blend
+#define PATCH_SWITCH_ADD_EXTENSION add_extension
+#define PATCH_SWITCH_DIALOG_NEW_FILE dlg_newfile
+#define PATCH_SWITCH_PLAYBACK_SPEED pb_speed
 #define PATCH_SWITCH_SETTING_NEW_PROJECT setting_newproject
 
 #define PATCH_SWITCH_UNDO undo
@@ -158,6 +168,7 @@
 	#define PATCH_SWITCH_FAST_TEXT fast_text
 	#define PATCH_SWITCH_FAST_CREATE_FIGURE fast_create_figure
 	#define PATCH_SWITCH_FAST_BORDER fast_border
+	#define PATCH_SWITCH_FAST_GLOW fast_glow
 
 	#define PATCH_SWITCH_CL cl
 	#ifdef PATCH_SWITCH_CL
