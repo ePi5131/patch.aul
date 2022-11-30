@@ -23,12 +23,29 @@ namespace OFS {
 		constexpr i32 default_resource_hmod = 0x2c525c;
 		constexpr i32 getsys_versionstr_arg = 0x022187;
 		constexpr i32 current_resource_hmod = 0x2d910c;
+		constexpr i32 filter_n = 0x258d04;
 		constexpr i32 edit_handle_ptr = 0x08717c;
 		constexpr i32 saveProjectFile = 0x024160;
+		constexpr i32 exfunc = 0x0a8c78;
 		
-		constexpr i32 str_dot_avi = 0x0745fc; // ".avi"
+		constexpr i32 get_exe_dir = 0x02c8c0;
 		
 		constexpr i32 filter_clipping_and_resize_ptr = 0x07ad58;
+		
+		constexpr i32 str_AviUtl = 0x0742a0; // "AviUtl"
+
+		constexpr i32 str_dot_avi = 0x0745fc; // ".avi"
+		constexpr i32 str_asterisk_dot_aul = 0x075a10; // "*.aul"
+		constexpr i32 str_asterisk_dot_auc = 0x0748fc; // "*.auc"
+		constexpr i32 str_asterisk_dot_aui = 0x07498c; // "*.aui"
+		constexpr i32 str_asterisk_dot_auf = 0x0752fc; // "*.auf"
+		constexpr i32 str_asterisk_dot_auo = 0x0750d4; // "*.auo"
+
+		constexpr i32 str_percent_s_percent_s = 0x0743c8; // "%s%s"
+		constexpr i32 str_percent_s_percent_s_percent_s = 0x0743e8; // "%s%s"
+
+		constexpr i32 str_plugins_backslash = 0x074904; // "plugins\\"
+		
 	}
 
 	namespace ExEdit {
