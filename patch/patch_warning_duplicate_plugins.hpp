@@ -24,7 +24,7 @@
 
 namespace patch {
 
-    // init at exedit load
+    // init at exedit func_init
     // ファイル名が同名のプラグインが複数フォルダに存在するときに警告出す
 
     inline class warning_duplicate_t {
