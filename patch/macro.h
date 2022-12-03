@@ -160,8 +160,6 @@
 	#define PATCH_SWITCH_LUA_RANDEX lua_randex
 	#define PATCH_SWITCH_LUA_PATH lua_path
 
-	//#define PATCH_SWITCH_LUA_COPYBUFFER_SMEM lua_copybuffer_smem
-
 #endif // ifdef PATCH_SWITCH_LUA
 
 #define PATCH_SWITCH_FAST fast
