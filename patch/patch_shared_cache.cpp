@@ -107,13 +107,9 @@ namespace patch {
         unsigned int priority_min = 0xFFFFFFFF;
         int new_id = 0;
         int i;
-        BOOL del_flag = FALSE;
         for (i = 0; i < cache_count; i++) {
             if (sci[i].name[0] != '\0' && lstrcmpiA(name, sci[i].name) == 0) {
                 new_id = i;
-                if (shared_mem_info[i] != NULL) {
-                    del_flag = TRUE;
-                }
                 break;
             } else if (0 < priority_min) {
                 if (shared_mem_info[i] == NULL) {
@@ -135,7 +131,7 @@ namespace patch {
         sci[new_id].h = h;
         sci[new_id].bitcount = bitcount;
         sci[new_id].priority = priority_count++;
-        if (del_flag) {
+        if (shared_mem_info[new_id] != NULL) {
             a_exfunc->delete_shared_mem((int)&shared_mem_info[new_id], shared_mem_info[new_id]);
         }
 
