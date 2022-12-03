@@ -259,8 +259,8 @@ void init_t::InitAtExeditLoad() {
 		#ifdef PATCH_SWITCH_CL
 			if (patch::fast::cl.init()) {
 				if (patch::fast::cl.is_enabled_i()) {
-					#ifdef PATCH_SWITCH_FAST_POLORTRANSFORM
-						patch::fast::PolorTransform.init();
+					#ifdef PATCH_SWITCH_FAST_POLARTRANSFORM
+						patch::fast::PolarTransform.init();
 					#endif
 					#ifdef PATCH_SWITCH_FAST_DISPLACEMENTMAP
 						patch::fast::DisplacementMap.init();
