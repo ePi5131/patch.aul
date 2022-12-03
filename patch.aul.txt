@@ -238,7 +238,7 @@ https://scrapbox.io/ePi5131/patch.aul
 		"fast.glow" : boolean, ; グローの高速化 (既定値: true)
 		"fast.cl" : boolean, ; fast.*でOpenCLが必要なオプションに必要なオプション (既定値: true)
 		"fast.radiationalblur" : boolean, ; fast.clが前提 放射ブラーの高速化 (既定値: true)
-		"fast.polortransform" : boolean, ; fast.clが前提 極座標変換の高速化 (既定値: true)
+		"fast.polartransform" : boolean, ; fast.clが前提 極座標変換の高速化 (既定値: true)
 		"fast.displacementmap" : boolean, ; fast.clが前提 ディスプレイスメントマップの高速化 (既定値: true)
         "fast.flash" : true : boolean, ; fast.clが前提 閃光の高速化 (既定値: true)
 		"fast.directionalblur" : boolean,  ; fast.clが前提 方向ブラーの高速化 (既定値: true)
