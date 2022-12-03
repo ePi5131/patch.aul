@@ -41,7 +41,7 @@
 #include "patch_setting_dialog_wndproc_override.hpp"
 #include "patch_undo.hpp"
 #include "patch_fast_getputpixeldata.hpp"
-#include "patch_fast_polortransform.hpp"
+#include "patch_fast_polartransform.hpp"
 #include "patch_fast_displacementmap.hpp"
 #include "patch_fast_radiationalblur.hpp"
 #include "patch_fast_flash.hpp"
