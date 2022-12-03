@@ -18,34 +18,32 @@
 #ifdef PATCH_SWITCH_SHARED_CACHE
 namespace patch {
 
-	void* __cdecl SharedCache_t::GetOrCreateSharedCache(ExEdit::ObjectFilterIndex ofi, int w, int h, int bitcount, int v_func_id, int* old_cache_exists) {
-		auto a_exfunc = (AviUtl::ExFunc*)(GLOBAL::aviutl_base + OFS::AviUtl::exfunc);
-		auto e_exfunc = (ExEdit::Exfunc*)(GLOBAL::exedit_base + OFS::ExEdit::exfunc);
-
-		if (0 <= (int)ofi) {
-			ofi = e_exfunc->get_start_idx(ofi);
-		}
-
-		unsigned int key1 = (int)ofi ^ (v_func_id << 14) ^ (bitcount << 25);
-		unsigned int key2 = (w - 1) ^ ((h - 1) << 16);
-
-		void* smem = a_exfunc->get_shared_mem(key1, key2, NULL);
-		if (smem != NULL) {
-			if (old_cache_exists != NULL) {
-				*old_cache_exists = 1;
-			}
-			return smem;
-		}
-		if (old_cache_exists != NULL) {
-			*old_cache_exists = 0;
-		}
-		int mem_size = (((w * bitcount + 7) >> 3) + 3 & 0xfffffffc) * h;
-		return a_exfunc->create_shared_mem(key1, key2, mem_size, NULL);
-	}
-
-
     int calc_cache_size(int w, int h, int bitcount) {
         return ((((w * bitcount + 7) >> 3) + 3) & 0xfffffffc) * h + 16;
+    }
+
+    void* __cdecl SharedCache_t::GetOrCreateSharedCache(ExEdit::ObjectFilterIndex ofi, int w, int h, int bitcount, int v_func_id, int* old_cache_exists) {
+        auto a_exfunc = (AviUtl::ExFunc*)(GLOBAL::aviutl_base + OFS::AviUtl::exfunc);
+        auto e_exfunc = (ExEdit::Exfunc*)(GLOBAL::exedit_base + OFS::ExEdit::exfunc);
+
+        if (0 <= (int)ofi) {
+            ofi = e_exfunc->get_start_idx(ofi);
+        }
+
+        unsigned int key1 = (int)ofi ^ (v_func_id << 14) ^ (bitcount << 25);
+        unsigned int key2 = (w - 1) ^ ((h - 1) << 16);
+
+        void* smem = a_exfunc->get_shared_mem(key1, key2, NULL);
+        if (smem != NULL) {
+            if (old_cache_exists != NULL) {
+                *old_cache_exists = 1;
+            }
+            return smem;
+        }
+        if (old_cache_exists != NULL) {
+            *old_cache_exists = 0;
+        }
+        return a_exfunc->create_shared_mem(key1, key2, calc_cache_size(w, h, bitcount), NULL);
     }
 
     SharedCache_t::SharedCacheInfo* SharedCache_t::InitSharedCacheInfo() {
