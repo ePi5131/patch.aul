@@ -46,6 +46,7 @@
     <ClInclude Include="patch_console.hpp" />
     <ClInclude Include="patch_copybuffer_smem.hpp" />
     <ClInclude Include="patch_dialog_new_file.hpp" />
+    <ClInclude Include="patch_rendering.hpp" />
     <ClInclude Include="patch_exception_history.hpp" />
     <ClInclude Include="patch_exception_log.hpp" />
     <ClInclude Include="patch_exception_log_dialog.hpp" />
@@ -126,6 +127,7 @@
     <ClCompile Include="patch_add_extension.cpp" />
     <ClCompile Include="patch_aviutl_wndproc_override.cpp" />
     <ClCompile Include="patch_blend.cpp" />
+    <ClCompile Include="patch_rendering.cpp" />
     <ClCompile Include="patch_exception_log.cpp" />
     <ClCompile Include="patch_exception_log_dialog.cpp" />
     <ClCompile Include="patch_exo_trackminusval.cpp" />
