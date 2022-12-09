@@ -26,7 +26,18 @@
 
 namespace patch {
     // init at exedit load
-    // 高さ4097以上描画が正常に行えないことがあるのを修正
+    /*
+    ・高さ4097以上描画が正常に行えないことがあるのを修正
+
+
+    以下二つは調査中
+
+    ・回転45、obj.w==obj.h、obj.y==-obj.screen、(他条件有り)　の時の描画が正常ではない
+    　https://twitter.com/iAieXAjGneaJAZO/status/1583718820191272960
+
+    ・オブジェクトを横から見た薄い状態の表示位置がずれる
+    　https://twitter.com/nazono22/status/1592798629332652032
+    */
     inline class rendering_t {
 
         static int __stdcall mid_render();
@@ -41,7 +52,7 @@ namespace patch {
 
             if (!enabled_i)return;
 
-            {
+            { // 高さ4097以上描画が正常に行えないことがあるのを修正
                 /*
                     1007caaf 3d00100000         cmp     eax,00001000
                     1007cab4 5e                 pop     esi
