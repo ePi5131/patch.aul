@@ -41,6 +41,10 @@ namespace OFS {
 		constexpr i32 blend_yca_normal_func = 0x007df0;
 		constexpr i32 blend_yc_normal_func = 0x007f20;
 		
+		constexpr i32 rendering_mt_func = 0x078140;
+		constexpr i32 rendering_data = 0x1ec890;
+		constexpr i32 rendering_data_count = 0x1ec728;
+		
 		constexpr i32 ConvertFilter2Exo_TrackScaleJudge_RangeBegin = 0x028a8d;
 		constexpr i32 ConvertFilter2Exo_TrackScaleJudge_Overwrite1 = 0x028a84;
 		constexpr i32 ConvertFilter2Exo_TrackScaleJudge_Overwrite2 = 0x0289cb;
@@ -108,6 +112,8 @@ namespace OFS {
 
 		
 		constexpr i32 exedit_edit_open = 0x03ac30;
+		
+		constexpr i32 do_multi_thread_func = 0x06c650;
 
 		constexpr i32 exfunc_10 = 0x04abe0;
 		constexpr i32 exfunc_08 = 0x04ab40;
