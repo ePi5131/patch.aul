@@ -74,6 +74,8 @@ namespace OFS {
 		constexpr i32 exedit_max_h = 0x1920e0;
 
 		constexpr i32 memory_ptr = 0x01a5328;
+		
+		constexpr i32 fast_process = 0x2308a0;
 
 		constexpr i32 CreateFigure_var_ptr = 0x1e4798;
 		constexpr i32 CreateFigure_circle_func_call = 0x073882;
