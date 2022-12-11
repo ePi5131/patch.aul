@@ -225,6 +225,9 @@ void init_t::InitAtExeditLoad() {
 #ifdef PATCH_SWITCH_PLAYBACK_SPEED
 	patch::playback_speed.init();
 #endif
+#ifdef PATCH_SWITCH_YC_RGB_CONV
+	patch::yc_rgb_conv.init();
+#endif
 	
 	patch::setting_dialog();
 
