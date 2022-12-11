@@ -226,6 +226,9 @@
     <ClInclude Include="patch_obj_colorcorrection.hpp">
       <Filter>feature</Filter>
     </ClInclude>
+    <ClInclude Include="patch_yc_rgb_conv.hpp">
+      <Filter>feature</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="init.cpp" />
@@ -337,6 +340,9 @@
       <Filter>feature\fast</Filter>
     </ClCompile>
     <ClCompile Include="patch_obj_colorcorrection.cpp">
+      <Filter>feature</Filter>
+    </ClCompile>
+    <ClCompile Include="patch_yc_rgb_conv.cpp">
       <Filter>feature</Filter>
     </ClCompile>
   </ItemGroup>
