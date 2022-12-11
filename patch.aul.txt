@@ -92,6 +92,7 @@ https://scrapbox.io/ePi5131/patch.aul
     ・レイヤー情報を保存するかどうかの判定方法を変える(従来:オブジェクトが存在する→変更:レイヤー情報が初期値でない)
     ・読み込もうとしたファイルパスが長くて失敗するときにメッセージを出す/エラーが発生するのを修正
     ・ドロップ処理で最終的に何も行われなかったときにメッセージを出力する
+    ・改行のみのテキストで一部スクリプトを使うとエラーが発生するのを修正
 
     追加
     ・コンソールの表示
@@ -216,6 +217,7 @@ https://scrapbox.io/ePi5131/patch.aul
 		"add_extension" : boolean, ; 動画、音声ファイル参照の時、exedit.iniにある拡張子を追加する (既定値: true)
 		"new_project_editbox" : boolean, ; 新規プロジェクト作成ダイアログの画像サイズ入力欄の幅を広げる (既定値: true)
 		"playback_speed" : boolean, ; 中間点で再生速度を変更した時、そこまでの中間点の数だけ速度変化が遅れて反映されるバグの修正 (既定値: true)
+		"yc_rgb_conv" : boolean, ; 改行のみのテキストで一部スクリプトを使うとエラーが発生するのを修正 (既定値: true)
         "undo" : boolean, ; 元に戻す 関連のバグ修正 (既定値: true)
         "undo.redo" : boolean, ; やり直す を追加 (既定値: true)
 		"console" : boolean, ; コンソール (既定値: true)
