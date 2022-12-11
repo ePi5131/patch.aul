@@ -59,6 +59,7 @@ namespace OFS {
 
 		constexpr i32 getpixeldata = 0x09a65c;
 		constexpr i32 rgb2yc = 0x06fed0;
+		constexpr i32 yc_conv_w_loop_count = 0x1e4300;
 
 		constexpr i32 exedit_max_h_add8 = 0x135c64;
 		constexpr i32 exedit_buffer_line = 0x135c68;
@@ -108,6 +109,8 @@ namespace OFS {
 
 		
 		constexpr i32 exedit_edit_open = 0x03ac30;
+
+		constexpr i32 do_multi_thread_func = 0x06c650;
 
 		constexpr i32 exfunc_10 = 0x04abe0;
 		constexpr i32 exfunc_08 = 0x04ab40;
