@@ -16,20 +16,17 @@
 #include "patch_fast_create_figure.hpp"
 #ifdef PATCH_SWITCH_FAST_CREATE_FIGURE
 
-#include "debug_log.hpp"
 
 //#define PATCH_STOPWATCH
-#include "stopwatch.hpp"
 
 namespace patch::fast {
-    static stopwatch_mem sw;
 
     void __cdecl CreateFigure_t::CreateFigure_circle(int thread_id, int thread_num, ExEdit::Filter* efp, ExEdit::FilterProcInfo* efpip) { // 73d20
         auto& figure = *reinterpret_cast<CreateFigure_var*>(GLOBAL::exedit_base + OFS::ExEdit::CreateFigure_var_ptr);
 
-        int begin_thread = thread_id * (efpip->obj_h + 1 >> 1) / thread_num;
-        int end_thread = (thread_id + 1) * (efpip->obj_h + 1 >> 1) / thread_num;
-        int obj_half_w = efpip->obj_w + 1 >> 1;
+        int begin_thread = thread_id * ((efpip->obj_h + 1) >> 1) / thread_num;
+        int end_thread = (thread_id + 1) * ((efpip->obj_h + 1) >> 1) / thread_num;
+        int obj_half_w = (efpip->obj_w + 1) >> 1;
         ExEdit::PixelYCA yca = { figure.color_y, figure.color_cb, figure.color_cr, 0 };
 
         int inner = 0;
@@ -173,7 +170,7 @@ namespace patch::fast {
 
         int thread_begin = thread_id * efpip->obj_h / thread_num;
         int thread_end = (thread_id + 1) * efpip->obj_h / thread_num;
-        int obj_half_w = efpip->obj_w + 1 >> 1;
+        int obj_half_w = (efpip->obj_w + 1) >> 1;
         int a;
         ExEdit::PixelYCA yca = { figure.color_y, figure.color_cb, figure.color_cr, 0 };
 
