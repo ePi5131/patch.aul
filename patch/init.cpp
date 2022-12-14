@@ -225,6 +225,9 @@ void init_t::InitAtExeditLoad() {
 #ifdef PATCH_SWITCH_PLAYBACK_SPEED
 	patch::playback_speed.init();
 #endif
+#ifdef PATCH_SWITCH_GROUP_CAMERA_SCENE
+	patch::group_camera_scene.init();
+#endif
 	
 	patch::setting_dialog();
 
