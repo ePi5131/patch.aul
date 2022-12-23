@@ -84,6 +84,10 @@ void init_t::InitAtPatchLoaded() {
 	patch::sysinfo_info_write();
 #endif
 
+#ifdef PATCH_SWITCH_KEYCONFIG
+	patch::KeyConfig.init();
+#endif
+
 #ifdef PATCH_SWITCH_ACCESS_KEY
 	patch::access_key.init();
 #endif
