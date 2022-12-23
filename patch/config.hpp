@@ -56,6 +56,10 @@ public:
         cr.regist("switch", [](json_value_s* value) {
             ConfigReader cr(value);
             
+            
+		    #ifdef PATCH_SWITCH_KEYCONFIG
+                patch::KeyConfig.switch_load(cr);
+		    #endif
 		    #ifdef PATCH_SWITCH_ACCESS_KEY
                 patch::access_key.switch_load(cr);
 		    #endif
@@ -385,6 +389,9 @@ public:
         {
             ConfigWriter switch_(++level);
             
+		    #ifdef PATCH_SWITCH_KEYCONFIG
+                patch::KeyConfig.switch_store(switch_);
+		    #endif
 		    #ifdef PATCH_SWITCH_ACCESS_KEY
                 patch::access_key.switch_store(switch_);
 		    #endif
