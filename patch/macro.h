@@ -48,6 +48,7 @@
 #define PATCH_SWITCH_EXEDITWINDOW_SIZING exeditwindow_sizing
 #define PATCH_SWITCH_SETTINGDIALOG_MOVE settingdialog_move
 #define PATCH_SWITCH_SETTINGDIALOG_EXCOLORCONFIG settingdialog_excolorconfig
+#define PATCH_SWITCH_SCRIPT_SORT_PATCH script_sort_patch
 
 #define PATCH_SWITCH_UNDO undo
 #ifdef PATCH_SWITCH_UNDO
