@@ -1,5 +1,5 @@
 patch.aul r43 beta1
-Copyright (c) 2021-2022 ePi
+© 2021-2023 ePi
 https://scrapbox.io/ePi5131/patch.aul
 
 概要
