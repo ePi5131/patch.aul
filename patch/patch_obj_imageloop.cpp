@@ -20,7 +20,7 @@ namespace patch {
 
 
 	void __cdecl obj_ImageLoop_t::save_current_image(ExEdit::Filter* efp, ExEdit::FilterProcInfo* efpip) {
-		auto a_exfunc = (AviUtl::ExFunc*)(GLOBAL::aviutl_base + OFS::AviUtl::exfunc);
+		const auto a_exfunc = efp->aviutl_exfunc;
 		
 		int obj_h = efpip->obj_h;
 		int smemline = efpip->obj_w * 8;
