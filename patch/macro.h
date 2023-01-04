@@ -128,6 +128,7 @@
 #define PATCH_SWITCH_OBJ_COLORCORRECTION obj_colorcorrection
 #define PATCH_SWITCH_OBJ_GLOW obj_glow
 #define PATCH_SWITCH_OBJ_LENSBLUR obj_lensblur
+#define PATCH_SWITCH_OBJ_IMAGELOOP obj_imageloop
 #define PATCH_SWITCH_OBJ_NOISE obj_noise
 #define PATCH_SWITCH_OBJ_SPECIALCOLORCONV obj_specialcolorconv
 #define PATCH_SWITCH_RCLICKMENU_SPLIT rclickmenu_split
