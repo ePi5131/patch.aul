@@ -93,6 +93,7 @@
     <ClInclude Include="patch_rclickmenu_delete.hpp" />
     <ClInclude Include="patch_rclickmenu_split.hpp" />
     <ClInclude Include="patch_redo.hpp" />
+    <ClInclude Include="patch_scene_cache.hpp" />
     <ClInclude Include="patch_scroll_objdlg.hpp" />
     <ClInclude Include="patch_setting_dialog_excolorconfig.hpp" />
     <ClInclude Include="patch_setting_dialog_wndproc_override.hpp" />
@@ -157,6 +158,7 @@
     <ClCompile Include="patch_rclickmenu_delete.cpp" />
     <ClCompile Include="patch_rclickmenu_split.cpp" />
     <ClCompile Include="patch_redo.cpp" />
+    <ClCompile Include="patch_scene_cache.cpp" />
     <ClCompile Include="patch_setting_dialog_excolorconfig.cpp" />
     <ClCompile Include="patch_setting_dialog_wndproc_override.cpp" />
     <ClCompile Include="patch_setting_new_project.cpp" />
