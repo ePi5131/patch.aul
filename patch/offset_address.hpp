@@ -115,6 +115,7 @@ namespace OFS {
 		
 		constexpr i32 exedit_edit_open = 0x03ac30;
 
+		constexpr i32 exfunc = 0x0a41e0;
 		constexpr i32 exfunc_10 = 0x04abe0;
 		constexpr i32 exfunc_08 = 0x04ab40;
 		constexpr i32 func_0x047ad0 = 0x047ad0;
@@ -139,6 +140,8 @@ namespace OFS {
 		constexpr i32 exeditdir = 0x1b2b18;
 		constexpr i32 sScriptFolderName = 0x1b2b4c;
 
+		constexpr i32 obj_effect_noarg = 0x04b200;
+		
 		constexpr i32 l_effect = 0x05d0a0;
 		constexpr i32 l_load = 0x05ef50;
 		constexpr i32 l_draw = 0x05e250;

@@ -196,6 +196,9 @@ void init_t::InitAtExeditLoad() {
 #ifdef PATCH_SWITCH_OBJ_LENSBLUR
 	patch::LensBlur.init();
 #endif
+#ifdef PATCH_SWITCH_OBJ_IMAGELOOP
+	patch::ImageLoop.init();
+#endif
 #ifdef PATCH_SWITCH_OBJ_NOISE
 	patch::Noise.init();
 #endif

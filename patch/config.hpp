@@ -155,6 +155,9 @@ public:
             #ifdef PATCH_SWITCH_OBJ_LENSBLUR
                 patch::LensBlur.switch_load(cr);
             #endif
+            #ifdef PATCH_SWITCH_OBJ_IMAGELOOP
+                patch::ImageLoop.switch_load(cr);
+            #endif
             #ifdef PATCH_SWITCH_OBJ_NOISE
                 patch::Noise.switch_load(cr);
             #endif
@@ -486,6 +489,9 @@ public:
             #endif
             #ifdef PATCH_SWITCH_OBJ_LENSBLUR
                 patch::LensBlur.switch_store(switch_);
+            #endif
+            #ifdef PATCH_SWITCH_OBJ_IMAGELOOP
+                patch::ImageLoop.switch_store(switch_);
             #endif
             #ifdef PATCH_SWITCH_OBJ_NOISE
                 patch::Noise.switch_store(switch_);
