@@ -16,6 +16,8 @@
 
 #ifdef PATCH_SWITCH_SCENE_CACHE
 
+#include <chrono>
+
 #include <exedit.hpp>
 
 #include "global.hpp"
@@ -31,17 +33,22 @@ namespace patch {
     // 仕様：シーンの画像構成に掛かった時間が64msを超えた時にキャッシュを生成する。シーンを切り替えた時点でキャッシュは破棄されます。
 
     inline class scene_cache_t {
+        
 
         static void* __cdecl get_scene_image_wrap(ExEdit::ObjectFilterIndex ofi, ExEdit::FilterProcInfo* efpip, int scene_idx, int frame, int subframe, int* w, int* h);
         static void delete_scene_cache();
 
         inline static void* (__cdecl* get_scene_image)(ExEdit::ObjectFilterIndex, ExEdit::FilterProcInfo*, int, int, int, int*, int*);
 
-        inline static unsigned int time_shreshold = 64;
+        inline static auto time_threshold_ms = std::chrono::system_clock::duration{ std::chrono::milliseconds{64} };
         
         bool enabled = true;
         bool enabled_i;
         inline static const char key[] = "scene_cache";
+
+        inline static int make_cache_key1(int idx) {
+            return reinterpret_cast<int>(&scene_cache_t::get_scene_image) + idx;
+        }
     public:
 
         void init() {
@@ -78,7 +85,7 @@ namespace patch {
         void switch_load(ConfigReader& cr) {
             cr.regist(key, [this](json_value_s* value) {
                 ConfigReader::load_variable(value, enabled);
-                });
+            });
         }
 
         void switch_store(ConfigWriter& cw) {
