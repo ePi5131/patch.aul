@@ -185,6 +185,9 @@ public:
             #ifdef PATCH_SWITCH_PLAYBACK_SPEED
                 patch::playback_speed.switch_load(cr);
             #endif
+            #ifdef PATCH_SWITCH_SCENE_CACHE
+                patch::scene_cache.switch_load(cr);
+            #endif
 		
 		    #ifdef PATCH_SWITCH_UNDO
                 patch::undo.switch_load(cr);
@@ -296,6 +299,13 @@ public:
             cr.load();
         });
 #endif
+#ifdef PATCH_SWITCH_SCENE_CACHE
+        cr.regist("scene_cache", [](json_value_s* value) {
+            ConfigReader cr(value);
+            patch::scene_cache.config_load(cr);
+            cr.load();
+        });
+#endif
 
         cr.load();
     }
@@ -381,6 +391,20 @@ public:
             fast_text.write(ss);
 
             cw.append("fast_text", ss.str());
+            --level;
+        }
+#endif
+
+#ifdef PATCH_SWITCH_SCENE_CACHE
+        {
+            ConfigWriter scene_cache(++level);
+
+            patch::scene_cache.config_store(scene_cache);
+
+            std::stringstream ss;
+            scene_cache.write(ss);
+
+            cw.append("scene_cache", ss.str());
             --level;
         }
 #endif
@@ -516,6 +540,9 @@ public:
             #endif
             #ifdef PATCH_SWITCH_PLAYBACK_SPEED
                 patch::playback_speed.switch_store(switch_);
+            #endif
+            #ifdef PATCH_SWITCH_SCENE_CACHE
+                patch::scene_cache.switch_store(switch_);
             #endif
 
 		    #ifdef PATCH_SWITCH_UNDO
