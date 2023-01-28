@@ -299,6 +299,13 @@ public:
             cr.load();
         });
 #endif
+#ifdef PATCH_SWITCH_SCENE_CACHE
+        cr.regist("scene_cache", [](json_value_s* value) {
+            ConfigReader cr(value);
+            patch::scene_cache.config_load(cr);
+            cr.load();
+        });
+#endif
 
         cr.load();
     }
@@ -384,6 +391,20 @@ public:
             fast_text.write(ss);
 
             cw.append("fast_text", ss.str());
+            --level;
+        }
+#endif
+
+#ifdef PATCH_SWITCH_SCENE_CACHE
+        {
+            ConfigWriter scene_cache(++level);
+
+            patch::scene_cache.config_store(scene_cache);
+
+            std::stringstream ss;
+            scene_cache.write(ss);
+
+            cw.append("scene_cache", ss.str());
             --level;
         }
 #endif

@@ -36,7 +36,7 @@ namespace patch {
 		void* img_ptr = get_scene_image(ofi, efpip, scene_idx, frame, subframe, w, h);
 		if (img_ptr == nullptr) return nullptr;
 
-		if (time_threshold_ms < std::chrono::system_clock::now() - t0) {
+		if (std::chrono::milliseconds{ threshold_time_ms } < std::chrono::system_clock::now() - t0) {
 			int yc_size, flag;
 			if (reinterpret_cast<BOOL(__cdecl*)(int)>(GLOBAL::exedit_base + OFS::ExEdit::scene_has_alpha)(scene_idx)) {
 				yc_size = 8;

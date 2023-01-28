@@ -180,6 +180,9 @@ https://scrapbox.io/ePi5131/patch.aul
     "fast_text" : { ; テキストの軽量化について
         "release_time" : 120 ; キャッシュデータの寿命[秒]
     },
+    "scene_cache" : { ; シーンのキャッシュについて
+        "threshold_time" : 64 ; キャッシュを使用するレンダリング時間の閾値[ミリ秒]
+    },
 	"switch" : { ; どのパッチを有効にするかを選択するものです trueなら有効、falseなら無効
 		"access_key" : boolean, ; アクセスキーを付加するか (既定値: false)
 		"aup_scene_setting" : boolean, ; プロジェクトの保存/読み込み時にシーン設定の一部情報（グリッド設定など）が欠けるのを修正 (既定値: true)

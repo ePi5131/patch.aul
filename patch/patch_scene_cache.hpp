@@ -40,7 +40,8 @@ namespace patch {
 
         inline static void* (__cdecl* get_scene_image)(ExEdit::ObjectFilterIndex, ExEdit::FilterProcInfo*, int, int, int, int*, int*);
 
-        inline static auto time_threshold_ms = std::chrono::system_clock::duration{ std::chrono::milliseconds{64} };
+        inline static auto threshold_time_ms = 64;
+        inline static const char key_threshold_time[] = "threshold_time";
         
         bool enabled = true;
         bool enabled_i;
@@ -91,6 +92,17 @@ namespace patch {
         void switch_store(ConfigWriter& cw) {
             cw.append(key, enabled);
         }
+        
+		void config_load(ConfigReader& cr) {
+			cr.regist(key_threshold_time, [this](json_value_s* value) {
+				ConfigReader::load_variable(value, threshold_time_ms);
+			});
+		}
+
+		void config_store(ConfigWriter& cw) {
+			cw.append(key_threshold_time, threshold_time_ms);
+		}
+
     } scene_cache;
 } // namespace patch
 
