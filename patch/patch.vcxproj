@@ -25,6 +25,7 @@
     <ClInclude Include="global_minimum.hpp" />
     <ClInclude Include="hash.hpp" />
     <ClInclude Include="init.hpp" />
+    <ClInclude Include="jsleep.hpp" />
     <ClInclude Include="json.h" />
     <ClInclude Include="macro.h" />
     <ClInclude Include="moduledata.hpp" />
