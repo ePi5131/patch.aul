@@ -277,6 +277,7 @@
     <ClInclude Include="patch_scene_cache.hpp">
       <Filter>feature</Filter>
     </ClInclude>
+    <ClInclude Include="jsleep.hpp" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="init.cpp" />
