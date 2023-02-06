@@ -95,6 +95,7 @@
     <ClInclude Include="patch_rclickmenu_split.hpp" />
     <ClInclude Include="patch_redo.hpp" />
     <ClInclude Include="patch_scene_cache.hpp" />
+    <ClInclude Include="patch_script_sort.hpp" />
     <ClInclude Include="patch_scroll_objdlg.hpp" />
     <ClInclude Include="patch_setting_dialog_excolorconfig.hpp" />
     <ClInclude Include="patch_setting_dialog_wndproc_override.hpp" />

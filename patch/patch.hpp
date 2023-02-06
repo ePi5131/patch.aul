@@ -85,3 +85,4 @@
 #include "patch_failed_longer_path.hpp"
 #include "patch_obj_imageloop.hpp"
 #include "patch_scene_cache.hpp"
+#include "patch_script_sort.hpp"

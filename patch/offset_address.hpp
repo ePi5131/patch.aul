@@ -118,6 +118,7 @@ namespace OFS {
 		constexpr i32 exfunc = 0x0a41e0;
 		constexpr i32 exfunc_10 = 0x04abe0;
 		constexpr i32 exfunc_08 = 0x04ab40;
+		constexpr i32 exfunc_4c = 0x04a430;
 		constexpr i32 func_0x047ad0 = 0x047ad0;
 		constexpr i32 exfunc_64 = 0x04d040;
 		constexpr i32 scenechange_progress_times4096 = 0x230c60;
@@ -184,6 +185,10 @@ namespace OFS {
 		constexpr i32 ObjectArrayPointer = 0x1e0fa4;
 		constexpr i32 NextObjectIdxArray = 0x1592d8;
 
+		constexpr i32 SettingDialog_ObjIdx = 0x177a10;
+		constexpr i32 get_last_filter_idx = 0x0335f0;
+		constexpr i32 get_filterp = 0x047b00;
+		
 		constexpr i32 ScaleColorBackGround = 0x0a4048;
 		constexpr i32 ScaleColorForeGround = 0x0a404c;
 		constexpr i32 LayerNameRectWidth = 0x037d1a;
