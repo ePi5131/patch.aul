@@ -29,6 +29,8 @@ namespace OFS {
 		
 		constexpr i32 str_dot_avi = 0x0745fc; // ".avi"
 		
+		constexpr i32 filter_change_size_ptr = 0x0814e8;
+		constexpr i32 filter_change_framerate_ptr = 0x080b28;
 		constexpr i32 filter_clipping_and_resize_ptr = 0x07ad58;
 	}
 
