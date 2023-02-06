@@ -25,6 +25,7 @@
     <ClInclude Include="global_minimum.hpp" />
     <ClInclude Include="hash.hpp" />
     <ClInclude Include="init.hpp" />
+    <ClInclude Include="jsleep.hpp" />
     <ClInclude Include="json.h" />
     <ClInclude Include="macro.h" />
     <ClInclude Include="moduledata.hpp" />
@@ -85,6 +86,7 @@
     <ClInclude Include="patch_lua_randex.hpp" />
     <ClInclude Include="patch_obj_colorcorrection.hpp" />
     <ClInclude Include="patch_obj_glow.hpp" />
+    <ClInclude Include="patch_obj_imageloop.hpp" />
     <ClInclude Include="patch_obj_lensblur.hpp" />
     <ClInclude Include="patch_obj_noise.hpp" />
     <ClInclude Include="patch_obj_specialcolorconv.hpp" />
@@ -92,6 +94,8 @@
     <ClInclude Include="patch_rclickmenu_delete.hpp" />
     <ClInclude Include="patch_rclickmenu_split.hpp" />
     <ClInclude Include="patch_redo.hpp" />
+    <ClInclude Include="patch_scene_cache.hpp" />
+    <ClInclude Include="patch_script_sort.hpp" />
     <ClInclude Include="patch_scroll_objdlg.hpp" />
     <ClInclude Include="patch_setting_dialog_excolorconfig.hpp" />
     <ClInclude Include="patch_setting_dialog_wndproc_override.hpp" />
@@ -151,10 +155,12 @@
     <ClCompile Include="patch_lua_randex.cpp" />
     <ClCompile Include="patch_console.cpp" />
     <ClCompile Include="patch_obj_colorcorrection.cpp" />
+    <ClCompile Include="patch_obj_imageloop.cpp" />
     <ClCompile Include="patch_obj_lensblur.cpp" />
     <ClCompile Include="patch_rclickmenu_delete.cpp" />
     <ClCompile Include="patch_rclickmenu_split.cpp" />
     <ClCompile Include="patch_redo.cpp" />
+    <ClCompile Include="patch_scene_cache.cpp" />
     <ClCompile Include="patch_setting_dialog_excolorconfig.cpp" />
     <ClCompile Include="patch_setting_dialog_wndproc_override.cpp" />
     <ClCompile Include="patch_setting_new_project.cpp" />
@@ -169,7 +175,6 @@
   </ItemGroup>
   <ItemGroup>
     <None Include=".editorconfig" />
-    <None Include="clprogram.cl" />
     <None Include="packages.config" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
