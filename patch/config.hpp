@@ -155,6 +155,9 @@ public:
             #ifdef PATCH_SWITCH_OBJ_LENSBLUR
                 patch::LensBlur.switch_load(cr);
             #endif
+            #ifdef PATCH_SWITCH_OBJ_IMAGELOOP
+                patch::ImageLoop.switch_load(cr);
+            #endif
             #ifdef PATCH_SWITCH_OBJ_NOISE
                 patch::Noise.switch_load(cr);
             #endif
@@ -181,6 +184,12 @@ public:
             #endif
             #ifdef PATCH_SWITCH_PLAYBACK_SPEED
                 patch::playback_speed.switch_load(cr);
+            #endif
+            #ifdef PATCH_SWITCH_SCENE_CACHE
+                patch::scene_cache.switch_load(cr);
+            #endif
+            #ifdef PATCH_SWITCH_SCRIPT_SORT_PATCH
+                patch::patch_script_sort.switch_load(cr);
             #endif
 		
 		    #ifdef PATCH_SWITCH_UNDO
@@ -293,6 +302,13 @@ public:
             cr.load();
         });
 #endif
+#ifdef PATCH_SWITCH_SCENE_CACHE
+        cr.regist("scene_cache", [](json_value_s* value) {
+            ConfigReader cr(value);
+            patch::scene_cache.config_load(cr);
+            cr.load();
+        });
+#endif
 
         cr.load();
     }
@@ -378,6 +394,20 @@ public:
             fast_text.write(ss);
 
             cw.append("fast_text", ss.str());
+            --level;
+        }
+#endif
+
+#ifdef PATCH_SWITCH_SCENE_CACHE
+        {
+            ConfigWriter scene_cache(++level);
+
+            patch::scene_cache.config_store(scene_cache);
+
+            std::stringstream ss;
+            scene_cache.write(ss);
+
+            cw.append("scene_cache", ss.str());
             --level;
         }
 #endif
@@ -484,6 +514,9 @@ public:
             #ifdef PATCH_SWITCH_OBJ_LENSBLUR
                 patch::LensBlur.switch_store(switch_);
             #endif
+            #ifdef PATCH_SWITCH_OBJ_IMAGELOOP
+                patch::ImageLoop.switch_store(switch_);
+            #endif
             #ifdef PATCH_SWITCH_OBJ_NOISE
                 patch::Noise.switch_store(switch_);
             #endif
@@ -510,6 +543,12 @@ public:
             #endif
             #ifdef PATCH_SWITCH_PLAYBACK_SPEED
                 patch::playback_speed.switch_store(switch_);
+            #endif
+            #ifdef PATCH_SWITCH_SCENE_CACHE
+                patch::scene_cache.switch_store(switch_);
+            #endif
+            #ifdef PATCH_SWITCH_SCRIPT_SORT_PATCH
+                patch::patch_script_sort.switch_store(switch_);
             #endif
 
 		    #ifdef PATCH_SWITCH_UNDO

@@ -83,3 +83,6 @@
 #include "patch_aup_layer_setting.hpp"
 #include "patch_failed_file_drop.hpp"
 #include "patch_failed_longer_path.hpp"
+#include "patch_obj_imageloop.hpp"
+#include "patch_scene_cache.hpp"
+#include "patch_script_sort.hpp"

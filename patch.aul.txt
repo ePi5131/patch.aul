@@ -1,5 +1,5 @@
 patch.aul r43 beta1
-Copyright (c) 2021-2022 ePi
+© 2021-2023 ePi
 https://scrapbox.io/ePi5131/patch.aul
 
 概要
@@ -92,6 +92,9 @@ https://scrapbox.io/ePi5131/patch.aul
     ・レイヤー情報を保存するかどうかの判定方法を変える(従来:オブジェクトが存在する→変更:レイヤー情報が初期値でない)
     ・読み込もうとしたファイルパスが長くて失敗するときにメッセージを出す/エラーが発生するのを修正
     ・ドロップ処理で最終的に何も行われなかったときにメッセージを出力する
+    ・画像ループの個別オブジェクトにチェックが入っている時、ループ毎に効果を付与し続けていくのを修正
+    ・シーン画像生成に時間がかかった時にキャッシュを作成する機能の追加
+    ・スクリプト並び替え管理プラグインとの競合を解消
 
     追加
     ・コンソールの表示
@@ -178,6 +181,9 @@ https://scrapbox.io/ePi5131/patch.aul
     "fast_text" : { ; テキストの軽量化について
         "release_time" : 120 ; キャッシュデータの寿命[秒]
     },
+    "scene_cache" : { ; シーンのキャッシュについて
+        "threshold_time" : 64 ; キャッシュを使用するレンダリング時間の閾値[ミリ秒]
+    },
 	"switch" : { ; どのパッチを有効にするかを選択するものです trueなら有効、falseなら無効
 		"access_key" : boolean, ; アクセスキーを付加するか (既定値: false)
 		"aup_scene_setting" : boolean, ; プロジェクトの保存/読み込み時にシーン設定の一部情報（グリッド設定など）が欠けるのを修正 (既定値: true)
@@ -207,6 +213,7 @@ https://scrapbox.io/ePi5131/patch.aul
 		"obj_lensblur" : boolean, ; レンズブラーのバグ修正 (既定値: true)
 		"obj_glow" : boolean, ; グローのしきい値が負の値になった時にエラーとなる・スレッド数より小さいサイズに正常に効果が反映されないバグを修正 (既定値: true)
 		"obj_lensblur" : boolean, ; 小さい画像に対してサイズ固定で範囲の大きいレンズブラーを掛けると例外になるのを修正 (既定値: true)
+		"obj_imageloop" : boolean, ; 画像ループの個別オブジェクトにチェックが入っている時、ループ毎に効果を付与し続けていくのを修正 (既定値: true)
 		"obj_noise" : boolean, ; ノイズの速度X、変化速度のトラック変化方法が移動無し以外の時に速度Yの値をもとに計算が行われてしまうのを修正 (既定値: true)
 		"obj_specialcolorconv" : boolean, ; 特定色域変換で変換前色に黒色を指定すると0除算が起こることがあるのを修正 (既定値: true)
 		"settingdialog_excolorconfig" : boolean, ; 拡張色変換のウィンドウが下のフィルタに被るのを修正 (既定値: true)
@@ -216,6 +223,8 @@ https://scrapbox.io/ePi5131/patch.aul
 		"add_extension" : boolean, ; 動画、音声ファイル参照の時、exedit.iniにある拡張子を追加する (既定値: true)
 		"new_project_editbox" : boolean, ; 新規プロジェクト作成ダイアログの画像サイズ入力欄の幅を広げる (既定値: true)
 		"playback_speed" : boolean, ; 中間点で再生速度を変更した時、そこまでの中間点の数だけ速度変化が遅れて反映されるバグの修正 (既定値: true)
+		"scene_cache" : boolean, ; シーン画像生成に時間がかかった時にキャッシュを作成する機能の追加 (既定値: true)
+		"patch_script_sort" : boolean, ; スクリプト並び替え管理プラグインとの競合を解消 (既定値: true)
         "undo" : boolean, ; 元に戻す 関連のバグ修正 (既定値: true)
         "undo.redo" : boolean, ; やり直す を追加 (既定値: true)
 		"console" : boolean, ; コンソール (既定値: true)

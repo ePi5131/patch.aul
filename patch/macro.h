@@ -128,6 +128,7 @@
 #define PATCH_SWITCH_OBJ_COLORCORRECTION obj_colorcorrection
 #define PATCH_SWITCH_OBJ_GLOW obj_glow
 #define PATCH_SWITCH_OBJ_LENSBLUR obj_lensblur
+#define PATCH_SWITCH_OBJ_IMAGELOOP obj_imageloop
 #define PATCH_SWITCH_OBJ_NOISE obj_noise
 #define PATCH_SWITCH_OBJ_SPECIALCOLORCONV obj_specialcolorconv
 #define PATCH_SWITCH_RCLICKMENU_SPLIT rclickmenu_split
@@ -137,6 +138,8 @@
 #define PATCH_SWITCH_DIALOG_NEW_FILE dlg_newfile
 #define PATCH_SWITCH_PLAYBACK_SPEED pb_speed
 #define PATCH_SWITCH_SETTING_NEW_PROJECT setting_newproject
+#define PATCH_SWITCH_SCENE_CACHE scenecache
+#define PATCH_SWITCH_SCRIPT_SORT_PATCH script_sort_patch
 
 #define PATCH_SWITCH_UNDO undo
 #ifdef PATCH_SWITCH_UNDO
