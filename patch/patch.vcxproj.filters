@@ -226,6 +226,58 @@
     <ClInclude Include="patch_obj_colorcorrection.hpp">
       <Filter>feature</Filter>
     </ClInclude>
+    <ClInclude Include="patch_obj_imageloop.hpp">
+      <Filter>feature</Filter>
+    </ClInclude>
+    <ClInclude Include="patch_aup_scene_setting.hpp">
+      <Filter>feature</Filter>
+    </ClInclude>
+    <ClInclude Include="patch_add_extension.hpp">
+      <Filter>feature</Filter>
+    </ClInclude>
+    <ClInclude Include="patch_aup_layer_setting.hpp">
+      <Filter>feature</Filter>
+    </ClInclude>
+    <ClInclude Include="patch_playback_speed.hpp">
+      <Filter>feature</Filter>
+    </ClInclude>
+    <ClInclude Include="patch_obj_glow.hpp">
+      <Filter>feature</Filter>
+    </ClInclude>
+    <ClInclude Include="patch_obj_specialcolorconv.hpp">
+      <Filter>feature</Filter>
+    </ClInclude>
+    <ClInclude Include="patch_fileinfo.hpp">
+      <Filter>feature</Filter>
+    </ClInclude>
+    <ClInclude Include="patch_failed_longer_path.hpp">
+      <Filter>feature</Filter>
+    </ClInclude>
+    <ClInclude Include="patch_colorpalette_cache.hpp">
+      <Filter>feature</Filter>
+    </ClInclude>
+    <ClInclude Include="patch_dialog_new_file.hpp">
+      <Filter>feature</Filter>
+    </ClInclude>
+    <ClInclude Include="patch_exo_fold_gui.hpp">
+      <Filter>feature</Filter>
+    </ClInclude>
+    <ClInclude Include="patch_exo_midpt_and_tra.hpp">
+      <Filter>feature</Filter>
+    </ClInclude>
+    <ClInclude Include="patch_failed_file_drop.hpp">
+      <Filter>feature</Filter>
+    </ClInclude>
+    <ClInclude Include="patch_setting_new_project.hpp">
+      <Filter>feature</Filter>
+    </ClInclude>
+    <ClInclude Include="patch_fast_glow.hpp">
+      <Filter>feature\fast</Filter>
+    </ClInclude>
+    <ClInclude Include="patch_scene_cache.hpp">
+      <Filter>feature</Filter>
+    </ClInclude>
+    <ClInclude Include="jsleep.hpp" />
     <ClInclude Include="patch_script_sort.hpp">
       <Filter>feature</Filter>
     </ClInclude>
@@ -342,13 +394,30 @@
     <ClCompile Include="patch_obj_colorcorrection.cpp">
       <Filter>feature</Filter>
     </ClCompile>
+    <ClCompile Include="patch_obj_imageloop.cpp">
+      <Filter>feature</Filter>
+    </ClCompile>
+    <ClCompile Include="patch_add_extension.cpp">
+      <Filter>feature</Filter>
+    </ClCompile>
+    <ClCompile Include="patch_failed_longer_path.cpp">
+      <Filter>feature</Filter>
+    </ClCompile>
+    <ClCompile Include="patch_setting_new_project.cpp">
+      <Filter>feature</Filter>
+    </ClCompile>
+    <ClCompile Include="patch_fast_glow.cpp">
+      <Filter>feature\fast</Filter>
+    </ClCompile>
+    <ClCompile Include="patch_scene_cache.cpp">
+      <Filter>feature</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="patch.rc" />
   </ItemGroup>
   <ItemGroup>
     <None Include=".editorconfig" />
-    <None Include="clprogram.cl" />
     <None Include="packages.config" />
   </ItemGroup>
 </Project>

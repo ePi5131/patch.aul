@@ -196,6 +196,9 @@ void init_t::InitAtExeditLoad() {
 #ifdef PATCH_SWITCH_OBJ_LENSBLUR
 	patch::LensBlur.init();
 #endif
+#ifdef PATCH_SWITCH_OBJ_IMAGELOOP
+	patch::ImageLoop.init();
+#endif
 #ifdef PATCH_SWITCH_OBJ_NOISE
 	patch::Noise.init();
 #endif
@@ -224,6 +227,9 @@ void init_t::InitAtExeditLoad() {
 #endif
 #ifdef PATCH_SWITCH_PLAYBACK_SPEED
 	patch::playback_speed.init();
+#endif
+#ifdef PATCH_SWITCH_SCENE_CACHE
+	patch::scene_cache.init();
 #endif
 	
 	patch::setting_dialog();

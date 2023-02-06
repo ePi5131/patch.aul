@@ -19,6 +19,7 @@
 #include <type_traits>
 #include <format>
 #include <concepts>
+#include <string_view>
 
 #include <Windows.h>
 #include <CommCtrl.h>
@@ -58,24 +59,28 @@ void modify_menuitem_check(HMENU menu, UINT item, BOOL position, Func func) {
 }
 
 struct format_literal_detail_a : private std::string_view {
-	format_literal_detail_a(const char* str, std::size_t size) : std::string_view(str, size) {}
+	constexpr format_literal_detail_a(const char* str, std::size_t size) noexcept : std::string_view(str, size) {}
 
 	template<class... Args>
-	auto operator()(Args&& ...args) { return std::vformat(*this, std::make_format_args(args...)); }
+	std::string operator()(Args&&... args) const {
+        return std::vformat(*this, std::make_format_args(std::forward<Args>(args)...));
+    }
 };
 
 struct format_literal_detail_w : private std::wstring_view {
-    format_literal_detail_w(const wchar_t* str, std::size_t size) : std::wstring_view(str, size) {}
+    constexpr format_literal_detail_w(const wchar_t* str, std::size_t size) noexcept : std::wstring_view(str, size) {}
 
     template<class... Args>
-    auto operator()(Args&& ...args) { return std::vformat(*this, std::make_wformat_args(args...)); }
+    std::wstring operator()(Args&&... args) const {
+        return std::vformat(*this, std::make_wformat_args(std::forward<Args>(args)...));
+    }
 };
 
-inline auto operator""_fmt(const char* str, std::size_t size) {
+inline constexpr auto operator""_fmt(const char* str, std::size_t size) noexcept {
 	return format_literal_detail_a(str, size);
 }
 
-inline auto operator""_fmt(const wchar_t* str, std::size_t size) {
+inline constexpr auto operator""_fmt(const wchar_t* str, std::size_t size) noexcept {
 	return format_literal_detail_w(str, size);
 }
 
