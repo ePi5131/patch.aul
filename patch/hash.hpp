@@ -19,9 +19,9 @@
 #include <concepts>
 #include <type_traits>
 
-#include <boost/scope_exit.hpp>
-
 #include <Windows.h>
+
+#include "scope_exit.hpp"
 
 struct SHA256 {
 private:
@@ -74,9 +74,9 @@ public:
 		{
 			auto hFile = CreateFileA(filename.data(), GENERIC_READ, 0, NULL, OPEN_EXISTING, 0, NULL);
 			if (hFile == INVALID_HANDLE_VALUE) throw std::runtime_error("Failed to open file.");
-			BOOST_SCOPE_EXIT_ALL(hFile) {
+			SCOPE_EXIT_AUTO{[hFile]{
 				CloseHandle(hFile);
-			};
+			}};
 
 			DWORD sizehigh;
 			auto sizelow = GetFileSize(hFile, &sizehigh);

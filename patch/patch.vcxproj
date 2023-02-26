@@ -112,6 +112,7 @@
     <ClInclude Include="patch_undo.hpp" />
     <ClInclude Include="restorable_patch.hpp" />
     <ClInclude Include="resource.h" />
+    <ClInclude Include="scope_exit.hpp" />
     <ClInclude Include="stopwatch.hpp" />
     <ClInclude Include="timer.hpp" />
     <ClInclude Include="util.hpp" />

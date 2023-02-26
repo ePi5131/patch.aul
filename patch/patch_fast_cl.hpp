@@ -1234,7 +1234,7 @@ public:
 				auto load_ret = __HrLoadAllImportsForDll("OpenCL.dll");
 					if (FAILED(load_ret)) {
 						[load_ret]() {
-							debug_log("OpenCL not available {}", "delay load failed {}"_fmt(load_ret));
+							debug_log("OpenCL not available {}", std::format("delay load failed {}", load_ret));
 						}();
 						return false;
 					}

@@ -16,7 +16,8 @@
 #pragma once
 
 #include <Windows.h>
-#include <boost/scope_exit.hpp>
+
+#include "scope_exit.hpp"
 
 #include "macro.h"
 #include "util_resource.hpp"
@@ -42,7 +43,7 @@ public:
         CloseHandle(hFile);
 
         json_value_s* root = nullptr;
-        BOOST_SCOPE_EXIT_ALL(&root) { free(root); };
+        SCOPE_EXIT_AUTO{[root]{ free(root); }};
 
         root = json_parse(file.get(), size_low);
         if (root == nullptr) {
@@ -321,9 +322,9 @@ public:
             patch_resource_message_w(PATCH_RS_PATCH_FAILED_TO_SAVE_SETTING, MB_TASKMODAL | MB_ICONEXCLAMATION);
             return;
         }
-        BOOST_SCOPE_EXIT_ALL(&hFile) {
+        SCOPE_EXIT_AUTO{[hFile]{
             CloseHandle(hFile);
-        };
+        }};
 
         int level = 0;
         ConfigWriter cw(level);
