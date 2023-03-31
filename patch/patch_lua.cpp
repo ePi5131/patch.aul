@@ -130,17 +130,17 @@ namespace patch {
         lua_getglobal(L, "package");
         const auto exedit_dir = load_i32<char*>(GLOBAL::exedit_base + OFS::ExEdit::exeditdir);
         if(auto folder_name = load_i32<char*>(GLOBAL::exedit_base + OFS::ExEdit::sScriptFolderName); folder_name == nullptr || folder_name[0] == '\0') {
-            lua_pushstring(L, "{0}?.lua;{0}script\\?.lua;{0}module\\?.lua;{0}module\\?\\init.lua"_fmt(exedit_dir).c_str());
+            lua_pushstring(L, std::format("{0}?.lua;{0}script\\?.lua;{0}module\\?.lua;{0}module\\?\\init.lua", exedit_dir).c_str());
             lua_setfield(L, -2, "path");
 
-            lua_pushstring(L, "{0}?.dll;{0}script\\?.dll;{0}module\\?.dll"_fmt(exedit_dir).c_str());
+            lua_pushstring(L, std::format("{0}?.dll;{0}script\\?.dll;{0}module\\?.dll", exedit_dir).c_str());
             lua_setfield(L, -2, "cpath");
         }
         else {
-            lua_pushstring(L, "{0}?.lua;{0}script\\?.lua;{0}script\\{1}\\?.lua;{0}module\\?.lua;{0}module\\?\\init.lua"_fmt(exedit_dir, folder_name).c_str());
+            lua_pushstring(L, std::format("{0}?.lua;{0}script\\?.lua;{0}script\\{1}\\?.lua;{0}module\\?.lua;{0}module\\?\\init.lua", exedit_dir, folder_name).c_str());
             lua_setfield(L, -2, "path");
 
-            lua_pushstring(L, "{0}?.dll;{0}script\\?.dll;{0}script\\{1}\\?.dll;{0}module\\?.dll"_fmt(exedit_dir, folder_name).c_str());
+            lua_pushstring(L, std::format("{0}?.dll;{0}script\\?.dll;{0}script\\{1}\\?.dll;{0}module\\?.dll", exedit_dir, folder_name).c_str());
             lua_setfield(L, -2, "cpath");
         }
         lua_pop(L, 1);

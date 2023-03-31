@@ -17,7 +17,7 @@
 
 namespace patch {
     LRESULT CALLBACK aviutl_wndproc_override_t::wrap(HWND hwnd, UINT message, WPARAM wparam, LPARAM lparam) {
-        auto org = [=]() { return aviutl_wndproc_orig(hwnd, message, wparam, lparam); };
+        auto org = [=] { return aviutl_wndproc_orig(hwnd, message, wparam, lparam); };
 
         switch (message) {
         case WM_MENUSELECT:

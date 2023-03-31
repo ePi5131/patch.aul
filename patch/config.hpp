@@ -16,7 +16,8 @@
 #pragma once
 
 #include <Windows.h>
-#include <boost/scope_exit.hpp>
+
+#include "scope_exit.hpp"
 
 #include "macro.h"
 #include "util_resource.hpp"
@@ -29,8 +30,8 @@ class Config2 {
     bool invalid_json;
 
 public:
-    void load(std::wstring_view path) {
-        auto hFile = CreateFileW(path.data(), GENERIC_READ, FILE_SHARE_READ, NULL, OPEN_EXISTING, 0, NULL);
+    void load(const std::wstring& path) {
+        auto hFile = CreateFileW(path.c_str(), GENERIC_READ, FILE_SHARE_READ, NULL, OPEN_EXISTING, 0, NULL);
         if (hFile == INVALID_HANDLE_VALUE) return;
         DWORD ignore;
         auto size_low = GetFileSize(hFile, &ignore);
@@ -42,7 +43,7 @@ public:
         CloseHandle(hFile);
 
         json_value_s* root = nullptr;
-        BOOST_SCOPE_EXIT_ALL(&root) { free(root); };
+        SCOPE_EXIT_AUTO{[root]{ free(root); }};
 
         root = json_parse(file.get(), size_low);
         if (root == nullptr) {
@@ -316,17 +317,17 @@ public:
         cr.load();
     }
 
-    void store(std::wstring_view path) {
+    void store(const std::wstring& path) {
         if (invalid_json)return;
 
-        auto hFile = CreateFileW(path.data(), GENERIC_WRITE, FILE_SHARE_READ, NULL, CREATE_ALWAYS, 0, NULL);
+        auto hFile = CreateFileW(path.c_str(), GENERIC_WRITE, FILE_SHARE_READ, NULL, CREATE_ALWAYS, 0, NULL);
         if (hFile == INVALID_HANDLE_VALUE) {
             patch_resource_message_w(PATCH_RS_PATCH_FAILED_TO_SAVE_SETTING, MB_TASKMODAL | MB_ICONEXCLAMATION);
             return;
         }
-        BOOST_SCOPE_EXIT_ALL(&hFile) {
+        SCOPE_EXIT_AUTO{[hFile]{
             CloseHandle(hFile);
-        };
+        }};
 
         int level = 0;
         ConfigWriter cw(level);

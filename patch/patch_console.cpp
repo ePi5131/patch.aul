@@ -25,7 +25,7 @@ namespace patch {
 	void __stdcall console_t::debug_print_override(LPCSTR lpOutputString) {
 		if (!lpOutputString)return;
 		console.setConsoleTextAttribute(FOREGROUND_BLUE | FOREGROUND_INTENSITY);
-		if (console.debug_string_time) console.writeConsole("[{}]\t"_fmt(get_local_time_string()));
+		if (console.debug_string_time) console.writeConsole(std::format("[{}]\t", get_local_time_string()));
 		console.writeConsole(lpOutputString);
 		console.setConsoleTextAttribute(FOREGROUND_RED | FOREGROUND_GREEN | FOREGROUND_BLUE);
 		console.writeConsole("\n");
@@ -34,7 +34,7 @@ namespace patch {
 	void __stdcall console_t::exedit_lua_error_override(LPCSTR lpOutputString) {
 		if (!lpOutputString)return;
 		console.setConsoleTextAttribute(FOREGROUND_RED | FOREGROUND_INTENSITY);
-		if (console.debug_string_time) console.writeConsole("[{}]\t"_fmt(get_local_time_string()));
+		if (console.debug_string_time) console.writeConsole(std::format("[{}]\t", get_local_time_string()));
 		console.writeConsole(lpOutputString);
 		console.setConsoleTextAttribute(FOREGROUND_RED | FOREGROUND_GREEN | FOREGROUND_BLUE);
 		console.writeConsole("\n");
