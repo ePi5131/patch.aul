@@ -153,7 +153,7 @@ namespace patch::fast {
 			ExchangeFunction(GLOBAL::exedit_hmod, cstr_gdi32_dll.get(), cstr_CreateFontIndirectW.get(), &CreateFontIndirectW);
 			ReplaceFunction(GLOBAL::exedit_base + 0x8a720, &MyCreateFont);
 
-			timer = std::make_unique<Timer>(std::chrono::seconds{release_time}, [this]() {
+			timer = std::make_unique<Timer>(std::chrono::seconds{release_time}, [this] {
 				collect(release_time);
 			});
 		}

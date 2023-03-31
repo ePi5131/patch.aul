@@ -34,14 +34,14 @@ public:
 	template<class Rep, class Period>
 	bool wait_for(const std::chrono::duration<Rep, Period>& rel_time) {
 		std::unique_lock lock(mtx);
-		cv.wait_for(lock, rel_time, [this]() { return signal; });
+		cv.wait_for(lock, rel_time, [this] { return signal; });
 		return signal;
 	}
 
 	template<class Clock, class Duration>
 	bool wait_until(const std::chrono::time_point<Clock, Duration>& abs_time) {
 		std::unique_lock lock(mtx);
-		cv.wait_until(lock, abs_time, [this]() { return signal; });
+		cv.wait_until(lock, abs_time, [this] { return signal; });
 		return signal;
 	}
 
