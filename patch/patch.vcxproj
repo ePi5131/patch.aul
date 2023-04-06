@@ -109,6 +109,7 @@
     <ClInclude Include="patch_tra_change_drawfilter.hpp" />
     <ClInclude Include="patch_tra_specified_speed.hpp" />
     <ClInclude Include="patch_undo.hpp" />
+    <ClInclude Include="patch_warning_duplicate_plugins.hpp" />
     <ClInclude Include="restorable_patch.hpp" />
     <ClInclude Include="resource.h" />
     <ClInclude Include="scope_exit.hpp" />
@@ -168,6 +169,7 @@
     <ClCompile Include="patch_susie_load.cpp" />
     <ClCompile Include="patch_tra_change_drawfilter.cpp" />
     <ClCompile Include="patch_undo.cpp" />
+    <ClCompile Include="patch_warning_duplicate_plugins.cpp" />
     <ClCompile Include="util_others.cpp" />
   </ItemGroup>
   <ItemGroup>

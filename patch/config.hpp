@@ -192,6 +192,9 @@ public:
             #ifdef PATCH_SWITCH_SCRIPT_SORT_PATCH
                 patch::patch_script_sort.switch_load(cr);
             #endif
+            #ifdef PATCH_SWITCH_WARNING_DUPLICATE_PLUGINS
+                patch::WarningDuplicate.switch_load(cr);
+            #endif
 		
 		    #ifdef PATCH_SWITCH_UNDO
                 patch::undo.switch_load(cr);
@@ -550,6 +553,9 @@ public:
             #endif
             #ifdef PATCH_SWITCH_SCRIPT_SORT_PATCH
                 patch::patch_script_sort.switch_store(switch_);
+            #endif
+            #ifdef PATCH_SWITCH_WARNING_DUPLICATE_PLUGINS
+                patch::WarningDuplicate.switch_store(switch_);
             #endif
 
 		    #ifdef PATCH_SWITCH_UNDO

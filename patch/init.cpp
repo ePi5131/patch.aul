@@ -96,6 +96,9 @@ void init_t::InitAtPatchLoaded() {
 	patch::fileinfo.init();
 #endif
 
+#ifdef PATCH_SWITCH_WARNING_DUPLICATE_PLUGINS
+	patch::WarningDuplicate.init();
+#endif
 }
 
 void init_t::InitAtExeditLoad() {
@@ -453,7 +456,6 @@ BOOL __cdecl init_t::func_initWrap(AviUtl::FilterPlugin* fp) {
 	#ifdef PATCH_SWITCH_LUA_GETVALUE
 		patch::lua_getvalueex.init();
 	#endif
-
 #endif
 	
 	return TRUE;
