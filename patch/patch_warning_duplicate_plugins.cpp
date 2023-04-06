@@ -4,6 +4,7 @@
 #include <ranges>
 #include <cctype>
 #include <format>
+#include <filesystem>
 #include <Shlwapi.h>
 #pragma comment(lib, "shlwapi.lib")
 
@@ -12,22 +13,34 @@
 #include "util_others.hpp"
 #include "cryptostring.hpp"
 
-static std::string get_lower_filename(LPCSTR path) {
-	std::string ret{ PathFindFileNameA(path) };
-	std::ranges::for_each(ret, [](char& c) { c = static_cast<char>(std::tolower(c)); });
-	return ret;
+namespace {
+	struct fileinfo {
+		std::filesystem::path fullpath;
+		std::filesystem::file_time_type update_time;
+	};
+
+	// { filename, fullpath }
+	using path_cache = std::unordered_map<std::filesystem::path, fileinfo>;
 }
 
-static bool warning_duplicate_message(const std::wstring& first, const std::wstring& second) {
+static bool warning_duplicate_message(
+	const std::filesystem::path& first, const std::filesystem::file_time_type& first_time,
+	const std::filesystem::path& second, const std::filesystem::file_time_type& second_time
+) {
+	using namespace std::string_view_literals;
+
 	const auto r_main = resource_string_w(PATCH_RS_PATCH_DUP_PLUGIN_WARNING);
 	const auto r_content = resource_string_w(PATCH_RS_PATCH_DUP_PLUGIN_WARNING_CONTENT);
 	const auto r_yes = resource_string_w(PATCH_RS_PATCH_DUP_PLUGIN_WARNING_YES);
 	const auto r_ignore = resource_string_w(PATCH_RS_PATCH_DUP_PLUGIN_WARNING_IGNORE);
 	const auto r_ex_ctl = resource_string_w(PATCH_RS_PATCH_DUP_PLUGIN_WARNING_EX_CTL);
 	const auto r_cl_ctl = resource_string_w(PATCH_RS_PATCH_DUP_PLUGIN_WARNING_CL_CTL);
+	const auto r_newer = resource_string_w(PATCH_RS_PATCH_DUP_PLUGIN_WARNING_NEWER);
 
-	const auto link_first = std::format(LR"(<a href="1">{}</a>)", first);
-	const auto link_second = std::format(LR"(<a href="2">{}</a>)", second);
+	auto cmp_first_second_time = first_time <=> second_time;
+
+	const auto link_first = std::format(LR"(<a href="1">{}</a> : {}{})", first.wstring(), first_time, cmp_first_second_time > 0 ? r_newer.value() : L""sv);
+	const auto link_second = std::format(LR"(<a href="2">{}</a> : {}{})", second.wstring(), second_time, cmp_first_second_time < 0 ? r_newer.value() : L""sv);
 	const auto r_ex_info = resource_format_w(PATCH_RS_PATCH_DUP_PLUGIN_WARNING_EX_INFO, link_first, link_second);
 
 	enum ID : int {
@@ -41,8 +54,8 @@ static bool warning_duplicate_message(const std::wstring& first, const std::wstr
 	};
 
 	struct CBDATA {
-		const std::wstring& first;
-		const std::wstring& second;
+		const std::filesystem::path& first;
+		const std::filesystem::path& second;
 	} cbdata{
 		first,
 		second
@@ -80,10 +93,10 @@ static bool warning_duplicate_message(const std::wstring& first, const std::wstr
 					const auto tag = reinterpret_cast<LPCWSTR>(lParam);
 					switch (tag[0]) {
 					case L'1':
-						open_explorer(cbdata.first);
+						open_explorer(cbdata.first.wstring());
 						break;
 					case L'2':
-						open_explorer(cbdata.second);
+						open_explorer(cbdata.second.wstring());
 						break;
 					}
 					break;
@@ -108,18 +121,28 @@ static bool warning_duplicate_message(const std::wstring& first, const std::wstr
 	}
 }
 
-namespace {
-	// { filename, fullpath }
-	using path_cache = std::unordered_map<std::string, std::string>;
-}
 
 static HMODULE warning_duplicate_common(path_cache& map, LPCSTR lpLibFileName) {
-	auto filename = get_lower_filename(lpLibFileName);
+	static auto exe_dir = std::filesystem::path{ WinWrap::Module{GetModuleHandleA(NULL)}.getFileNameW() }.parent_path();
 
-	if (const auto itr = map.find(filename); itr != map.cend()) {
-		if (itr->second == lpLibFileName) return LoadLibraryA(lpLibFileName);
+	std::filesystem::path arg_path{ lpLibFileName };
+	auto arg_filename = arg_path.filename();
 
-		if (warning_duplicate_message(string_convert_A2W(itr->second), string_convert_A2W(lpLibFileName))) {
+	auto safe_last_write_time = [](const std::filesystem::path& path) -> std::filesystem::file_time_type {
+		try {
+			return std::filesystem::last_write_time(path);
+		}
+		catch (const std::filesystem::filesystem_error&) {
+			return {};
+		}
+	};
+
+	if (const auto itr = map.find(arg_filename); itr != map.cend()) {
+		if (itr->second.fullpath == arg_path) return LoadLibraryA(lpLibFileName);
+		
+		auto update_time = safe_last_write_time(arg_path);
+
+		if (warning_duplicate_message(std::filesystem::relative(itr->second.fullpath, exe_dir), itr->second.update_time, std::filesystem::relative(arg_path, exe_dir), update_time)) {
 			return LoadLibraryA(lpLibFileName);
 		}
 		else {
@@ -127,7 +150,8 @@ static HMODULE warning_duplicate_common(path_cache& map, LPCSTR lpLibFileName) {
 		}
 	}
 	else {
-		map.try_emplace(filename, lpLibFileName);
+		auto update_time = safe_last_write_time(arg_path);;
+		map.try_emplace(arg_filename, arg_path, update_time);
 		return LoadLibraryA(lpLibFileName);
 	}
 }
