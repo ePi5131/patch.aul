@@ -37,10 +37,26 @@ static bool warning_duplicate_message(
 	const auto r_cl_ctl = resource_string_w(PATCH_RS_PATCH_DUP_PLUGIN_WARNING_CL_CTL);
 	const auto r_newer = resource_string_w(PATCH_RS_PATCH_DUP_PLUGIN_WARNING_NEWER);
 
-	auto cmp_first_second_time = first_time <=> second_time;
+	const auto cmp_first_second_time = first_time <=> second_time;
 
-	const auto link_first = std::format(LR"(<a href="1">{}</a> : {}{})", first.wstring(), first_time, cmp_first_second_time > 0 ? r_newer.value() : L""sv);
-	const auto link_second = std::format(LR"(<a href="2">{}</a> : {}{})", second.wstring(), second_time, cmp_first_second_time < 0 ? r_newer.value() : L""sv);
+	auto normalize_time = [](const std::filesystem::file_time_type& t) {
+		const auto utc = std::chrono::clock_cast<std::chrono::utc_clock>(t);
+		const auto local = std::chrono::local_time{ utc.time_since_epoch() };
+		return std::chrono::floor<std::chrono::seconds>(local);
+	};
+
+	const auto link_first = std::format(
+		LR"(<a href="1">{}</a> : {:%Y/%m/%d %H:%M:%S}{})",
+		first.wstring(),
+		normalize_time(first_time),
+		cmp_first_second_time > 0 ? r_newer.value() : L""sv
+	);
+	const auto link_second = std::format(
+		LR"(<a href="2">{}</a> : {:%Y/%m/%d %H:%M:%S}{})",
+		second.wstring(),
+		normalize_time(second_time),
+		cmp_first_second_time < 0 ? r_newer.value() : L""sv
+	);
 	const auto r_ex_info = resource_format_w(PATCH_RS_PATCH_DUP_PLUGIN_WARNING_EX_INFO, link_first, link_second);
 
 	enum ID : int {
@@ -48,19 +64,19 @@ static bool warning_duplicate_message(
 		Ignore,
 	};
 
-	TASKDIALOG_BUTTON vtdb[] = {
+	const TASKDIALOG_BUTTON vtdb[] = {
 		{ static_cast<int>(ID::Yes), r_yes->c_str() },
 		{ static_cast<int>(ID::Ignore), r_ignore->c_str() },
 	};
 
-	struct CBDATA {
+	const struct CBDATA {
 		const std::filesystem::path& first;
 		const std::filesystem::path& second;
 	} cbdata{
 		first,
 		second
 	};
-	TASKDIALOGCONFIG tdc{
+	const TASKDIALOGCONFIG tdc{
 		.cbSize = sizeof(TASKDIALOGCONFIG),
 		.hwndParent = NULL,
 		.hInstance = GLOBAL::patchaul_hinst,
@@ -125,8 +141,8 @@ static bool warning_duplicate_message(
 static HMODULE warning_duplicate_common(path_cache& map, LPCSTR lpLibFileName) {
 	static auto exe_dir = std::filesystem::path{ WinWrap::Module{GetModuleHandleA(NULL)}.getFileNameW() }.parent_path();
 
-	std::filesystem::path arg_path{ lpLibFileName };
-	auto arg_filename = arg_path.filename();
+	const std::filesystem::path arg_path{ lpLibFileName };
+	const auto arg_filename = arg_path.filename();
 
 	auto safe_last_write_time = [](const std::filesystem::path& path) -> std::filesystem::file_time_type {
 		try {
@@ -140,7 +156,7 @@ static HMODULE warning_duplicate_common(path_cache& map, LPCSTR lpLibFileName) {
 	if (const auto itr = map.find(arg_filename); itr != map.cend()) {
 		if (itr->second.fullpath == arg_path) return LoadLibraryA(lpLibFileName);
 		
-		auto update_time = safe_last_write_time(arg_path);
+		const auto update_time = safe_last_write_time(arg_path);
 
 		if (warning_duplicate_message(std::filesystem::relative(itr->second.fullpath, exe_dir), itr->second.update_time, std::filesystem::relative(arg_path, exe_dir), update_time)) {
 			return LoadLibraryA(lpLibFileName);
@@ -150,7 +166,7 @@ static HMODULE warning_duplicate_common(path_cache& map, LPCSTR lpLibFileName) {
 		}
 	}
 	else {
-		auto update_time = safe_last_write_time(arg_path);;
+		const auto update_time = safe_last_write_time(arg_path);;
 		map.try_emplace(arg_filename, arg_path, update_time);
 		return LoadLibraryA(lpLibFileName);
 	}
