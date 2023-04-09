@@ -141,6 +141,8 @@ namespace patch::fast {
 
 		inline static const char key_release_time[] = "release_time";
 
+		std::unique_ptr<Timer> timer;
+
 	public:
 		void init() {
 			enabled_i = enabled;
@@ -151,9 +153,9 @@ namespace patch::fast {
 			ExchangeFunction(GLOBAL::exedit_hmod, cstr_gdi32_dll.get(), cstr_CreateFontIndirectW.get(), &CreateFontIndirectW);
 			ReplaceFunction(GLOBAL::exedit_base + 0x8a720, &MyCreateFont);
 
-			timer.set([this]() {
+			timer = std::make_unique<Timer>(std::chrono::seconds{release_time}, [this] {
 				collect(release_time);
-			}, release_time * 1000);
+			});
 		}
 
 		void switching(bool flag) { enabled = flag; }

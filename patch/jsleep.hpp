@@ -14,26 +14,39 @@
 */
 
 #pragma once
-#include <iostream>
+#include <chrono>
 #include <mutex>
+#include <condition_variable>
 
-#include "util_others.hpp"
-
-inline class debug_log_t {
-private:
+class JSleep {
+	bool signal;
 	std::mutex mtx;
-
+	std::condition_variable cv;
 public:
-	template<class T>
-	void operator()(const T& v) {
+	JSleep() : signal{ false }, mtx{}, cv{} {}
+
+	void cancel() {
 		std::lock_guard lock(mtx);
-		std::cout << v << std::endl;
+		signal = true;
+		cv.notify_all();
 	}
 
-	template<class... Args>
-	void operator()(std::format_string<Args...> fmt, Args&&... args) {
-		std::lock_guard lock(mtx);
-		format_to_os(std::cout, fmt, std::forward<Args>(args)...);
-		std::endl(std::cout);
+	template<class Rep, class Period>
+	bool wait_for(const std::chrono::duration<Rep, Period>& rel_time) {
+		std::unique_lock lock(mtx);
+		cv.wait_for(lock, rel_time, [this] { return signal; });
+		return signal;
 	}
-} debug_log;
+
+	template<class Clock, class Duration>
+	bool wait_until(const std::chrono::time_point<Clock, Duration>& abs_time) {
+		std::unique_lock lock(mtx);
+		cv.wait_until(lock, abs_time, [this] { return signal; });
+		return signal;
+	}
+
+	void reset() {
+		std::lock_guard lock(mtx);
+		signal = true;
+	}
+};

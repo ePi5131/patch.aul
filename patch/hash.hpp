@@ -19,9 +19,9 @@
 #include <concepts>
 #include <type_traits>
 
-#include <boost/scope_exit.hpp>
-
 #include <Windows.h>
+
+#include "scope_exit.hpp"
 
 struct SHA256 {
 private:
@@ -66,17 +66,17 @@ public:
 
 	std::byte data[32];
 
-	SHA256(std::string_view filename) {
+	SHA256(const std::string& filename) {
 #if _DEBUG && 1 // 重いので
 		std::fill(std::begin(data), std::end(data), std::byte{});
 #else
 		std::vector<uint8_t> buf;
 		{
-			auto hFile = CreateFileA(filename.data(), GENERIC_READ, 0, NULL, OPEN_EXISTING, 0, NULL);
+			auto hFile = CreateFileA(filename.c_str(), GENERIC_READ, 0, NULL, OPEN_EXISTING, 0, NULL);
 			if (hFile == INVALID_HANDLE_VALUE) throw std::runtime_error("Failed to open file.");
-			BOOST_SCOPE_EXIT_ALL(hFile) {
+			SCOPE_EXIT_AUTO{[hFile]{
 				CloseHandle(hFile);
-			};
+			}};
 
 			DWORD sizehigh;
 			auto sizelow = GetFileSize(hFile, &sizehigh);
@@ -165,7 +165,7 @@ public:
 	template<std::integral... T> requires(sizeof...(T) == std::extent_v<decltype(data)>)
 	constexpr SHA256(T&&... list) noexcept : data{ static_cast<std::byte>(std::forward<T>(list))... } {}
 
-	static std::optional<SHA256> make_opt(std::string_view filename) {
+	static std::optional<SHA256> make_opt(const std::string& filename) {
 		try {
 			return SHA256(filename);
 		}

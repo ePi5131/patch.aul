@@ -16,7 +16,8 @@
 #pragma once
 
 #include <Windows.h>
-#include <boost/scope_exit.hpp>
+
+#include "scope_exit.hpp"
 
 #include "macro.h"
 #include "util_resource.hpp"
@@ -29,8 +30,8 @@ class Config2 {
     bool invalid_json;
 
 public:
-    void load(std::wstring_view path) {
-        auto hFile = CreateFileW(path.data(), GENERIC_READ, FILE_SHARE_READ, NULL, OPEN_EXISTING, 0, NULL);
+    void load(const std::wstring& path) {
+        auto hFile = CreateFileW(path.c_str(), GENERIC_READ, FILE_SHARE_READ, NULL, OPEN_EXISTING, 0, NULL);
         if (hFile == INVALID_HANDLE_VALUE) return;
         DWORD ignore;
         auto size_low = GetFileSize(hFile, &ignore);
@@ -42,7 +43,7 @@ public:
         CloseHandle(hFile);
 
         json_value_s* root = nullptr;
-        BOOST_SCOPE_EXIT_ALL(&root) { free(root); };
+        SCOPE_EXIT_AUTO{[root]{ free(root); }};
 
         root = json_parse(file.get(), size_low);
         if (root == nullptr) {
@@ -155,6 +156,9 @@ public:
             #ifdef PATCH_SWITCH_OBJ_LENSBLUR
                 patch::LensBlur.switch_load(cr);
             #endif
+            #ifdef PATCH_SWITCH_OBJ_IMAGELOOP
+                patch::ImageLoop.switch_load(cr);
+            #endif
             #ifdef PATCH_SWITCH_OBJ_NOISE
                 patch::Noise.switch_load(cr);
             #endif
@@ -181,6 +185,15 @@ public:
             #endif
             #ifdef PATCH_SWITCH_PLAYBACK_SPEED
                 patch::playback_speed.switch_load(cr);
+            #endif
+            #ifdef PATCH_SWITCH_SCENE_CACHE
+                patch::scene_cache.switch_load(cr);
+            #endif
+            #ifdef PATCH_SWITCH_SCRIPT_SORT_PATCH
+                patch::patch_script_sort.switch_load(cr);
+            #endif
+            #ifdef PATCH_SWITCH_WARNING_DUPLICATE_PLUGINS
+                patch::WarningDuplicate.switch_load(cr);
             #endif
             #ifdef PATCH_SWITCH_SHARED_CACHE
                 patch::SharedCache.switch_load(cr);
@@ -296,21 +309,28 @@ public:
             cr.load();
         });
 #endif
+#ifdef PATCH_SWITCH_SCENE_CACHE
+        cr.regist("scene_cache", [](json_value_s* value) {
+            ConfigReader cr(value);
+            patch::scene_cache.config_load(cr);
+            cr.load();
+        });
+#endif
 
         cr.load();
     }
 
-    void store(std::wstring_view path) {
+    void store(const std::wstring& path) {
         if (invalid_json)return;
 
-        auto hFile = CreateFileW(path.data(), GENERIC_WRITE, FILE_SHARE_READ, NULL, CREATE_ALWAYS, 0, NULL);
+        auto hFile = CreateFileW(path.c_str(), GENERIC_WRITE, FILE_SHARE_READ, NULL, CREATE_ALWAYS, 0, NULL);
         if (hFile == INVALID_HANDLE_VALUE) {
             patch_resource_message_w(PATCH_RS_PATCH_FAILED_TO_SAVE_SETTING, MB_TASKMODAL | MB_ICONEXCLAMATION);
             return;
         }
-        BOOST_SCOPE_EXIT_ALL(&hFile) {
+        SCOPE_EXIT_AUTO{[hFile]{
             CloseHandle(hFile);
-        };
+        }};
 
         int level = 0;
         ConfigWriter cw(level);
@@ -381,6 +401,20 @@ public:
             fast_text.write(ss);
 
             cw.append("fast_text", ss.str());
+            --level;
+        }
+#endif
+
+#ifdef PATCH_SWITCH_SCENE_CACHE
+        {
+            ConfigWriter scene_cache(++level);
+
+            patch::scene_cache.config_store(scene_cache);
+
+            std::stringstream ss;
+            scene_cache.write(ss);
+
+            cw.append("scene_cache", ss.str());
             --level;
         }
 #endif
@@ -487,6 +521,9 @@ public:
             #ifdef PATCH_SWITCH_OBJ_LENSBLUR
                 patch::LensBlur.switch_store(switch_);
             #endif
+            #ifdef PATCH_SWITCH_OBJ_IMAGELOOP
+                patch::ImageLoop.switch_store(switch_);
+            #endif
             #ifdef PATCH_SWITCH_OBJ_NOISE
                 patch::Noise.switch_store(switch_);
             #endif
@@ -513,6 +550,15 @@ public:
             #endif
             #ifdef PATCH_SWITCH_PLAYBACK_SPEED
                 patch::playback_speed.switch_store(switch_);
+            #endif
+            #ifdef PATCH_SWITCH_SCENE_CACHE
+                patch::scene_cache.switch_store(switch_);
+            #endif
+            #ifdef PATCH_SWITCH_SCRIPT_SORT_PATCH
+                patch::patch_script_sort.switch_store(switch_);
+            #endif
+            #ifdef PATCH_SWITCH_WARNING_DUPLICATE_PLUGINS
+                patch::WarningDuplicate.switch_store(switch_);
             #endif
             #ifdef PATCH_SWITCH_SHARED_CACHE
                 patch::SharedCache.switch_store(switch_);
