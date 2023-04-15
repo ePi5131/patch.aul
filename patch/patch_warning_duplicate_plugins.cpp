@@ -10,6 +10,7 @@
 
 #include <winwrap.hpp>
 
+#include "init.hpp"
 #include "util_others.hpp"
 #include "cryptostring.hpp"
 
@@ -154,12 +155,12 @@ static HMODULE warning_duplicate_common(path_cache& map, LPCSTR lpLibFileName) {
 	};
 
 	if (const auto itr = map.find(arg_filename); itr != map.cend()) {
-		if (itr->second.fullpath == arg_path) return LoadLibraryA(lpLibFileName);
+		if (itr->second.fullpath == arg_path) return init_t::LoadLibraryAWrap(lpLibFileName);
 		
 		const auto update_time = safe_last_write_time(arg_path);
 
 		if (warning_duplicate_message(std::filesystem::relative(itr->second.fullpath, exe_dir), itr->second.update_time, std::filesystem::relative(arg_path, exe_dir), update_time)) {
-			return LoadLibraryA(lpLibFileName);
+			return init_t::LoadLibraryAWrap(lpLibFileName);
 		}
 		else {
 			return NULL;
@@ -168,7 +169,7 @@ static HMODULE warning_duplicate_common(path_cache& map, LPCSTR lpLibFileName) {
 	else {
 		const auto update_time = safe_last_write_time(arg_path);;
 		map.try_emplace(arg_filename, arg_path, update_time);
-		return LoadLibraryA(lpLibFileName);
+		return init_t::LoadLibraryAWrap(lpLibFileName);
 	}
 }
 
