@@ -192,3 +192,43 @@ public:
 inline bool operator==(const SHA256& a, const SHA256& b) {
 	return std::equal(std::begin(a.data), std::end(a.data), std::begin(b.data));
 }
+
+struct FNV1_32 {
+	uint32_t hash;
+	
+	static constexpr uint32_t basis = 0x811c9dc5;
+	
+	constexpr FNV1_32() : hash(basis) {}
+	
+	constexpr FNV1_32(const uint8_t* ptr, size_t len) : hash(basis) {
+		const uint8_t* end = ptr + len;
+ 		for (; ptr != end; ++ptr) step(*ptr);
+	}
+	
+	constexpr void step(uint8_t x) {
+		// hash *= 0x01000193
+		hash +=
+			(hash << 1) +
+			(hash << 4) +
+			(hash << 7) +
+			(hash << 8) +
+			(hash << 24);
+		hash ^= x;
+	}
+
+	template<class T>
+	requires(sizeof(T) > 1 && std::is_trivial_v<T>)
+	constexpr void step(T x) {
+		uint8_t ax[sizeof(T)];
+		std::memcpy(ax, std::addressof(x), sizeof(T));
+		step(ax[0]);
+		step(ax[1]);
+		step(ax[2]);
+		step(ax[3]);
+	}
+
+	constexpr operator uint32_t() const {
+		return hash;
+	}
+};
+

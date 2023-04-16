@@ -14,13 +14,33 @@
 */
 
 #include "patch_shared_cache.hpp"
+#include "hash.hpp"
+
+static constexpr int calc_cache_size(int w, int h, int bitcount) {
+    return ((((w * bitcount + 7) >> 3) + 3) & 0xfffffffc) * h + 16;
+}
+
+static constexpr int32_t make_key1(ExEdit::ObjectFilterIndex idx, int v_func_id, int bitcount) {
+    FNV1_32 ret;
+
+    ret.step(idx);
+    ret.step(v_func_id);
+    ret.step(bitcount);
+
+    return static_cast<int32_t>(ret);
+}
+
+static constexpr int32_t make_key2(int w, int h) {
+    FNV1_32 ret;
+
+    ret.step(w);
+    ret.step(h);
+
+    return static_cast<int32_t>(ret);
+}
 
 #ifdef PATCH_SWITCH_SHARED_CACHE
 namespace patch {
-
-    int calc_cache_size(int w, int h, int bitcount) {
-        return ((((w * bitcount + 7) >> 3) + 3) & 0xfffffffc) * h + 16;
-    }
 
     void* __cdecl SharedCache_t::GetOrCreateSharedCache(ExEdit::ObjectFilterIndex ofi, int w, int h, int bitcount, int v_func_id, int* old_cache_exists) {
         auto a_exfunc = (AviUtl::ExFunc*)(GLOBAL::aviutl_base + OFS::AviUtl::exfunc);
@@ -30,8 +50,8 @@ namespace patch {
             ofi = e_exfunc->get_start_idx(ofi);
         }
 
-        unsigned int key1 = (int)ofi ^ (v_func_id << 14) ^ (bitcount << 25);
-        unsigned int key2 = (w - 1) ^ ((h - 1) << 16);
+        unsigned int key1 = make_key1(ofi, v_func_id, bitcount);
+        unsigned int key2 = make_key2(w, h);
 
         void* smem = a_exfunc->get_shared_mem(key1, key2, NULL);
         if (smem != NULL) {

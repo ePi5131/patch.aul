@@ -39,8 +39,8 @@ namespace patch {
             unsigned int priority;
         };
 
-#define SHARECACHEINFO_N 1024
-#define SHARECACHEINFO_SIZE (SHARECACHEINFO_N * sizeof(struct SharedCacheInfo))
+        static constexpr auto SHARECACHEINFO_N = 1024;
+        static constexpr auto SHARECACHEINFO_SIZE = (SHARECACHEINFO_N * sizeof(SharedCacheInfo));
 
         inline static AviUtl::SharedMemoryInfo* shared_mem_info[SHARECACHEINFO_N];
         inline static int cache_count = 0;
@@ -60,8 +60,6 @@ namespace patch {
         bool enabled_i;
         inline static const char key[] = "shared_cache";
     public:
-
-
 
         void init() {
             enabled_i = enabled;
@@ -94,7 +92,7 @@ namespace patch {
         void switch_load(ConfigReader& cr) {
             cr.regist(key, [this](json_value_s* value) {
                 ConfigReader::load_variable(value, enabled);
-                });
+            });
         }
 
         void switch_store(ConfigWriter& cw) {
