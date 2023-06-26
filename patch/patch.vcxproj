@@ -100,6 +100,7 @@
     <ClInclude Include="patch_setting_dialog_wndproc_override.hpp" />
     <ClInclude Include="patch_setting_gui.hpp" />
     <ClInclude Include="patch_setting_new_project.hpp" />
+    <ClInclude Include="patch_shared_cache.hpp" />
     <ClInclude Include="patch_splash.hpp" />
     <ClInclude Include="patch_susie_load.hpp" />
     <ClInclude Include="patch_sysinfo_write.hpp" />
@@ -165,6 +166,7 @@
     <ClCompile Include="patch_setting_dialog_excolorconfig.cpp" />
     <ClCompile Include="patch_setting_dialog_wndproc_override.cpp" />
     <ClCompile Include="patch_setting_new_project.cpp" />
+    <ClCompile Include="patch_shared_cache.cpp" />
     <ClCompile Include="patch_splash.cpp" />
     <ClCompile Include="patch_susie_load.cpp" />
     <ClCompile Include="patch_tra_change_drawfilter.cpp" />

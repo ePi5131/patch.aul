@@ -141,6 +141,7 @@
 #define PATCH_SWITCH_SETTING_NEW_PROJECT setting_newproject
 #define PATCH_SWITCH_SCENE_CACHE scenecache
 #define PATCH_SWITCH_SCRIPT_SORT_PATCH script_sort_patch
+#define PATCH_SWITCH_SHARED_CACHE shared_cache
 
 #define PATCH_SWITCH_UNDO undo
 #ifdef PATCH_SWITCH_UNDO
@@ -162,8 +163,6 @@
 	#define PATCH_SWITCH_LUA_RAND lua_rand
 	#define PATCH_SWITCH_LUA_RANDEX lua_randex
 	#define PATCH_SWITCH_LUA_PATH lua_path
-
-	//#define PATCH_SWITCH_LUA_COPYBUFFER_SMEM lua_copybuffer_smem
 
 #endif // ifdef PATCH_SWITCH_LUA
 

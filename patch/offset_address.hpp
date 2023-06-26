@@ -115,6 +115,9 @@ namespace OFS {
 		constexpr i32 get_scene_image = 0x04ce20;
 		constexpr i32 get_scene_size = 0x02b980;
 		constexpr i32 scene_has_alpha = 0x02ba00;
+		constexpr i32 GetCache = 0x00cff0;
+		constexpr i32 CreateCache = 0x00cd00;
+		constexpr i32 GetOrCreateCache = 0x04d7d0;
 		
 		constexpr i32 exedit_edit_open = 0x03ac30;
 

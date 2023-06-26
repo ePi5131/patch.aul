@@ -195,6 +195,9 @@ public:
             #ifdef PATCH_SWITCH_WARNING_DUPLICATE_PLUGINS
                 patch::WarningDuplicate.switch_load(cr);
             #endif
+            #ifdef PATCH_SWITCH_SHARED_CACHE
+                patch::SharedCache.switch_load(cr);
+            #endif
 		
 		    #ifdef PATCH_SWITCH_UNDO
                 patch::undo.switch_load(cr);
@@ -556,6 +559,9 @@ public:
             #endif
             #ifdef PATCH_SWITCH_WARNING_DUPLICATE_PLUGINS
                 patch::WarningDuplicate.switch_store(switch_);
+            #endif
+            #ifdef PATCH_SWITCH_SHARED_CACHE
+                patch::SharedCache.switch_store(switch_);
             #endif
 
 		    #ifdef PATCH_SWITCH_UNDO

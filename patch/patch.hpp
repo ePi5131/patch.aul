@@ -87,3 +87,4 @@
 #include "patch_scene_cache.hpp"
 #include "patch_script_sort.hpp"
 #include "patch_warning_duplicate_plugins.hpp"
+#include "patch_shared_cache.hpp"
