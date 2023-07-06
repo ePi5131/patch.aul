@@ -281,6 +281,9 @@
       <Filter>feature</Filter>
     </ClInclude>
     <ClInclude Include="scope_exit.hpp" />
+    <ClInclude Include="patch_rendering.hpp">
+      <Filter>feature</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="init.cpp" />
@@ -410,6 +413,9 @@
       <Filter>feature\fast</Filter>
     </ClCompile>
     <ClCompile Include="patch_scene_cache.cpp">
+      <Filter>feature</Filter>
+    </ClCompile>
+    <ClCompile Include="patch_rendering.cpp">
       <Filter>feature</Filter>
     </ClCompile>
   </ItemGroup>
