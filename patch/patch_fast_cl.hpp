@@ -48,7 +48,7 @@ namespace patch::fast {
 inline class cl_t {
 #pragma region clprogram
 	inline static auto program_str = make_cryptostring(R"(
-kernel void PolorTransform(global short* dst, global short* src, int obj_w, int obj_h, int obj_line,
+kernel void PolarTransform(global short* dst, global short* src, int obj_w, int obj_h, int obj_line,
 	int center_length, int radius, float angle, float uzu, float uzu_a){
 	int x = get_global_id(0);
 	int y = get_global_id(1);
@@ -1203,8 +1203,7 @@ public:
 	std::vector<cl::Device> devices;
 	cl::Context context;
 
-	std::byte program_mem[sizeof(cl::Program)];
-	bool program_opt;
+	std::optional<cl::Program> program;
 	cl::CommandQueue queue;
 
 	HMODULE CLLib;
@@ -1218,10 +1217,6 @@ public:
 	cl_t() :state(State::NotYet), CLLib(NULL) {}
 	~cl_t() {
 		FreeLibrary(CLLib);
-		if (program_opt) {
-			auto program = reinterpret_cast<cl::Program*>(program_mem);
-			program->~Program();
-		}
 	}
 
 	bool init() {
@@ -1229,12 +1224,12 @@ public:
 
 		if (!enabled_i)return true;
 
-		if (![]() {
+		if (![]{
 			__try {
 				auto load_ret = __HrLoadAllImportsForDll("OpenCL.dll");
 					if (FAILED(load_ret)) {
-						[load_ret]() {
-							debug_log("OpenCL not available {}", "delay load failed {}"_fmt(load_ret));
+						[load_ret]{
+							debug_log("OpenCL not available {}", std::format("delay load failed {}", load_ret));
 						}();
 						return false;
 					}
@@ -1264,9 +1259,8 @@ public:
 				cl::Platform::get(&platform);
 				platform.getDevices(CL_DEVICE_TYPE_ALL, &devices);
 				context = cl::Context(devices);
-				new (&program_mem[0]) cl::Program(context, program_str.get(), false);
-				program_opt = true;
-				reinterpret_cast<cl::Program*>(program_mem)->build();
+				program.emplace(context, program_str.get(), false);
+				program->build();
 				program_str.re_encrypt();
 
 				struct DeviceInfo {
@@ -1301,8 +1295,7 @@ public:
 
 				if (err.err() == CL_BUILD_PROGRAM_FAILURE) {
 					try {
-						if (program_opt) {
-							auto program = reinterpret_cast<cl::Program*>(program_mem);
+						if (program) {
 							if (auto status = program->getBuildInfo<CL_PROGRAM_BUILD_STATUS>(devices[0]); status == CL_BUILD_ERROR) {
 								debug_log(
 									"OpenCL Error (CL_BUILD_PROGRAM_FAILURE : CL_BUILD_ERROR)\n{}",
@@ -1312,8 +1305,6 @@ public:
 							else {
 								debug_log("OpenCL Error (CL_BUILD_PROGRAM_FAILURE)\nstatus: {}", status);
 							}
-							program_opt = false;
-							program->~Program();
 							state = State::Failed;
 							return false;
 						}
@@ -1339,7 +1330,6 @@ public:
 
 	template<class... Args>
 	cl::Kernel readyKernel(std::string_view name, Args&&... args) {
-		auto program = reinterpret_cast<cl::Program*>(program_mem);
 		cl::Kernel kernel(*program, name.data());
 		KernelSetArg<0>(kernel, args...);
 		return kernel;

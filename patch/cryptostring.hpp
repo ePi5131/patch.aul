@@ -75,6 +75,7 @@ inline cryptostring cstr_EnumResourceLanguagesA("EnumResourceLanguagesA");
 inline cryptostring cstr_LoadLibraryA("LoadLibraryA");
 inline cryptostring cstr_LoadLibraryW("LoadLibraryW");
 inline cryptostring cstr_MessageBoxA("MessageBoxA");
+inline cryptostring cstr_SetWindowLongA("SetWindowLongA");
 inline cryptostring cstr_gdi32_dll("GDI32.DLL");
 inline cryptostring cstr_GetGlyphOutlineW("GetGlyphOutlineW");
 inline cryptostring cstr_DeleteObject("DeleteObject");

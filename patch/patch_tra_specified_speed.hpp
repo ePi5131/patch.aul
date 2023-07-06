@@ -40,14 +40,14 @@ namespace patch {
 
 	public:
 
-        void init() {
-            enabled_i = enabled;
+		void init() {
+			enabled_i = enabled;
 
-            if (!enabled_i)return;
+			if (!enabled_i)return;
 
-            auto& cursor = GLOBAL::executable_memory_cursor;
+			auto& cursor = GLOBAL::executable_memory_cursor;
 
-            /*
+			/*
 				1006821c 8b8cb7f8000000     mov     ecx,dword ptr [edi+esi*4+000000f8] ;ecx = obj[object_idx].track_value_left[track_begin]
 				10068223 0faf442458         imul    eax,dword ptr [esp+58] ;eax *= obj_frame
 				↓
@@ -57,7 +57,7 @@ namespace patch {
 
 				; arg3_subframeが0以外の時はobj_frameが100倍されてarg3_subframeが加算されている
 				; 移動量指定では100で割るコードを忘れている
-            */
+			*/
 
 
 			OverWriteOnProtectHelper h(GLOBAL::exedit_base + 0x06821c, 12);
@@ -77,10 +77,10 @@ namespace patch {
 				"\xc3"                     // ret      ;return
 				;
 
-            memcpy(cursor, code_put, sizeof(code_put) - 1);
+			memcpy(cursor, code_put, sizeof(code_put) - 1);
 
-            cursor += sizeof(code_put) - 1;
-        }
+			cursor += sizeof(code_put) - 1;
+		}
 
 		void switching(bool flag) {
 			enabled = flag;

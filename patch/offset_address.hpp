@@ -25,10 +25,14 @@ namespace OFS {
 		constexpr i32 current_resource_hmod = 0x2d910c;
 		constexpr i32 edit_handle_ptr = 0x08717c;
 		constexpr i32 saveProjectFile = 0x024160;
+		constexpr i32 exfunc = 0x0a8c78;
+		
+		constexpr i32 filter_change_size_ptr = 0x0814e8;
+		constexpr i32 filter_change_framerate_ptr = 0x080b28;
+		constexpr i32 filter_clipping_and_resize_ptr = 0x07ad58;
 		
 		constexpr i32 str_dot_avi = 0x0745fc; // ".avi"
 		
-		constexpr i32 filter_clipping_and_resize_ptr = 0x07ad58;
 	}
 
 	namespace ExEdit {
@@ -87,10 +91,10 @@ namespace OFS {
 		constexpr i32 efBorder_func_proc_ptr = 0x0515d0;
 		constexpr i32 efBorder_var_ptr = 0x1b1e30;
 		constexpr i32 efGlow_var_ptr = 0x1b2010;
-		constexpr i32 efPolorTransform_func_proc = 0x0748a0;
-		constexpr i32 efPolorTransform_func_proc_ptr = 0x0add30;
-		constexpr i32 efPolorTransform_mt_func_call = 0x074a62;
-		constexpr i32 efPolorTransform_var_ptr = 0x1e48c0;
+		constexpr i32 efPolarTransform_func_proc = 0x0748a0;
+		constexpr i32 efPolarTransform_func_proc_ptr = 0x0add30;
+		constexpr i32 efPolarTransform_mt_func_call = 0x074a62;
+		constexpr i32 efPolarTransform_var_ptr = 0x1e48c0;
 		constexpr i32 efDisplacementMap_mt_func_call = 0x01f154;
 		constexpr i32 efDisplacementMap_var_ptr = 0x11effc;
 		constexpr i32 efRadiationalBlur_func_proc = 0x00b310;
@@ -112,13 +116,23 @@ namespace OFS {
 		constexpr i32 str_DOUGAFILE = 0x09df6c; // "動画ファイル"
 		constexpr i32 str_ONSEIFILE = 0x0ba698; // "音声ファイル"
 
+		constexpr i32 SceneDisplaying = 0x1a5310;
+		constexpr i32 SceneSetting = 0x177a50;
+		constexpr i32 get_scene_image = 0x04ce20;
+		constexpr i32 get_scene_size = 0x02b980;
+		constexpr i32 scene_has_alpha = 0x02ba00;
+		constexpr i32 GetCache = 0x00cff0;
+		constexpr i32 CreateCache = 0x00cd00;
+		constexpr i32 GetOrCreateCache = 0x04d7d0;
 		
 		constexpr i32 exedit_edit_open = 0x03ac30;
 		
 		constexpr i32 do_multi_thread_func = 0x06c650;
 
+		constexpr i32 exfunc = 0x0a41e0;
 		constexpr i32 exfunc_10 = 0x04abe0;
 		constexpr i32 exfunc_08 = 0x04ab40;
+		constexpr i32 exfunc_4c = 0x04a430;
 		constexpr i32 func_0x047ad0 = 0x047ad0;
 		constexpr i32 exfunc_64 = 0x04d040;
 		constexpr i32 scenechange_progress_times4096 = 0x230c60;
@@ -141,6 +155,8 @@ namespace OFS {
 		constexpr i32 exeditdir = 0x1b2b18;
 		constexpr i32 sScriptFolderName = 0x1b2b4c;
 
+		constexpr i32 obj_effect_noarg = 0x04b200;
+		
 		constexpr i32 l_effect = 0x05d0a0;
 		constexpr i32 l_load = 0x05ef50;
 		constexpr i32 l_draw = 0x05e250;
@@ -183,6 +199,10 @@ namespace OFS {
 		constexpr i32 ObjectArrayPointer = 0x1e0fa4;
 		constexpr i32 NextObjectIdxArray = 0x1592d8;
 
+		constexpr i32 SettingDialog_ObjIdx = 0x177a10;
+		constexpr i32 get_last_filter_idx = 0x0335f0;
+		constexpr i32 get_filterp = 0x047b00;
+		
 		constexpr i32 ScaleColorBackGround = 0x0a4048;
 		constexpr i32 ScaleColorForeGround = 0x0a404c;
 		constexpr i32 LayerNameRectWidth = 0x037d1a;

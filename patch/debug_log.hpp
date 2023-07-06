@@ -31,9 +31,9 @@ public:
 	}
 
 	template<class... Args>
-	void operator()(Args... args) {
+	void operator()(std::format_string<Args...> fmt, Args&&... args) {
 		std::lock_guard lock(mtx);
-		format_to_os(std::cout, args...);
+		format_to_os(std::cout, fmt, std::forward<Args>(args)...);
 		std::endl(std::cout);
 	}
 } debug_log;
