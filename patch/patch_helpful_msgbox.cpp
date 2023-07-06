@@ -57,7 +57,7 @@ namespace patch {
 	}
 
 	void helpful_msgbox_t::UrlConfirm(std::wstring_view url) {
-		auto ret = MessageBoxW(NULL, L"次のリンクを開こうとしています。同意しますか？\n{}"_fmt(url).c_str(), L"patch.aul", MB_ICONQUESTION | MB_YESNO | MB_TASKMODAL);
+		auto ret = MessageBoxW(NULL, std::format(L"次のリンクを開こうとしています。同意しますか？\n{}", url).c_str(), L"patch.aul", MB_ICONQUESTION | MB_YESNO | MB_TASKMODAL);
 		switch (ret) {
 		case IDYES:
 			ShellExecuteW(NULL, L"open", url.data(), NULL, NULL, SW_SHOW);

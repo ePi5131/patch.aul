@@ -4,3 +4,6 @@
 [submodule "patch/winwrap"]
 	path = patch/winwrap
 	url = https://github.com/ePi5131/winwrap
+[submodule "patch/json.h"]
+	path = patch/json.h
+	url = https://github.com/sheredom/json.h

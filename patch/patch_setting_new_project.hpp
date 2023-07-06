@@ -15,52 +15,45 @@
 
 #pragma once
 #include "macro.h"
-#ifdef PATCH_SWITCH_FAST_POLORTRANSFORM
 
-#include <aviutl.hpp>
+#ifdef PATCH_SWITCH_SETTING_NEW_PROJECT
 #include <exedit.hpp>
-
 #include "global.hpp"
-#include "offset_address.hpp"
 #include "util.hpp"
-#include "global.hpp"
+#include "restorable_patch.hpp"
+
 #include "config_rw.hpp"
 
-namespace patch::fast {
+namespace patch {
 	// init at exedit load
-	// 極座標変換の高速化
-	inline class PolorTransform_t {
-		static BOOL mt_func(AviUtl::MultiThreadFunc original_func_ptr, ExEdit::Filter* efp, ExEdit::FilterProcInfo* efpip);
+	// プロジェクト作成時、サイズの変更＞なし　フレームレートの変更＞なし　クリッピング＆リサイズOFF にする
 
+	inline class setting_new_project_t {
+
+		static BOOL __cdecl exedit_edit_open_wrap(int w, int h, int video_rate, int video_scale, int audio_rate, HWND hwnd, AviUtl::EditHandle* editp, AviUtl::FilterPlugin* fp);
 		bool enabled = true;
 		bool enabled_i;
-		inline static const char key[] = "fast.polortransform";
+
+		inline static const char key[] = "setting_new_project";
 
 	public:
-
-		struct efPolorTransform_var { // 1e48c0
-			int src_h;
-			int radius;
-			int src_w;
-			int _padding;
-			double uzu;
-			double uzu_a;
-			double angle;
-			int center_length;
-			int output_size;
-		};
-
 		void init() {
 			enabled_i = enabled;
+
 			if (!enabled_i)return;
 
-			OverWriteOnProtectHelper h(GLOBAL::exedit_base + OFS::ExEdit::efPolorTransform_mt_func_call, 6);
-			h.store_i16(0, '\x90\xe8'); // nop; call (rel32)
-			h.replaceNearJmp(2, &mt_func);
+			{
+				// ReplaceNearJmp(GLOBAL::exedit_base + 0x004d4a, &exedit_edit_open_wrap); // バックアップファイルから新規作成
+				ReplaceNearJmp(GLOBAL::exedit_base + 0x03c0d0, &exedit_edit_open_wrap); // プロジェクト作成前のD&D
+				ReplaceNearJmp(GLOBAL::exedit_base + 0x04392f, &exedit_edit_open_wrap); // オブジェクトファイルから新規作成
+				ReplaceNearJmp(GLOBAL::exedit_base + 0x043aea, &exedit_edit_open_wrap); // 新規プロジェクトの作成
+			}
+
 
 		}
-
-		void switching(bool flag) { enabled = flag; }
+		void switching(bool flag) {
+			enabled = flag;
+		}
 
 		bool is_enabled() { return enabled; }
 		bool is_enabled_i() { return enabled_i; }
@@ -68,13 +61,13 @@ namespace patch::fast {
 		void switch_load(ConfigReader& cr) {
 			cr.regist(key, [this](json_value_s* value) {
 				ConfigReader::load_variable(value, enabled);
-				});
+			});
 		}
 
 		void switch_store(ConfigWriter& cw) {
 			cw.append(key, enabled);
 		}
 
-	} PolorTransform;
-} // namespace patch::fast
-#endif // ifdef PATCH_SWITCH_FAST_POLORTRANSFORM
+	} setting_new_project;
+} // namespace patch
+#endif // ifdef PATCH_SWITCH_SETTING_NEW_PROJECT

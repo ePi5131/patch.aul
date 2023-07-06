@@ -96,6 +96,9 @@ void init_t::InitAtPatchLoaded() {
 	patch::fileinfo.init();
 #endif
 
+#ifdef PATCH_SWITCH_WARNING_DUPLICATE_PLUGINS
+	patch::WarningDuplicate.init();
+#endif
 }
 
 void init_t::InitAtExeditLoad() {
@@ -117,8 +120,14 @@ void init_t::InitAtExeditLoad() {
 #ifdef PATCH_SWITCH_TRA_SPECIFIED_SPEED
 	patch::tra_specified_speed.init();
 #endif
+#ifdef PATCH_SWITCH_SETTING_NEW_PROJECT
+	patch::setting_new_project.init();
+#endif
 
 
+#ifdef PATCH_SWITCH_AUP_LAYER_SETTING
+	patch::aup_layer_setting.init();
+#endif
 #ifdef PATCH_SWITCH_EXO_AVIUTL_FILTER
 	patch::exo_aviutlfilter.init();
 #endif
@@ -174,12 +183,24 @@ void init_t::InitAtExeditLoad() {
 #ifdef PATCH_SWITCH_FAILED_SJIS_MSGBOX
 	patch::failed_sjis_msgbox.init();
 #endif
+#ifdef PATCH_SWITCH_FAILED_LONGER_PATH
+	patch::failed_longer_path.init();
+#endif
+#ifdef PATCH_SWITCH_FAILED_FILE_DROP
+	patch::failed_file_drop.init();
+#endif
 
 #ifdef PATCH_SWITCH_OBJ_COLORCORRECTION
 	patch::ColorCorrection.init();
 #endif
+#ifdef PATCH_SWITCH_OBJ_GLOW
+	patch::Glow.init();
+#endif
 #ifdef PATCH_SWITCH_OBJ_LENSBLUR
 	patch::LensBlur.init();
+#endif
+#ifdef PATCH_SWITCH_OBJ_IMAGELOOP
+	patch::ImageLoop.init();
 #endif
 #ifdef PATCH_SWITCH_OBJ_NOISE
 	patch::Noise.init();
@@ -201,11 +222,23 @@ void init_t::InitAtExeditLoad() {
 #ifdef PATCH_SWITCH_BLEND
 	patch::blend.init();
 #endif
+#ifdef PATCH_SWITCH_RENDERING
+	patch::Rendering.init();
+#endif
 #ifdef PATCH_SWITCH_ADD_EXTENSION
 	patch::add_extension.init();
 #endif
 #ifdef PATCH_SWITCH_DIALOG_NEW_FILE
 	patch::dialog_new_file.init();
+#endif
+#ifdef PATCH_SWITCH_PLAYBACK_SPEED
+	patch::playback_speed.init();
+#endif
+#ifdef PATCH_SWITCH_SCENE_CACHE
+	patch::scene_cache.init();
+#endif
+#ifdef PATCH_SWITCH_SHARED_CACHE
+	patch::SharedCache.init();
 #endif
 	
 	patch::setting_dialog();
@@ -234,12 +267,15 @@ void init_t::InitAtExeditLoad() {
 		#ifdef PATCH_SWITCH_FAST_BORDER
 			patch::fast::Border.init();
 		#endif
+		#ifdef PATCH_SWITCH_FAST_GLOW
+			patch::fast::Glow.init();
+		#endif
 		
 		#ifdef PATCH_SWITCH_CL
 			if (patch::fast::cl.init()) {
 				if (patch::fast::cl.is_enabled_i()) {
-					#ifdef PATCH_SWITCH_FAST_POLORTRANSFORM
-						patch::fast::PolorTransform.init();
+					#ifdef PATCH_SWITCH_FAST_POLARTRANSFORM
+						patch::fast::PolarTransform.init();
 					#endif
 					#ifdef PATCH_SWITCH_FAST_DISPLACEMENTMAP
 						patch::fast::DisplacementMap.init();
@@ -337,6 +373,11 @@ HMODULE WINAPI init_t::LoadLibraryAWrap(LPCSTR lpLibFileName) {
 		}
 	}
 #endif
+#ifdef PATCH_SWITCH_SCRIPT_SORT_PATCH
+	else if (lstrcmpiA(filename, "script_sort.auf") == 0) {
+		patch::patch_script_sort.init(ret);
+	}
+#endif
 #ifdef PATCH_SWITCH_WARNING_OLD_LSW
 	else if (lstrcmpiA(filename, "lwcolor.auc") == 0) {
 		static const SHA256 r940_hash(0xc7, 0xe2, 0x51, 0xde, 0xd2, 0xf8, 0x21, 0xcb, 0x1b, 0xc6, 0xb1, 0x9a, 0x66, 0x43, 0xd3, 0x0d, 0xa4, 0xeb, 0xd6, 0x97, 0x1e, 0x34, 0x1a, 0xb2, 0x11, 0xd9, 0x41, 0x1d, 0xcc, 0xbf, 0x9a, 0x18);
@@ -355,6 +396,7 @@ HMODULE WINAPI init_t::LoadLibraryAWrap(LPCSTR lpLibFileName) {
 			"bakusoku.auf",
 			"eclipse_fast.auf",
 			"redo.auf",
+			"script_sort_patch.auf",
 		};
 
 		std::string check = filename;
@@ -420,7 +462,6 @@ BOOL __cdecl init_t::func_initWrap(AviUtl::FilterPlugin* fp) {
 	#ifdef PATCH_SWITCH_LUA_GETVALUE
 		patch::lua_getvalueex.init();
 	#endif
-
 #endif
 	
 	return TRUE;
