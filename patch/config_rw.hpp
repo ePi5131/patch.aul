@@ -81,10 +81,10 @@ namespace config_type {
 			}
 		}
 		std::string to_string() const {
-			return "{:02x}{:02x}{:02x}"_fmt(r, g, b);
+			return std::format("{:02x}{:02x}{:02x}", r, g, b);
 		}
 		std::string to_jsonstring() const {
-			if(valid) return "\"{:02x}{:02x}{:02x}\""_fmt(r, g, b);
+			if(valid) return std::format("\"{:02x}{:02x}{:02x}\"", r, g, b);
 			return std::string{};
 		}
 		constexpr bool is_valid() const noexcept {
@@ -142,7 +142,7 @@ namespace config_type {
 		std::string to_jsonstring() const {
 			if (ary[0].is_valid()) {
 				if (ary[1].is_valid())
-					return "[ {}, {} ]"_fmt(ary[0].to_jsonstring(), ary[1].to_jsonstring());
+					return std::format("[ {}, {} ]", ary[0].to_jsonstring(), ary[1].to_jsonstring());
 				else
 					return ary[0].to_jsonstring();
 			}
@@ -187,7 +187,7 @@ namespace config_type {
 
 		std::string to_jsonstring() const {
 			if (ary[0].is_valid())
-				return "[ {}, {} ]"_fmt(ary[0].to_jsonstring(), ary[1].to_jsonstring());
+				return std::format("[ {}, {} ]", ary[0].to_jsonstring(), ary[1].to_jsonstring());
 			return std::string{};
 		}
 
@@ -230,7 +230,7 @@ namespace config_type {
 		}
 		std::string to_jsonstring() const {
 			if (has_value())
-				return "[ {}, {}, {} ]"_fmt(ary[0].to_jsonstring(), ary[1].to_jsonstring(), ary[2].to_jsonstring());
+				return std::format("[ {}, {}, {} ]", ary[0].to_jsonstring(), ary[1].to_jsonstring(), ary[2].to_jsonstring());
 			return std::string{};
 		}
 	};
@@ -316,7 +316,7 @@ public:
 	}
 
 	void append(std::string_view key, const RECT& value) {
-		vkv.emplace_back(std::string(key), "[ {}, {}, {}, {} ]"_fmt(value.left, value.top, value.right, value.bottom));
+		vkv.emplace_back(std::string(key), std::format("[ {}, {}, {}, {} ]", value.left, value.top, value.right, value.bottom));
 	}
 
 	template<size_t N>
