@@ -48,7 +48,7 @@ namespace patch::fast {
 inline class cl_t {
 #pragma region clprogram
 	inline static auto program_str = make_cryptostring(R"(
-kernel void PolorTransform(global short* dst, global short* src, int obj_w, int obj_h, int obj_line,
+kernel void PolarTransform(global short* dst, global short* src, int obj_w, int obj_h, int obj_line,
 	int center_length, int radius, float angle, float uzu, float uzu_a){
 	int x = get_global_id(0);
 	int y = get_global_id(1);

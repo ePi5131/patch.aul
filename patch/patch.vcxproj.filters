@@ -124,7 +124,7 @@
     <ClInclude Include="patch_fast_getputpixeldata.hpp">
       <Filter>feature\fast</Filter>
     </ClInclude>
-    <ClInclude Include="patch_fast_polortransform.hpp">
+    <ClInclude Include="patch_fast_polartransform.hpp">
       <Filter>feature\fast</Filter>
     </ClInclude>
     <ClInclude Include="patch_fast_radiationalblur.hpp">
@@ -325,7 +325,7 @@
     <ClCompile Include="patch_fast_getputpixeldata.cpp">
       <Filter>feature\fast</Filter>
     </ClCompile>
-    <ClCompile Include="patch_fast_polortransform.cpp">
+    <ClCompile Include="patch_fast_polartransform.cpp">
       <Filter>feature\fast</Filter>
     </ClCompile>
     <ClCompile Include="patch_fast_radiationalblur.cpp">

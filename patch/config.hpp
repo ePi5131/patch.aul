@@ -133,10 +133,10 @@ public:
 				patch::failed_sjis_msgbox.switch_load(cr);
 			#endif
 			#ifdef PATCH_SWITCH_FAILED_LONGER_PATH
-		patch::failed_longer_path.switch_load(cr);
+				patch::failed_longer_path.switch_load(cr);
 			#endif
 			#ifdef PATCH_SWITCH_FAILED_FILE_DROP
-		patch::failed_file_drop.switch_load(cr);
+				patch::failed_file_drop.switch_load(cr);
 			#endif
 			#ifdef PATCH_SWITCH_THEME_CC
 				patch::theme_cc.switch_load(cr);
@@ -253,8 +253,8 @@ public:
 					#ifdef PATCH_SWITCH_FAST_RADIATIONALBLUR
 						patch::fast::RadiationalBlur.switch_load(cr);
 					#endif
-					#ifdef PATCH_SWITCH_FAST_POLORTRANSFORM
-						patch::fast::PolorTransform.switch_load(cr);
+					#ifdef PATCH_SWITCH_FAST_POLARTRANSFORM
+						patch::fast::PolarTransform.switch_load(cr);
 					#endif
 					#ifdef PATCH_SWITCH_FAST_DISPLACEMENTMAP
 						patch::fast::DisplacementMap.switch_load(cr);
@@ -618,8 +618,8 @@ public:
 					#ifdef PATCH_SWITCH_FAST_RADIATIONALBLUR
 						patch::fast::RadiationalBlur.switch_store(switch_);
 					#endif
-					#ifdef PATCH_SWITCH_FAST_POLORTRANSFORM
-						patch::fast::PolorTransform.switch_store(switch_);
+					#ifdef PATCH_SWITCH_FAST_POLARTRANSFORM
+						patch::fast::PolarTransform.switch_store(switch_);
 					#endif
 					#ifdef PATCH_SWITCH_FAST_DISPLACEMENTMAP
 						patch::fast::DisplacementMap.switch_store(switch_);
