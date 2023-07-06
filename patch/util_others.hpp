@@ -1,16 +1,16 @@
 /*
 	This program is free software: you can redistribute it and/or modify
-    it under the terms of the GNU Lesser General Public License as published by
-    the Free Software Foundation, either version 3 of the License, or
-    (at your option) any later version.
+	it under the terms of the GNU Lesser General Public License as published by
+	the Free Software Foundation, either version 3 of the License, or
+	(at your option) any later version.
 
-    This program is distributed in the hope that it will be useful,
-    but WITHOUT ANY WARRANTY; without even the implied warranty of
-    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-    GNU Lesser General Public License for more details.
+	This program is distributed in the hope that it will be useful,
+	but WITHOUT ANY WARRANTY; without even the implied warranty of
+	MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+	GNU Lesser General Public License for more details.
 
-    You should have received a copy of the GNU Lesser General Public License
-    along with this program.  If not, see <https://www.gnu.org/licenses/>.
+	You should have received a copy of the GNU Lesser General Public License
+	along with this program.  If not, see <https://www.gnu.org/licenses/>.
 */
 
 #pragma once
@@ -68,7 +68,7 @@ inline auto format_to_os(OStream& ss, std::format_string<Args...> fmt, Args&& ..
 
 template<class OStream, class... Args> requires std::same_as<typename OStream::char_type, wchar_t>
 inline auto format_to_os(OStream& ss, std::wformat_string<Args...> fmt, Args&& ...args) {
-    return std::format_to(std::ostreambuf_iterator<typename OStream::char_type>(ss), fmt, std::forward<Args>(args)...);
+	return std::format_to(std::ostreambuf_iterator<typename OStream::char_type>(ss), fmt, std::forward<Args>(args)...);
 }
 
 template<class OStream, class... Args> requires std::same_as<typename OStream::char_type, char>
@@ -78,7 +78,7 @@ inline auto vformat_to_os(OStream& ss, const std::string_view fmt, Args&& ...arg
 
 template<class OStream, class... Args> requires std::same_as<typename OStream::char_type, wchar_t>
 inline auto vformat_to_os(OStream& ss, const std::wstring_view fmt, Args&& ...args) {
-    return std::vformat_to(std::ostreambuf_iterator<typename OStream::char_type>(ss), fmt, std::make_wformat_args(std::forward<Args>(args)...));
+	return std::vformat_to(std::ostreambuf_iterator<typename OStream::char_type>(ss), fmt, std::make_wformat_args(std::forward<Args>(args)...));
 }
 
 inline auto get_local_time() {
@@ -136,110 +136,110 @@ inline std::u8string string_convert_W2U(std::wstring_view str) {
 }
 
 enum class CPUCmdSet : uint32_t {
-    F_TSC              = 1 << 0,
-    F_MMX              = 1 << 1,
-    F_SSE              = 1 << 2,
-    F_SSE2             = 1 << 3,
-    F_3DNOW            = 1 << 4,
-    F_3DNOWEXT         = 1 << 5,
-    F_SMT              = 1 << 6,
-    F_64BIT            = 1 << 7,
-    F_SSE3             = 1 << 8,
-    F_SSSE3            = 1 << 9,
-    F_SSE4A            = 1 << 10,
-    F_SSE41            = 1 << 12,
-    F_SSE42            = 1 << 13,
-    F_AESNI            = 1 << 14,
-    F_AVX              = 1 << 15,
-    F_AVX2             = 1 << 16,
-    F_FMA4             = 1 << 11,
-    F_AVX512F          = 1 << 17,
-    F_AVX512DQ         = 1 << 18,
-    F_AVX512_IFMA      = 1 << 19,
-    F_AVX512PF         = 1 << 20,
-    F_AVX512ER         = 1 << 21,
-    F_AVX512CD         = 1 << 22,
-    F_AVX512BW         = 1 << 23,
-    F_AVX512VL         = 1 << 24,
-    F_AVX512_VBMI      = 1 << 25,
-    F_AVX512_VPOPCNTDQ = 1 << 26,
-    F_AVX512_4VNNIW    = 1 << 27,
-    F_AVX512_4FMAPS    = 1 << 28,
+	F_TSC              = 1 << 0,
+	F_MMX              = 1 << 1,
+	F_SSE              = 1 << 2,
+	F_SSE2             = 1 << 3,
+	F_3DNOW            = 1 << 4,
+	F_3DNOWEXT         = 1 << 5,
+	F_SMT              = 1 << 6,
+	F_64BIT            = 1 << 7,
+	F_SSE3             = 1 << 8,
+	F_SSSE3            = 1 << 9,
+	F_SSE4A            = 1 << 10,
+	F_SSE41            = 1 << 12,
+	F_SSE42            = 1 << 13,
+	F_AESNI            = 1 << 14,
+	F_AVX              = 1 << 15,
+	F_AVX2             = 1 << 16,
+	F_FMA4             = 1 << 11,
+	F_AVX512F          = 1 << 17,
+	F_AVX512DQ         = 1 << 18,
+	F_AVX512_IFMA      = 1 << 19,
+	F_AVX512PF         = 1 << 20,
+	F_AVX512ER         = 1 << 21,
+	F_AVX512CD         = 1 << 22,
+	F_AVX512BW         = 1 << 23,
+	F_AVX512VL         = 1 << 24,
+	F_AVX512_VBMI      = 1 << 25,
+	F_AVX512_VPOPCNTDQ = 1 << 26,
+	F_AVX512_4VNNIW    = 1 << 27,
+	F_AVX512_4FMAPS    = 1 << 28,
 };
 template<>struct AviUtl::detail::flag::ops_def<CPUCmdSet>:std::true_type{};
 
 /*
-    参考: https://www.timbreofprogram.info/blog/archives/951
+	参考: https://www.timbreofprogram.info/blog/archives/951
 */
 inline CPUCmdSet get_CPUCmdSet() {
-    static CPUCmdSet ret = []{
-        CPUCmdSet ret{};
-        int cpuinfo[4];
+	static CPUCmdSet ret = []{
+		CPUCmdSet ret{};
+		int cpuinfo[4];
 
-        __cpuid(cpuinfo, 0x00000000);
-        auto basicmax = cpuinfo[0];
+		__cpuid(cpuinfo, 0x00000000);
+		auto basicmax = cpuinfo[0];
 
-        __cpuid(cpuinfo, 0x80000000);
-        auto extendmax = cpuinfo[0];
+		__cpuid(cpuinfo, 0x80000000);
+		auto extendmax = cpuinfo[0];
 
-        __cpuid(cpuinfo, 0x00000001);
-        if (cpuinfo[3] & (1u << 4)) ret |= CPUCmdSet::F_TSC;
-        if (cpuinfo[3] & (1u << 23)) ret |= CPUCmdSet::F_MMX;
-        if (cpuinfo[3] & (1u << 25)) ret |= CPUCmdSet::F_SSE;
-        if (cpuinfo[3] & (1u << 26)) ret |= CPUCmdSet::F_SSE2;
-        if (cpuinfo[3] & (1u << 28)) ret |= CPUCmdSet::F_SMT;
+		__cpuid(cpuinfo, 0x00000001);
+		if (cpuinfo[3] & (1u << 4)) ret |= CPUCmdSet::F_TSC;
+		if (cpuinfo[3] & (1u << 23)) ret |= CPUCmdSet::F_MMX;
+		if (cpuinfo[3] & (1u << 25)) ret |= CPUCmdSet::F_SSE;
+		if (cpuinfo[3] & (1u << 26)) ret |= CPUCmdSet::F_SSE2;
+		if (cpuinfo[3] & (1u << 28)) ret |= CPUCmdSet::F_SMT;
 
-        if (cpuinfo[2] & (1u << 0)) ret |= CPUCmdSet::F_SSE3;
-        if (cpuinfo[2] & (1u << 9)) ret |= CPUCmdSet::F_SSSE3;
-        if (cpuinfo[2] & (1u << 19)) ret |= CPUCmdSet::F_SSE41;
-        if (cpuinfo[2] & (1u << 20)) ret |= CPUCmdSet::F_SSE42;
-        if (cpuinfo[2] & (1u << 25)) ret |= CPUCmdSet::F_AESNI;
-        if (cpuinfo[2] & (1u << 28)) ret |= CPUCmdSet::F_AVX;
+		if (cpuinfo[2] & (1u << 0)) ret |= CPUCmdSet::F_SSE3;
+		if (cpuinfo[2] & (1u << 9)) ret |= CPUCmdSet::F_SSSE3;
+		if (cpuinfo[2] & (1u << 19)) ret |= CPUCmdSet::F_SSE41;
+		if (cpuinfo[2] & (1u << 20)) ret |= CPUCmdSet::F_SSE42;
+		if (cpuinfo[2] & (1u << 25)) ret |= CPUCmdSet::F_AESNI;
+		if (cpuinfo[2] & (1u << 28)) ret |= CPUCmdSet::F_AVX;
 
-        if (static_cast<unsigned int>(extendmax) < 0x80000000u) return ret;
-
-
-        __cpuid(cpuinfo, 0x80000001);
-        if (cpuinfo[3] & (1u << 31)) ret |= CPUCmdSet::F_3DNOW;
-        if (cpuinfo[3] & (1u << 30)) ret |= CPUCmdSet::F_3DNOWEXT;
-        if (cpuinfo[3] & (1u << 29)) ret |= CPUCmdSet::F_64BIT;
-
-        if (cpuinfo[2] & (1u << 6)) ret |= CPUCmdSet::F_SSE4A;
-        if (cpuinfo[2] & (1u << 16)) ret |= CPUCmdSet::F_FMA4;
+		if (static_cast<unsigned int>(extendmax) < 0x80000000u) return ret;
 
 
-        if (basicmax < 7) return ret;
+		__cpuid(cpuinfo, 0x80000001);
+		if (cpuinfo[3] & (1u << 31)) ret |= CPUCmdSet::F_3DNOW;
+		if (cpuinfo[3] & (1u << 30)) ret |= CPUCmdSet::F_3DNOWEXT;
+		if (cpuinfo[3] & (1u << 29)) ret |= CPUCmdSet::F_64BIT;
 
-        __cpuidex(cpuinfo, 7, 0);
-        if (cpuinfo[1] & (1u << 5)) ret |= CPUCmdSet::F_AVX2;
-        if (cpuinfo[1] & (1u << 16)) ret |= CPUCmdSet::F_AVX512F;
-        if (cpuinfo[1] & (1u << 17)) ret |= CPUCmdSet::F_AVX512DQ;
-        if (cpuinfo[1] & (1u << 21)) ret |= CPUCmdSet::F_AVX512_IFMA;
-        if (cpuinfo[1] & (1u << 26)) ret |= CPUCmdSet::F_AVX512PF;
-        if (cpuinfo[1] & (1u << 27)) ret |= CPUCmdSet::F_AVX512ER;
-        if (cpuinfo[1] & (1u << 28)) ret |= CPUCmdSet::F_AVX512CD;
-        if (cpuinfo[1] & (1u << 30)) ret |= CPUCmdSet::F_AVX512BW;
-        if (cpuinfo[1] & (1u << 31)) ret |= CPUCmdSet::F_AVX512VL;
+		if (cpuinfo[2] & (1u << 6)) ret |= CPUCmdSet::F_SSE4A;
+		if (cpuinfo[2] & (1u << 16)) ret |= CPUCmdSet::F_FMA4;
 
-        if (cpuinfo[2] & (1u << 1)) ret |= CPUCmdSet::F_AVX512_VBMI;
-        if (cpuinfo[2] & (1u << 14)) ret |= CPUCmdSet::F_AVX512_VPOPCNTDQ;
 
-        if (cpuinfo[3] & (1u << 2)) ret |= CPUCmdSet::F_AVX512_4VNNIW;
-        if (cpuinfo[3] & (1u << 3)) ret |= CPUCmdSet::F_AVX512_4FMAPS;
-        return ret;
-    }();
-    return ret;
+		if (basicmax < 7) return ret;
+
+		__cpuidex(cpuinfo, 7, 0);
+		if (cpuinfo[1] & (1u << 5)) ret |= CPUCmdSet::F_AVX2;
+		if (cpuinfo[1] & (1u << 16)) ret |= CPUCmdSet::F_AVX512F;
+		if (cpuinfo[1] & (1u << 17)) ret |= CPUCmdSet::F_AVX512DQ;
+		if (cpuinfo[1] & (1u << 21)) ret |= CPUCmdSet::F_AVX512_IFMA;
+		if (cpuinfo[1] & (1u << 26)) ret |= CPUCmdSet::F_AVX512PF;
+		if (cpuinfo[1] & (1u << 27)) ret |= CPUCmdSet::F_AVX512ER;
+		if (cpuinfo[1] & (1u << 28)) ret |= CPUCmdSet::F_AVX512CD;
+		if (cpuinfo[1] & (1u << 30)) ret |= CPUCmdSet::F_AVX512BW;
+		if (cpuinfo[1] & (1u << 31)) ret |= CPUCmdSet::F_AVX512VL;
+
+		if (cpuinfo[2] & (1u << 1)) ret |= CPUCmdSet::F_AVX512_VBMI;
+		if (cpuinfo[2] & (1u << 14)) ret |= CPUCmdSet::F_AVX512_VPOPCNTDQ;
+
+		if (cpuinfo[3] & (1u << 2)) ret |= CPUCmdSet::F_AVX512_4VNNIW;
+		if (cpuinfo[3] & (1u << 3)) ret |= CPUCmdSet::F_AVX512_4FMAPS;
+		return ret;
+	}();
+	return ret;
 }
 
 // ファイルを選択した状態のエクスプローラーを開く
 inline void open_explorer(const std::wstring& path) {
-    if (auto result = CoInitializeEx(NULL, NULL); !SUCCEEDED(result)) {
-        return;
-    }
-    SCOPE_EXIT_AUTO{[]{ CoUninitialize(); }};
-    
-    auto il = ILCreateFromPathW(path.c_str());
-    SCOPE_EXIT_AUTO{[il]{ ILFree(il); }};
+	if (auto result = CoInitializeEx(NULL, NULL); !SUCCEEDED(result)) {
+		return;
+	}
+	SCOPE_EXIT_AUTO{[]{ CoUninitialize(); }};
+	
+	auto il = ILCreateFromPathW(path.c_str());
+	SCOPE_EXIT_AUTO{[il]{ ILFree(il); }};
 
-    SHOpenFolderAndSelectItems(il, 0, nullptr, 0);
+	SHOpenFolderAndSelectItems(il, 0, nullptr, 0);
 }
