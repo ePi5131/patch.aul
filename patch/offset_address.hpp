@@ -31,6 +31,8 @@ namespace OFS {
 		constexpr i32 filter_change_framerate_ptr = 0x080b28;
 		constexpr i32 filter_clipping_and_resize_ptr = 0x07ad58;
 		
+		constexpr i32 ini_shiftselect = 0x086398;
+		
 		constexpr i32 str_dot_avi = 0x0745fc; // ".avi"
 		
 	}
@@ -41,6 +43,9 @@ namespace OFS {
 		constexpr i32 aviutl_hwnd = 0x135c6c;
 		constexpr i32 exedit_hwnd = 0x177a44;
 		constexpr i32 settingdialog_hwnd = 0x1539c8;
+		
+		constexpr i32 tl_title = 0x0a4cfc;
+		
 		
 		constexpr i32 blend_yca_normal_func = 0x007df0;
 		constexpr i32 blend_yc_normal_func = 0x007f20;
@@ -125,6 +130,10 @@ namespace OFS {
 		constexpr i32 GetCache = 0x00cff0;
 		constexpr i32 CreateCache = 0x00cd00;
 		constexpr i32 GetOrCreateCache = 0x04d7d0;
+		constexpr i32 frame_cursor = 0x1a5304;
+		constexpr i32 frame_n = 0x14d3a0;
+		constexpr i32 double_framerate = 0x0a4068;
+		constexpr i32 double_framerate_scale = 0x0a4060;
 		
 		constexpr i32 exedit_edit_open = 0x03ac30;
 		

@@ -246,6 +246,9 @@ void init_t::InitAtExeditLoad() {
 #ifdef PATCH_SWITCH_GROUP_CAMERA_SCENE
 	patch::group_camera_scene.init();
 #endif
+#ifdef PATCH_SWITCH_CHANGE_DISP_SCENE
+	patch::change_disp_scene.init();
+#endif
 	
 	patch::setting_dialog();
 

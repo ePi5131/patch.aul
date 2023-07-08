@@ -204,6 +204,9 @@ public:
             #ifdef PATCH_SWITCH_GROUP_CAMERA_SCENE
                 patch::group_camera_scene.switch_load(cr);
             #endif
+            #ifdef PATCH_SWITCH_CHANGE_DISP_SCENE
+                patch::change_disp_scene.switch_load(cr);
+            #endif
 		
 			#ifdef PATCH_SWITCH_UNDO
 				patch::undo.switch_load(cr);
@@ -577,6 +580,9 @@ public:
             #endif
             #ifdef PATCH_SWITCH_GROUP_CAMERA_SCENE
                 patch::group_camera_scene.switch_store(switch_);
+            #endif
+            #ifdef PATCH_SWITCH_CHANGE_DISP_SCENE
+                patch::change_disp_scene.switch_store(switch_);
             #endif
 
 			#ifdef PATCH_SWITCH_UNDO
