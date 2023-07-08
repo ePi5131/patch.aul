@@ -240,6 +240,9 @@ void init_t::InitAtExeditLoad() {
 #ifdef PATCH_SWITCH_SHARED_CACHE
 	patch::SharedCache.init();
 #endif
+#ifdef PATCH_SWITCH_YC_RGB_CVT
+	patch::yc_rgb_cvt.init();
+#endif
 	
 	patch::setting_dialog();
 

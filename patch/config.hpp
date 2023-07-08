@@ -198,6 +198,9 @@ public:
 			#ifdef PATCH_SWITCH_SHARED_CACHE
 				patch::SharedCache.switch_load(cr);
 			#endif
+            #ifdef PATCH_SWITCH_YC_RGB_CVT
+                patch::yc_rgb_cvt.switch_load(cr);
+            #endif
 		
 			#ifdef PATCH_SWITCH_UNDO
 				patch::undo.switch_load(cr);
@@ -566,6 +569,9 @@ public:
 			#ifdef PATCH_SWITCH_SHARED_CACHE
 				patch::SharedCache.switch_store(switch_);
 			#endif
+            #ifdef PATCH_SWITCH_YC_RGB_CVT
+                patch::yc_rgb_cvt.switch_store(switch_);
+            #endif
 
 			#ifdef PATCH_SWITCH_UNDO
 				patch::undo.switch_store(switch_);

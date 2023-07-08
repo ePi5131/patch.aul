@@ -67,6 +67,7 @@ namespace OFS {
 
 		constexpr i32 getpixeldata = 0x09a65c;
 		constexpr i32 rgb2yc = 0x06fed0;
+		constexpr i32 yc_conv_w_loop_count = 0x1e4300;
 
 		constexpr i32 exedit_max_h_add8 = 0x135c64;
 		constexpr i32 exedit_buffer_line = 0x135c68;
@@ -154,7 +155,6 @@ namespace OFS {
 		constexpr i32 luaL_Reg_obj_table = 0x09a5c0;
 		constexpr i32 exeditdir = 0x1b2b18;
 		constexpr i32 sScriptFolderName = 0x1b2b4c;
-
 		constexpr i32 obj_effect_noarg = 0x04b200;
 		
 		constexpr i32 l_effect = 0x05d0a0;
@@ -198,7 +198,6 @@ namespace OFS {
 
 		constexpr i32 ObjectArrayPointer = 0x1e0fa4;
 		constexpr i32 NextObjectIdxArray = 0x1592d8;
-
 		constexpr i32 SettingDialog_ObjIdx = 0x177a10;
 		constexpr i32 get_last_filter_idx = 0x0335f0;
 		constexpr i32 get_filterp = 0x047b00;

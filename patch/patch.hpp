@@ -89,3 +89,4 @@
 #include "patch_warning_duplicate_plugins.hpp"
 #include "patch_shared_cache.hpp"
 #include "patch_rendering.hpp"
+#include "patch_yc_rgb_cvt.hpp"
