@@ -23,10 +23,19 @@ namespace patch {
 		if (*SceneDisplaying != 0) {
 			return get_scene_image(ofi, efpip, scene_idx, frame, subframe, w, h);
 		}
-
+		
 		auto a_exfunc = (AviUtl::ExFunc*)(GLOBAL::aviutl_base + OFS::AviUtl::exfunc);
 
-		void* smem_ptr = a_exfunc->get_shared_mem(make_cache_key1(scene_idx), (frame << 7) | subframe, nullptr);
+
+		int key = *(int*)(GLOBAL::exedit_base + OFS::ExEdit::is_saving);
+		if (key) {
+			key <<= 6;
+		} else {
+			key = *(int*)(GLOBAL::exedit_base + OFS::ExEdit::fast_process) << 7;
+		}
+		key += (int)&get_scene_image + scene_idx;
+
+		void* smem_ptr = a_exfunc->get_shared_mem(key, (frame << 7) | subframe, NULL);
 		if (smem_ptr != nullptr) {
 			reinterpret_cast<void(__cdecl*)(int, int*, int*, ExEdit::FilterProcInfo*)>(GLOBAL::exedit_base + OFS::ExEdit::get_scene_size)(scene_idx, w, h, efpip);
 			return smem_ptr;
@@ -45,9 +54,8 @@ namespace patch {
 				yc_size = 6;
 				flag = 0x13000002;
 			}
-			void* smem_ptr = a_exfunc->create_shared_mem(make_cache_key1(scene_idx), (frame << 7) | subframe, *h * efpip->scene_line * yc_size, nullptr);
+			void* smem_ptr = a_exfunc->create_shared_mem(key, (frame << 7) | subframe, *h * efpip->scene_line * yc_size, nullptr);
 			if (smem_ptr == nullptr) return img_ptr;
-
 			memcpy(smem_ptr, img_ptr, *h * efpip->scene_line * yc_size);
 		}
 		return img_ptr;
@@ -55,8 +63,11 @@ namespace patch {
 
 	void scene_cache_t::delete_scene_cache() {
 		auto a_exfunc = (AviUtl::ExFunc*)(GLOBAL::aviutl_base + OFS::AviUtl::exfunc);
-		for (int i = 1; i < 50; i++) {
-			a_exfunc->delete_shared_mem(make_cache_key1(i), nullptr);
+		for (int flag = 0; flag < 3; flag++) {
+			int key = (int)&get_scene_image + (flag << 6);
+			for (int i = 1; i < 50; i++) {
+				a_exfunc->delete_shared_mem(key + i, NULL);
+			}
 		}
 	}
 
