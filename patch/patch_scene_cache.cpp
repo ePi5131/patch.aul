@@ -23,30 +23,51 @@ namespace {
 	int32_t make_key1(int scene_idx) {
 		return GLOBAL::exedit_base + OFS::ExEdit::get_scene_image
 			+ scene_idx
-			+ (*reinterpret_cast<int*>(GLOBAL::exedit_base + OFS::ExEdit::is_saving) << state_shift)
-			+ (*reinterpret_cast<int*>(GLOBAL::exedit_base + OFS::ExEdit::fast_process) << (state_shift + 1));
+			+ (*reinterpret_cast<int*>(GLOBAL::exedit_base + OFS::ExEdit::is_saving) & 1 << state_shift)
+			+ (*reinterpret_cast<int*>(GLOBAL::exedit_base + OFS::ExEdit::fast_process) & 1<< (state_shift + 1));
 	}
 	int32_t make_key2(int frame, int subframe) {
 		return (frame << 7) | subframe;
 	}
+
+	struct SceneCacheHeader {
+		int w, h;
+		int _padding[2];
+
+		void* get_img() {
+			return this + 1;
+		}
+
+		std::pair<int, int> get_wh() const {
+			return std::make_pair(w, h);
+		}
+
+		void set_wh(int w, int h) {
+			this->w = w;
+			this->h = h;
+		}
+
+		static int get_img_bytesize(int yc_size, int line, int h) {
+			return yc_size * line * h;
+		}
+	};
 }
 
 namespace patch {
 
 	void* __cdecl scene_cache_t::get_scene_image_wrap(ExEdit::ObjectFilterIndex ofi, ExEdit::FilterProcInfo* efpip, int scene_idx, int frame, int subframe, int* w, int* h) {
-		int* SceneDisplaying = (int*)(GLOBAL::exedit_base + OFS::ExEdit::SceneDisplaying);
-		if (*SceneDisplaying != 0) {
+		if (*reinterpret_cast<int*>(GLOBAL::exedit_base + OFS::ExEdit::SceneDisplaying) != 0) {
 			return get_scene_image(ofi, efpip, scene_idx, frame, subframe, w, h);
 		}
 		
 		auto a_exfunc = (AviUtl::ExFunc*)(GLOBAL::aviutl_base + OFS::AviUtl::exfunc);
 
 		auto key1 = make_key1(scene_idx);
+		auto key2 = make_key2(frame, subframe);
 		
-		void* smem_ptr = a_exfunc->get_shared_mem(key1, make_key2(frame, subframe), nullptr);
-		if (smem_ptr != nullptr) {
-			reinterpret_cast<void(__cdecl*)(int, int*, int*, ExEdit::FilterProcInfo*)>(GLOBAL::exedit_base + OFS::ExEdit::get_scene_size)(scene_idx, w, h, efpip);
-			return smem_ptr;
+		if (auto cache_header = static_cast<SceneCacheHeader*>(a_exfunc->get_shared_mem(key1, key2, nullptr))) {
+			std::tie(*w, *h) = cache_header->get_wh();
+			return cache_header->get_img();
 		}
 
 		auto t0 = std::chrono::system_clock::now();
@@ -54,17 +75,60 @@ namespace patch {
 		if (img_ptr == nullptr) return nullptr;
 
 		if (std::chrono::milliseconds{ threshold_time_ms } < std::chrono::system_clock::now() - t0) {
-			int yc_size, flag;
+			int yc_size;
 			if (reinterpret_cast<BOOL(__cdecl*)(int)>(GLOBAL::exedit_base + OFS::ExEdit::scene_has_alpha)(scene_idx)) {
 				yc_size = 8;
-				flag = 0x13000003;
 			} else {
 				yc_size = 6;
-				flag = 0x13000002;
 			}
-			void* smem_ptr = a_exfunc->create_shared_mem(key1, make_key2(frame, subframe), *h * efpip->scene_line * yc_size, nullptr);
-			if (smem_ptr == nullptr) return img_ptr;
-			memcpy(smem_ptr, img_ptr, *h * efpip->scene_line * yc_size);
+			const auto img_size = SceneCacheHeader::get_img_bytesize(yc_size, efpip->scene_line, *h);
+			auto cache_header = static_cast<SceneCacheHeader*>(a_exfunc->create_shared_mem(key1, key2, sizeof(SceneCacheHeader) + img_size, nullptr));
+			if (cache_header == nullptr) return img_ptr;
+			cache_header->set_wh(*w, *h);
+			std::memcpy(cache_header->get_img(), img_ptr, img_size);
+		}
+		return img_ptr;
+	}
+
+	void* __cdecl scene_cache_t::get_scene_image_mask_wrap(ExEdit::ObjectFilterIndex ofi, ExEdit::FilterProcInfo* efpip, int scene_idx, int frame, int subframe, int* w, int* h) {
+		if (*reinterpret_cast<int*>(GLOBAL::exedit_base + OFS::ExEdit::SceneDisplaying) != 0) {
+			return get_scene_image(ofi, efpip, scene_idx, frame, subframe, w, h);
+		}
+
+		auto a_exfunc = (AviUtl::ExFunc*)(GLOBAL::aviutl_base + OFS::AviUtl::exfunc);
+
+		auto key1 = make_key1(scene_idx);
+		auto key2 = make_key2(frame, subframe);
+		
+		if (auto cache_header = static_cast<SceneCacheHeader*>(a_exfunc->get_shared_mem(key1, key2, nullptr))) {
+			if (reinterpret_cast<BOOL(__cdecl*)(int)>(GLOBAL::exedit_base + OFS::ExEdit::scene_has_alpha)(scene_idx)) {
+				if (void* ptr = reinterpret_cast<void*(__cdecl*)(ExEdit::ObjectFilterIndex, int, int, int, int)>(GLOBAL::exedit_base + OFS::ExEdit::GetOrCreateSceneBufYCA)(ofi, cache_header->w, cache_header->h, efpip->v_func_idx + 1, 1)) {
+					std::memcpy(ptr, cache_header->get_img(), SceneCacheHeader::get_img_bytesize(8, efpip->obj_line, cache_header->h));
+					return cache_header->get_img();
+				}
+			} else {
+				if (void* ptr = reinterpret_cast<void*(__cdecl*)(ExEdit::ObjectFilterIndex, int, int, int, int)>(GLOBAL::exedit_base + OFS::ExEdit::GetOrCreateSceneBufYC)(ofi, cache_header->w, cache_header->h, efpip->v_func_idx + 1, 1)) {
+					std::memcpy(ptr, cache_header->get_img(), SceneCacheHeader::get_img_bytesize(6, efpip->obj_line, cache_header->h));
+					return cache_header->get_img();
+				}
+			}
+		}
+
+		auto t0 = std::chrono::system_clock::now();
+		void* img_ptr = get_scene_image(ofi, efpip, scene_idx, frame, subframe, w, h);
+		if (img_ptr == nullptr) return nullptr;
+		if (std::chrono::milliseconds{ threshold_time_ms } < std::chrono::system_clock::now() - t0) {
+			int yc_size;
+			if (reinterpret_cast<BOOL(__cdecl*)(int)>(GLOBAL::exedit_base + OFS::ExEdit::scene_has_alpha)(scene_idx)) {
+				yc_size = 8;
+			} else {
+				yc_size = 6;
+			}
+			const auto img_size = SceneCacheHeader::get_img_bytesize(yc_size, efpip->obj_line, *h);
+			auto cache_header = static_cast<SceneCacheHeader*>(a_exfunc->create_shared_mem(key1, key2, sizeof(SceneCacheHeader) + img_size, nullptr));
+			if (cache_header == nullptr) return img_ptr;
+			cache_header->set_wh(*w, *h);
+			std::memcpy(cache_header->get_img(), img_ptr, img_size);
 		}
 		return img_ptr;
 	}
