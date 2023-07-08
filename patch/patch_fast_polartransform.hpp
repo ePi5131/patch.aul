@@ -15,7 +15,7 @@
 
 #pragma once
 #include "macro.h"
-#ifdef PATCH_SWITCH_FAST_POLORTRANSFORM
+#ifdef PATCH_SWITCH_FAST_POLARTRANSFORM
 
 #include <aviutl.hpp>
 #include <exedit.hpp>
@@ -29,16 +29,16 @@
 namespace patch::fast {
 	// init at exedit load
 	// 極座標変換の高速化
-	inline class PolorTransform_t {
+	inline class PolarTransform_t {
 		static BOOL mt_func(AviUtl::MultiThreadFunc original_func_ptr, ExEdit::Filter* efp, ExEdit::FilterProcInfo* efpip);
 
 		bool enabled = true;
 		bool enabled_i;
-		inline static const char key[] = "fast.polortransform";
+		inline static const char key[] = "fast.polartransform";
 
 	public:
 
-		struct efPolorTransform_var { // 1e48c0
+		struct efPolarTransform_var { // 1e48c0
 			int src_h;
 			int radius;
 			int src_w;
@@ -54,7 +54,7 @@ namespace patch::fast {
 			enabled_i = enabled;
 			if (!enabled_i)return;
 
-			OverWriteOnProtectHelper h(GLOBAL::exedit_base + OFS::ExEdit::efPolorTransform_mt_func_call, 6);
+			OverWriteOnProtectHelper h(GLOBAL::exedit_base + OFS::ExEdit::efPolarTransform_mt_func_call, 6);
 			h.store_i16(0, '\x90\xe8'); // nop; call (rel32)
 			h.replaceNearJmp(2, &mt_func);
 
@@ -68,13 +68,13 @@ namespace patch::fast {
 		void switch_load(ConfigReader& cr) {
 			cr.regist(key, [this](json_value_s* value) {
 				ConfigReader::load_variable(value, enabled);
-				});
+			});
 		}
 
 		void switch_store(ConfigWriter& cw) {
 			cw.append(key, enabled);
 		}
 
-	} PolorTransform;
+	} PolarTransform;
 } // namespace patch::fast
-#endif // ifdef PATCH_SWITCH_FAST_POLORTRANSFORM
+#endif // ifdef PATCH_SWITCH_FAST_POLARTRANSFORM

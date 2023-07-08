@@ -1,5 +1,5 @@
 patch.aul r43 beta1
-Copyright (c) 2021-2022 ePi
+© 2021-2023 ePi
 https://scrapbox.io/ePi5131/patch.aul
 
 概要
@@ -92,6 +92,14 @@ https://scrapbox.io/ePi5131/patch.aul
     ・レイヤー情報を保存するかどうかの判定方法を変える(従来:オブジェクトが存在する→変更:レイヤー情報が初期値でない)
     ・読み込もうとしたファイルパスが長くて失敗するときにメッセージを出す/エラーが発生するのを修正
     ・ドロップ処理で最終的に何も行われなかったときにメッセージを出力する
+    ・画像ループの個別オブジェクトにチェックが入っている時、ループ毎に効果を付与し続けていくのを修正
+    ・シーン画像生成に時間がかかった時にキャッシュを作成する機能の追加
+    ・スクリプト並び替え管理プラグインとの競合を解消
+    ・ファイル名が同じプラグインファイルが複数フォルダに存在するときに警告を出す
+    ・一部キャッシュは共有メモリ(システムの設定のキャッシュサイズの部分)を使用するように変更
+    ・高さ4097以上の描画が正常に行えないことがあるのを修正
+    ・幅0のバッファにYCA<->RGBA色変換を行って例外になることがあるのを修正
+    ・グループ制御とカメラ制御を併用しているシーンを呼び出すと起こる不具合を修正
 
     追加
     ・コンソールの表示
@@ -178,72 +186,83 @@ https://scrapbox.io/ePi5131/patch.aul
     "fast_text" : { ; テキストの軽量化について
         "release_time" : 120 ; キャッシュデータの寿命[秒]
     },
-	"switch" : { ; どのパッチを有効にするかを選択するものです trueなら有効、falseなら無効
-		"access_key" : boolean, ; アクセスキーを付加するか (既定値: false)
-		"aup_scene_setting" : boolean, ; プロジェクトの保存/読み込み時にシーン設定の一部情報（グリッド設定など）が欠けるのを修正 (既定値: true)
-		"colorpalette_cache" : boolean, ; bmpのキャッシュが作られる際に、カラーパレット分のデータ容量を取り忘れているのを修正 (既定値: true)
-		"fileinfo" : boolean, ; ファイルの情報を開くと落ちる/ファイル制御情報が正しくないことがあるのを修正 (既定値: true)
-		"aup_layer_setting" : boolean, ; プロジェクトの保存時、レイヤー情報を保存する基準を変える (既定値: true)
-		"exo_aviutl_filter" : boolean, ; 拡張編集以外のフィルタ(例:拡張色調補正)を使ったプロジェクトをオブジェクトファイルに出力できないことがある (既定値: true)
-		"exo_sceneidx" : boolean, ; オブジェクトファイルの入出力で、シーン番号を正しく扱えない (既定値: true)
-		"exo_trackparam" : boolean, ; オブジェクトファイルの入力で、トラックバー変化方法スクリプトの名前にASCII以外の文字が含まれているとパラメータを読み込めない (既定値: true)
-		"exa_fold_gui" : boolean, ; exa,exo生成時、設定ダイアログの▼（折り畳み）とマウスマーク（GUI表示）の情報を追加する (既定値: true)
+    "scene_cache" : { ; シーンのキャッシュについて
+        "threshold_time" : 64 ; キャッシュを使用するレンダリング時間の閾値[ミリ秒]
+    },
+    "switch" : { ; どのパッチを有効にするかを選択するものです trueなら有効、falseなら無効
+        "access_key" : boolean, ; アクセスキーを付加するか (既定値: false)
+        "aup_scene_setting" : boolean, ; プロジェクトの保存/読み込み時にシーン設定の一部情報（グリッド設定など）が欠けるのを修正 (既定値: true)
+        "colorpalette_cache" : boolean, ; bmpのキャッシュが作られる際に、カラーパレット分のデータ容量を取り忘れているのを修正 (既定値: true)
+        "fileinfo" : boolean, ; ファイルの情報を開くと落ちる/ファイル制御情報が正しくないことがあるのを修正 (既定値: true)
+        "aup_layer_setting" : boolean, ; プロジェクトの保存時、レイヤー情報を保存する基準を変える (既定値: true)
+        "exo_aviutl_filter" : boolean, ; 拡張編集以外のフィルタ(例:拡張色調補正)を使ったプロジェクトをオブジェクトファイルに出力できないことがある (既定値: true)
+        "exo_sceneidx" : boolean, ; オブジェクトファイルの入出力で、シーン番号を正しく扱えない (既定値: true)
+        "exo_trackparam" : boolean, ; オブジェクトファイルの入力で、トラックバー変化方法スクリプトの名前にASCII以外の文字が含まれているとパラメータを読み込めない (既定値: true)
+        "exa_fold_gui" : boolean, ; exa,exo生成時、設定ダイアログの▼（折り畳み）とマウスマーク（GUI表示）の情報を追加する (既定値: true)
         "exo_track_minusval" : boolean, ; オブジェクトファイルの入力で、トラックバーの -1 超 0 未満の値が正になってしまう (既定値: true)
-		"exo_midpt_and_tra" : boolean, ; 中間点有りで.traスクリプト変化方式のあるオブジェクトがあるexoが正常に読み込めないことがあるのを修正 (既定値: true)
+        "exo_midpt_and_tra" : boolean, ; 中間点有りで.traスクリプト変化方式のあるオブジェクトがあるexoが正常に読み込めないことがあるのを修正 (既定値: true)
         "exo_specialcolorconv" : boolean, ; オブジェクトファイルの入出力で、特定色域変換のstatusが2つあって正しく入出力できない (既定値: true)
         "tra_aviutlfilter" : boolean, ; 拡張編集以外のフィルタのトラックバーにトラックバー変化方法スクリプトを適用していると例外になる問題 (既定値: true)
-		"tra_change_drawfilter" : boolean, ; 標準描画-拡張描画-パーティクルの切り替え時にトラックバーの設定値(移動フレーム間隔)が0になるのを修正 (既定値: true)
-		"tra_specified_speed" : boolean, ; トラックバー変化方法の移動量指定と時間制御の組み合わせでバグるのを修正 (既定値: true)
-		"setting_new_project" : boolean, ; 新規プロジェクト作成時にサイズ・フレームレートの変わるフィルタをオフにする (既定値: true)
-		"text_op_size" : boolean, ; テキストオブジェクトでUTF-16で34バイト以上のフォント名を指定している時、制御文字<s>でサイズのみを指定していると正しい動作をしない (既定値: true)
+        "tra_change_drawfilter" : boolean, ; 標準描画-拡張描画-パーティクルの切り替え時にトラックバーの設定値(移動フレーム間隔)が0になるのを修正 (既定値: true)
+        "tra_specified_speed" : boolean, ; トラックバー変化方法の移動量指定と時間制御の組み合わせでバグるのを修正 (既定値: true)
+        "setting_new_project" : boolean, ; 新規プロジェクト作成時にサイズ・フレームレートの変わるフィルタをオフにする (既定値: true)
+        "text_op_size" : boolean, ; テキストオブジェクトでUTF-16で34バイト以上のフォント名を指定している時、制御文字<s>でサイズのみを指定していると正しい動作をしない (既定値: true)
         "ignore_media_param_reset" : boolean, ; 動画ファイル と 音声ファイル で中間点を打っていないときでもファイルを再参照しても再生位置などの情報を変更しない (既定値: false)
         "failed_sjis_msgbox" : boolean, ; ファイルパスに使用できない文字が含まれている時に出すエラーメッセージを変更する (既定値: true)
-		"failed_longer_path" : boolean, ; 読み込もうとしたファイルパスが長くて失敗するときにメッセージを出す/エラーが発生するのを修正 (既定値: true)
-		"failed_file_drop" : boolean, ; ドロップ処理で最終的に何も行われなかったときにメッセージを出力する (既定値: true)
-		"theme_cc" : boolean, ; テーマ機能 (既定値: true)
-		"exeditwindow_sizing" : boolean, ; 拡張編集ウィンドウの上部をドラッグして正常にリサイズできるようにする (既定値: true)
+        "failed_longer_path" : boolean, ; 読み込もうとしたファイルパスが長くて失敗するときにメッセージを出す/エラーが発生するのを修正 (既定値: true)
+        "failed_file_drop" : boolean, ; ドロップ処理で最終的に何も行われなかったときにメッセージを出力する (既定値: true)
+        "theme_cc" : boolean, ; テーマ機能 (既定値: true)
+        "exeditwindow_sizing" : boolean, ; 拡張編集ウィンドウの上部をドラッグして正常にリサイズできるようにする (既定値: true)
         "settingdialog_move" : boolean, ; 設定ダイアログを高ポーリングレートマウス環境で移動すると重たい の解消 (既定値: true)
-		"obj_colorcorrection" : boolean, ; 色調補正の色相計算を修正 (既定値: true)
-		"obj_lensblur" : boolean, ; レンズブラーのバグ修正 (既定値: true)
-		"obj_glow" : boolean, ; グローのしきい値が負の値になった時にエラーとなる・スレッド数より小さいサイズに正常に効果が反映されないバグを修正 (既定値: true)
-		"obj_lensblur" : boolean, ; 小さい画像に対してサイズ固定で範囲の大きいレンズブラーを掛けると例外になるのを修正 (既定値: true)
-		"obj_noise" : boolean, ; ノイズの速度X、変化速度のトラック変化方法が移動無し以外の時に速度Yの値をもとに計算が行われてしまうのを修正 (既定値: true)
-		"obj_specialcolorconv" : boolean, ; 特定色域変換で変換前色に黒色を指定すると0除算が起こることがあるのを修正 (既定値: true)
-		"settingdialog_excolorconfig" : boolean, ; 拡張色変換のウィンドウが下のフィルタに被るのを修正 (既定値: true)
-		"r_click_menu_split" : boolean, ; 右クリック分割で設定ダイアログが更新されないのを修正 (既定値: true)
-		"r_click_menu_delete" : boolean, ; 右クリック削除でテキストの字間行間が変わることがあるのを修正 (既定値: true)
-		"blend" : boolean, ; アルファチャンネルのあるフレームバッファで合成モード「通常」以外を使用すると誤った結果になるのを修正 (既定値: true)
-		"add_extension" : boolean, ; 動画、音声ファイル参照の時、exedit.iniにある拡張子を追加する (既定値: true)
-		"new_project_editbox" : boolean, ; 新規プロジェクト作成ダイアログの画像サイズ入力欄の幅を広げる (既定値: true)
-		"playback_speed" : boolean, ; 中間点で再生速度を変更した時、そこまでの中間点の数だけ速度変化が遅れて反映されるバグの修正 (既定値: true)
+        "obj_colorcorrection" : boolean, ; 色調補正の色相計算を修正 (既定値: true)
+        "obj_lensblur" : boolean, ; レンズブラーのバグ修正 (既定値: true)
+        "obj_glow" : boolean, ; グローのしきい値が負の値になった時にエラーとなる・スレッド数より小さいサイズに正常に効果が反映されないバグを修正 (既定値: true)
+        "obj_lensblur" : boolean, ; 小さい画像に対してサイズ固定で範囲の大きいレンズブラーを掛けると例外になるのを修正 (既定値: true)
+        "obj_imageloop" : boolean, ; 画像ループの個別オブジェクトにチェックが入っている時、ループ毎に効果を付与し続けていくのを修正 (既定値: true)
+        "obj_noise" : boolean, ; ノイズの速度X、変化速度のトラック変化方法が移動無し以外の時に速度Yの値をもとに計算が行われてしまうのを修正 (既定値: true)
+        "obj_specialcolorconv" : boolean, ; 特定色域変換で変換前色に黒色を指定すると0除算が起こることがあるのを修正 (既定値: true)
+        "settingdialog_excolorconfig" : boolean, ; 拡張色変換のウィンドウが下のフィルタに被るのを修正 (既定値: true)
+        "r_click_menu_split" : boolean, ; 右クリック分割で設定ダイアログが更新されないのを修正 (既定値: true)
+        "r_click_menu_delete" : boolean, ; 右クリック削除でテキストの字間行間が変わることがあるのを修正 (既定値: true)
+        "blend" : boolean, ; アルファチャンネルのあるフレームバッファで合成モード「通常」以外を使用すると誤った結果になるのを修正 (既定値: true)
+        "rendering" : boolean, ; 高さ4097以上の描画が正常に行えないことがあるのを修正 (既定値: true)
+        "add_extension" : boolean, ; 動画、音声ファイル参照の時、exedit.iniにある拡張子を追加する (既定値: true)
+        "new_project_editbox" : boolean, ; 新規プロジェクト作成ダイアログの画像サイズ入力欄の幅を広げる (既定値: true)
+        "playback_speed" : boolean, ; 中間点で再生速度を変更した時、そこまでの中間点の数だけ速度変化が遅れて反映されるバグの修正 (既定値: true)
+        "scene_cache" : boolean, ; シーン画像生成に時間がかかった時にキャッシュを作成する機能の追加 (既定値: true)
+        "patch_script_sort" : boolean, ; スクリプト並び替え管理プラグインとの競合を解消 (既定値: true)
+        "warning_duplicate" : boolean, ; ファイル名が同じプラグインファイルが複数フォルダに存在するときに警告を出す (既定値: true)
+        "shared_cache" : boolean, ; 一部キャッシュは共有メモリ(システムの設定のキャッシュサイズの部分)を使用するように変更 (既定値: true)
+        "yc_rgb_cvt" : boolean, ; 改行のみのテキストで一部スクリプトを使うとエラーが発生するのを修正 (既定値: true)
+        "group_camera_scene" : boolean, ; グループ制御とカメラ制御を併用しているシーンを呼び出すと起こる不具合を修正 (既定値: true)
         "undo" : boolean, ; 元に戻す 関連のバグ修正 (既定値: true)
-        "undo.redo" : boolean, ; やり直す を追加 (既定値: true)
-		"console" : boolean, ; コンソール (既定値: true)
-		"console.escape" : boolean, ; エスケープシーケンス (既定値: true)
-		"console.input" : boolean, ; 標準入力を受け取るか (既定値: false)
-		"console.debug_string" : boolean, ; 拡張編集のOutputDebugStringの内容を表示する (既定値: true)
-		"console.debug_string.time" : boolean, ; 拡張編集のOutputDebugStringの内容の先頭に時刻を表示する (既定値: true)
-		"lua" : boolean, ; lua.*配下のスイッチの主電源 (既定値: true)
-        "lua.env" : boolean, ; Luaの環境を統一する (既定値: false)
-        "lua.path" : boolean, ; package.path,cpathにパスを追加 (既定値: false)
-		"lua.getvalue" : boolean, ; getvalueで中心座標を取得できるように (既定値: true)
-		"lua.rand" : boolean, ; rand関数で例外になるパターンを潰す (既定値: true)
-		"lua.randex" : boolean, ; 正確な乱数を提供するrandexクラスの追加 (既定値: true)
-		"fast" : boolean, ; fast.*配下のスイッチの主電源 (既定値: true)
-		"fast.exeditwindow" : boolean, ; 拡張編集ウィンドウの描画の最適化 (既定値: true)
-		"fast.settingdialog" : boolean, ; 設定ダイアログの描画の最適化 (既定値: true)
-        "fast.text" : boolean, ; テキストの軽量化 (既定値: true)
-		"fast.create_figure" : boolean, ; 図形の高速化 (既定値: true)
-        "fast.border" : boolean, ; 縁取りの高速化/バグ修正 (既定値: true)
-		"fast.glow" : boolean, ; グローの高速化 (既定値: true)
-		"fast.cl" : boolean, ; fast.*でOpenCLが必要なオプションに必要なオプション (既定値: true)
-		"fast.radiationalblur" : boolean, ; fast.clが前提 放射ブラーの高速化 (既定値: true)
-		"fast.polortransform" : boolean, ; fast.clが前提 極座標変換の高速化 (既定値: true)
-		"fast.displacementmap" : boolean, ; fast.clが前提 ディスプレイスメントマップの高速化 (既定値: true)
-        "fast.flash" : true : boolean, ; fast.clが前提 閃光の高速化 (既定値: true)
-		"fast.directionalblur" : boolean,  ; fast.clが前提 方向ブラーの高速化 (既定値: true)
-		"fast.lensblur" : boolean  ; fast.clが前提 レンズブラーの高速化 (既定値: true)
-	}
+            "undo.redo" : boolean, ; やり直す を追加 (既定値: true)
+        "console" : boolean, ; コンソール (既定値: true)
+            "console.escape" : boolean, ; エスケープシーケンス (既定値: true)
+            "console.input" : boolean, ; 標準入力を受け取るか (既定値: false)
+            "console.debug_string" : boolean, ; 拡張編集のOutputDebugStringの内容を表示する (既定値: true)
+                "console.debug_string.time" : boolean, ; 拡張編集のOutputDebugStringの内容の先頭に時刻を表示する (既定値: true)
+        "lua" : boolean, ; lua.*配下のスイッチの主電源 (既定値: true)
+            "lua.env" : boolean, ; Luaの環境を統一する (既定値: false)
+            "lua.path" : boolean, ; package.path,cpathにパスを追加 (既定値: false)
+            "lua.getvalue" : boolean, ; getvalueで中心座標を取得できるように (既定値: true)
+            "lua.rand" : boolean, ; rand関数で例外になるパターンを潰す (既定値: true)
+            "lua.randex" : boolean, ; 正確な乱数を提供するrandexクラスの追加 (既定値: true)
+        "fast" : boolean, ; fast.*配下のスイッチの主電源 (既定値: true)
+            "fast.exeditwindow" : boolean, ; 拡張編集ウィンドウの描画の最適化 (既定値: true)
+            "fast.settingdialog" : boolean, ; 設定ダイアログの描画の最適化 (既定値: true)
+            "fast.text" : boolean, ; テキストの軽量化 (既定値: true)
+            "fast.create_figure" : boolean, ; 図形の高速化 (既定値: true)
+            "fast.border" : boolean, ; 縁取りの高速化/バグ修正 (既定値: true)
+            "fast.glow" : boolean, ; グローの高速化 (既定値: true)
+            "fast.cl" : boolean, ; fast.*でOpenCLが必要なオプションに必要なオプション (既定値: true)
+                "fast.radiationalblur" : boolean, ; fast.clが前提 放射ブラーの高速化 (既定値: true)
+                "fast.polortransform" : boolean, ; fast.clが前提 極座標変換の高速化 (既定値: true)
+                "fast.displacementmap" : boolean, ; fast.clが前提 ディスプレイスメントマップの高速化 (既定値: true)
+                "fast.flash" : true : boolean, ; fast.clが前提 閃光の高速化 (既定値: true)
+                "fast.directionalblur" : boolean,  ; fast.clが前提 方向ブラーの高速化 (既定値: true)
+                "fast.lensblur" : boolean  ; fast.clが前提 レンズブラーの高速化 (既定値: true)
+    }
 
 Lua追加要素詳細
     _PATCH
@@ -467,3 +486,9 @@ Lua追加要素詳細
         レイヤー情報を保存するかどうかの判定方法を変える(従来:オブジェクトが存在する→変更:レイヤー情報が初期値でない)
         読み込もうとしたファイルパスが長くて失敗するときにメッセージを出す/エラーが発生するのを修正
         ドロップ処理で最終的に何も行われなかったときにメッセージを出力する
+        ファイル名が同じプラグインファイルが複数フォルダに存在するときに警告を出す
+        一部キャッシュは共有メモリ(システムの設定のキャッシュサイズの部分)を使用するように変更
+        極座標変換の高速化設定のキーのtypoを修正
+        高さ4097以上の描画が正常に行えないことがあるのを修正
+        幅0のバッファにYCA<->RGBA色変換を行って例外になることがあるのを修正
+        グループ制御とカメラ制御を併用しているシーンを呼び出すと起こる不具合を修正

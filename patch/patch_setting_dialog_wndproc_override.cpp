@@ -16,6 +16,7 @@
 #include "patch_setting_dialog_wndproc_override.hpp"
 
 #include "patch_setting_dialog_move.hpp"
+#include "patch_script_sort.hpp"
 
 namespace patch {
 	LRESULT CALLBACK setting_dialog_t::wndproc(HWND hwnd, UINT message, WPARAM wparam, LPARAM lparam) {
@@ -23,6 +24,15 @@ namespace patch {
 		case WM_MOVE:
 			#ifdef PATCH_SWITCH_SETTINGDIALOG_MOVE
 				setting_dialog_move(hwnd);
+			#endif
+			break;
+		case WM_COMMAND:
+			#ifdef PATCH_SWITCH_SCRIPT_SORT_PATCH
+			if ((wparam & 0xffff) == 2079) {
+				int ret = wndproc_orig(hwnd, message, wparam, lparam);
+				patch_script_sort(hwnd);
+				return ret;
+			}
 			#endif
 			break;
 		}
