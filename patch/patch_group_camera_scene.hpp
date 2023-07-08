@@ -22,6 +22,7 @@
 #include "global.hpp"
 #include "offset_address.hpp"
 #include "util.hpp"
+#include "config_rw.hpp"
 
 
 namespace patch {
@@ -73,7 +74,7 @@ namespace patch {
         void switch_load(ConfigReader& cr) {
             cr.regist(key, [this](json_value_s* value) {
                 ConfigReader::load_variable(value, enabled);
-                });
+            });
         }
 
         void switch_store(ConfigWriter& cw) {
