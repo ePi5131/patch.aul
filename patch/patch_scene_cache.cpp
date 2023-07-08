@@ -17,14 +17,19 @@
 
 #ifdef PATCH_SWITCH_SCENE_CACHE
 
+namespace {
+	constexpr int state_shift = 6;
 
-static int get_state_idx(bool is_saving, bool fast_process) {
-	if (is_saving) return 1;
-	if (fast_process) return 2;
-	return 0;
-};
-
-static AviUtl::SharedMemoryInfo* smem_info[50][3] = {};
+	int32_t make_key1(int scene_idx) {
+		return GLOBAL::exedit_base + OFS::ExEdit::get_scene_image
+			+ scene_idx
+			+ (*reinterpret_cast<int*>(GLOBAL::exedit_base + OFS::ExEdit::is_saving) << state_shift)
+			+ (*reinterpret_cast<int*>(GLOBAL::exedit_base + OFS::ExEdit::fast_process) << (state_shift + 1));
+	}
+	int32_t make_key2(int frame, int subframe) {
+		return (frame << 7) | subframe;
+	}
+}
 
 namespace patch {
 
@@ -36,10 +41,9 @@ namespace patch {
 		
 		auto a_exfunc = (AviUtl::ExFunc*)(GLOBAL::aviutl_base + OFS::AviUtl::exfunc);
 
-		auto state_idx = get_state_idx(*(int*)(GLOBAL::exedit_base + OFS::ExEdit::is_saving), *(int*)(GLOBAL::exedit_base + OFS::ExEdit::fast_process));
-		auto& smem = smem_info[scene_idx][state_idx];
+		auto key1 = make_key1(scene_idx);
 		
-		void* smem_ptr = a_exfunc->get_shared_mem(std::bit_cast<int32_t>(&smem), (frame << 7) | subframe, smem);
+		void* smem_ptr = a_exfunc->get_shared_mem(key1, make_key2(frame, subframe), nullptr);
 		if (smem_ptr != nullptr) {
 			reinterpret_cast<void(__cdecl*)(int, int*, int*, ExEdit::FilterProcInfo*)>(GLOBAL::exedit_base + OFS::ExEdit::get_scene_size)(scene_idx, w, h, efpip);
 			return smem_ptr;
@@ -58,7 +62,7 @@ namespace patch {
 				yc_size = 6;
 				flag = 0x13000002;
 			}
-			void* smem_ptr = a_exfunc->create_shared_mem(std::bit_cast<int32_t>(&smem), (frame << 7) | subframe, *h * efpip->scene_line * yc_size, &smem);
+			void* smem_ptr = a_exfunc->create_shared_mem(key1, make_key2(frame, subframe), *h * efpip->scene_line * yc_size, nullptr);
 			if (smem_ptr == nullptr) return img_ptr;
 			memcpy(smem_ptr, img_ptr, *h * efpip->scene_line * yc_size);
 		}
@@ -68,9 +72,11 @@ namespace patch {
 	void scene_cache_t::delete_scene_cache() {
 		auto a_exfunc = (AviUtl::ExFunc*)(GLOBAL::aviutl_base + OFS::AviUtl::exfunc);
 		for (int i = 1; i < 50; i++) {
-			for (int state = 0; state < 2; state++) {
-				auto& smem = smem_info[i][state];
-				a_exfunc->delete_shared_mem(std::bit_cast<int32_t>(&smem), smem);
+			for (int state = 0; state < 3; state++) {
+				const auto key1 = GLOBAL::exedit_base + OFS::ExEdit::get_scene_image
+					+ i
+					+ (state << state_shift);
+				a_exfunc->delete_shared_mem(key1, nullptr);
 			}
 		}
 	}
