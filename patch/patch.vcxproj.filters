@@ -287,6 +287,9 @@
     <ClInclude Include="patch_warning_duplicate_plugins.hpp">
       <Filter>feature</Filter>
     </ClInclude>
+    <ClInclude Include="patch_keyconfig.hpp">
+      <Filter>feature</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="init.cpp" />
@@ -428,6 +431,9 @@
       <Filter>feature</Filter>
     </ClCompile>
     <ClCompile Include="patch_warning_duplicate_plugins.cpp">
+      <Filter>feature</Filter>
+    </ClCompile>
+    <ClCompile Include="patch_keyconfig.cpp">
       <Filter>feature</Filter>
     </ClCompile>
   </ItemGroup>
