@@ -65,8 +65,12 @@
     <ClInclude Include="patch_scene_cache.hpp" />
     <ClInclude Include="patch_script_sort.hpp" />
     <ClInclude Include="patch_setting_new_project.hpp" />
-    <ClInclude Include="patch_shared_cache.hpp" />
-    <ClInclude Include="patch_warning_duplicate_plugins.hpp" />
+    <ClInclude Include="patch_shared_cache.hpp">
+      <Filter>feature</Filter>
+    </ClInclude>
+    <ClInclude Include="patch_warning_duplicate_plugins.hpp">
+      <Filter>feature</Filter>
+    </ClInclude>
     <ClInclude Include="patch_access_key.hpp">
       <Filter>feature</Filter>
     </ClInclude>
