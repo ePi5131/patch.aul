@@ -147,6 +147,7 @@
 #define PATCH_SWITCH_SHARED_CACHE shared_cache
 #define PATCH_SWITCH_YC_RGB_CVT ycrgbcvt
 #define PATCH_SWITCH_GROUP_CAMERA_SCENE group_camera_scene
+#define PATCH_SWITCH_CHANGE_DISP_SCENE change_dispscene
 
 #define PATCH_SWITCH_UNDO undo
 #ifdef PATCH_SWITCH_UNDO
