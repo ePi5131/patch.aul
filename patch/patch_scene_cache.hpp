@@ -36,6 +36,7 @@ namespace patch {
 		
 
 		static void* __cdecl get_scene_image_wrap(ExEdit::ObjectFilterIndex ofi, ExEdit::FilterProcInfo* efpip, int scene_idx, int frame, int subframe, int* w, int* h);
+		static void* __cdecl get_scene_image_mask_wrap(ExEdit::ObjectFilterIndex ofi, ExEdit::FilterProcInfo* efpip, int scene_idx, int frame, int subframe, int* w, int* h);
 		static void delete_scene_cache();
 
 		inline static void* (__cdecl* get_scene_image)(ExEdit::ObjectFilterIndex, ExEdit::FilterProcInfo*, int, int, int, int*, int*);
@@ -60,11 +61,11 @@ namespace patch {
 				OverWriteOnProtectHelper h(GLOBAL::exedit_base + 0x0835bd, 4);
 				h.replaceNearJmp(0, &get_scene_image_wrap);
 			}
-			/*
+			
 			{   // mask
 				OverWriteOnProtectHelper h(GLOBAL::exedit_base + 0x068a2d, 4);
-				h.replaceNearJmp(0, &get_scene_image_wrap);
-			}*/
+				h.replaceNearJmp(0, &get_scene_image_mask_wrap);
+			}
 
 			{   // シーン切り替え時に初期化
 				OverWriteOnProtectHelper h(GLOBAL::exedit_base + 0x02be77, 5);

@@ -123,6 +123,8 @@ namespace OFS {
 		constexpr i32 str_DOUGAFILE = 0x09df6c; // "動画ファイル"
 		constexpr i32 str_ONSEIFILE = 0x0ba698; // "音声ファイル"
 
+		constexpr i32 GetOrCreateSceneBufYC = 0x02a770;
+		constexpr i32 GetOrCreateSceneBufYCA = 0x02a830;
 		constexpr i32 SceneDisplaying = 0x1a5310;
 		constexpr i32 SceneSetting = 0x177a50;
 		constexpr i32 get_scene_image = 0x04ce20;
