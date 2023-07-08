@@ -258,7 +258,7 @@
     <ClInclude Include="patch_obj_colorcorrection.hpp">
       <Filter>feature</Filter>
     </ClInclude>
-    <ClInclude Include="patch_yc_rgb_conv.hpp">
+    <ClInclude Include="patch_yc_rgb_cvt.hpp">
       <Filter>feature</Filter>
     </ClInclude>
   </ItemGroup>
@@ -374,7 +374,7 @@
     <ClCompile Include="patch_obj_colorcorrection.cpp">
       <Filter>feature</Filter>
     </ClCompile>
-    <ClCompile Include="patch_yc_rgb_conv.cpp">
+    <ClCompile Include="patch_yc_rgb_cvt.cpp">
       <Filter>feature</Filter>
     </ClCompile>
     <ClCompile Include="patch_add_extension.cpp">
