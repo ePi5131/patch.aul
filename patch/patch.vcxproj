@@ -1,5 +1,19 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup Label="ProjectConfigurations">
+    <ProjectConfiguration Include="Debug|Win32">
+      <Configuration>Debug</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Release_PDB|Win32">
+      <Configuration>Release_PDB</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Release|Win32">
+      <Configuration>Release</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+  </ItemGroup>
   <ItemGroup>
     <Filter Include="feature">
       <UniqueIdentifier>{f2c356a4-9aa7-4917-b27b-4b37a59cc03e}</UniqueIdentifier>
@@ -19,7 +33,7 @@
     <ClInclude Include="global_minimum.hpp" />
     <ClInclude Include="hash.hpp" />
     <ClInclude Include="init.hpp" />
-    <ClInclude Include="json.h" />
+    <ClInclude Include="jsleep.hpp" />
     <ClInclude Include="macro.h" />
     <ClInclude Include="moduledata.hpp" />
     <ClInclude Include="multi_threading.hpp" />
@@ -29,9 +43,30 @@
     <ClInclude Include="overwrite_resource.hpp" />
     <ClInclude Include="patch.hpp" />
     <ClInclude Include="resource.h" />
+    <ClInclude Include="scope_exit.hpp" />
     <ClInclude Include="stopwatch.hpp" />
     <ClInclude Include="version.hpp" />
     <ClInclude Include="add_dll_ref.hpp" />
+    <ClInclude Include="patch_add_extension.hpp" />
+    <ClInclude Include="patch_aup_layer_setting.hpp" />
+    <ClInclude Include="patch_aup_scene_setting.hpp" />
+    <ClInclude Include="patch_colorpalette_cache.hpp" />
+    <ClInclude Include="patch_dialog_new_file.hpp" />
+    <ClInclude Include="patch_rendering.hpp" />
+    <ClInclude Include="patch_exo_fold_gui.hpp" />
+    <ClInclude Include="patch_exo_midpt_and_tra.hpp" />
+    <ClInclude Include="patch_failed_file_drop.hpp" />
+    <ClInclude Include="patch_fast_glow.hpp" />
+    <ClInclude Include="patch_fast_polartransform.hpp" />
+    <ClInclude Include="patch_fileinfo.hpp" />
+    <ClInclude Include="patch_obj_glow.hpp" />
+    <ClInclude Include="patch_obj_imageloop.hpp" />
+    <ClInclude Include="patch_obj_specialcolorconv.hpp" />
+    <ClInclude Include="patch_scene_cache.hpp" />
+    <ClInclude Include="patch_script_sort.hpp" />
+    <ClInclude Include="patch_setting_new_project.hpp" />
+    <ClInclude Include="patch_shared_cache.hpp" />
+    <ClInclude Include="patch_warning_duplicate_plugins.hpp" />
     <ClInclude Include="patch_access_key.hpp">
       <Filter>feature</Filter>
     </ClInclude>
@@ -123,9 +158,6 @@
       <Filter>feature\fast</Filter>
     </ClInclude>
     <ClInclude Include="patch_fast_getputpixeldata.hpp">
-      <Filter>feature\fast</Filter>
-    </ClInclude>
-    <ClInclude Include="patch_fast_polortransform.hpp">
       <Filter>feature\fast</Filter>
     </ClInclude>
     <ClInclude Include="patch_fast_radiationalblur.hpp">
@@ -273,7 +305,7 @@
     <ClCompile Include="patch_fast_getputpixeldata.cpp">
       <Filter>feature\fast</Filter>
     </ClCompile>
-    <ClCompile Include="patch_fast_polortransform.cpp">
+    <ClCompile Include="patch_fast_polartransform.cpp">
       <Filter>feature\fast</Filter>
     </ClCompile>
     <ClCompile Include="patch_fast_radiationalblur.cpp">
@@ -345,13 +377,204 @@
     <ClCompile Include="patch_yc_rgb_conv.cpp">
       <Filter>feature</Filter>
     </ClCompile>
+    <ClCompile Include="patch_add_extension.cpp">
+      <Filter>feature</Filter>
+    </ClCompile>
+    <ClCompile Include="patch_rendering.cpp">
+      <Filter>feature</Filter>
+    </ClCompile>
+    <ClCompile Include="patch_failed_longer_path.cpp">
+      <Filter>feature\fast</Filter>
+    </ClCompile>
+    <ClCompile Include="patch_fast_glow.cpp">
+      <Filter>feature\fast</Filter>
+    </ClCompile>
+    <ClCompile Include="patch_obj_imageloop.cpp">
+      <Filter>feature</Filter>
+    </ClCompile>
+    <ClCompile Include="patch_scene_cache.cpp">
+      <Filter>feature</Filter>
+    </ClCompile>
+    <ClCompile Include="patch_setting_new_project.cpp">
+      <Filter>feature</Filter>
+    </ClCompile>
+    <ClCompile Include="patch_shared_cache.cpp">
+      <Filter>feature</Filter>
+    </ClCompile>
+    <ClCompile Include="patch_warning_duplicate_plugins.cpp">
+      <Filter>feature</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="patch.rc" />
   </ItemGroup>
   <ItemGroup>
     <None Include=".editorconfig" />
-    <None Include="clprogram.cl" />
     <None Include="packages.config" />
   </ItemGroup>
+  <PropertyGroup Label="Globals">
+    <VCProjectVersion>16.0</VCProjectVersion>
+    <Keyword>Win32Proj</Keyword>
+    <ProjectGuid>{20c4ed31-b17f-445a-90fe-77f8119f831b}</ProjectGuid>
+    <RootNamespace>patch</RootNamespace>
+    <WindowsTargetPlatformVersion>10.0</WindowsTargetPlatformVersion>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
+    <ConfigurationType>DynamicLibrary</ConfigurationType>
+    <UseDebugLibraries>true</UseDebugLibraries>
+    <PlatformToolset>v143</PlatformToolset>
+    <CharacterSet>MultiByte</CharacterSet>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="Configuration">
+    <ConfigurationType>DynamicLibrary</ConfigurationType>
+    <UseDebugLibraries>false</UseDebugLibraries>
+    <PlatformToolset>v143</PlatformToolset>
+    <WholeProgramOptimization>true</WholeProgramOptimization>
+    <CharacterSet>MultiByte</CharacterSet>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release_PDB|Win32'" Label="Configuration">
+    <ConfigurationType>DynamicLibrary</ConfigurationType>
+    <UseDebugLibraries>false</UseDebugLibraries>
+    <PlatformToolset>v143</PlatformToolset>
+    <WholeProgramOptimization>true</WholeProgramOptimization>
+    <CharacterSet>MultiByte</CharacterSet>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
+  <ImportGroup Label="ExtensionSettings">
+  </ImportGroup>
+  <ImportGroup Label="Shared">
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <ImportGroup Condition="'$(Configuration)|$(Platform)'=='Release_PDB|Win32'" Label="PropertySheets">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <PropertyGroup Label="UserMacros" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <LinkIncremental>true</LinkIncremental>
+    <TargetExt>.aul</TargetExt>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <LinkIncremental>false</LinkIncremental>
+    <TargetExt>.aul</TargetExt>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release_PDB|Win32'">
+    <LinkIncremental>false</LinkIncremental>
+    <TargetExt>.aul</TargetExt>
+  </PropertyGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <ClCompile>
+      <WarningLevel>Level3</WarningLevel>
+      <SDLCheck>true</SDLCheck>
+      <PreprocessorDefinitions>WIN32;_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <ConformanceMode>true</ConformanceMode>
+      <LanguageStandard>stdcpplatest</LanguageStandard>
+      <AdditionalIncludeDirectories>aviutl_exedit_sdk;winwrap;json.h;%CUDA_PATH%\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalOptions>/source-charset:utf-8 /execution-charset:shift_jis %(AdditionalOptions)</AdditionalOptions>
+      <MultiProcessorCompilation>true</MultiProcessorCompilation>
+    </ClCompile>
+    <Link>
+      <SubSystem>Console</SubSystem>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+      <DelayLoadDLLs>OpenCL.DLL</DelayLoadDLLs>
+      <AdditionalLibraryDirectories>%CUDA_PATH%\lib\Win32</AdditionalLibraryDirectories>
+    </Link>
+    <PostBuildEvent>
+      <Command>xcopy /Y "$(TargetPath)" "$(SolutionDir)test\"
+xcopy /Y "$(TargetPath)" "$(SolutionDir)pack\"
+xcopy /Y "$(SolutionDir)patch.aul.txt" "$(SolutionDir)pack\"
+xcopy /Y "$(SolutionDir)credits.md" "$(SolutionDir)pack\"
+xcopy /Y "$(SolutionDir)LICENSE" "$(SolutionDir)pack\"
+xcopy /Y "$(SolutionDir)COPYING" "$(SolutionDir)pack\"
+xcopy /Y "$(SolutionDir)COPYING.LESSER" "$(SolutionDir)pack\"</Command>
+    </PostBuildEvent>
+    <ResourceCompile>
+      <AdditionalOptions>/c 65001 %(AdditionalOptions)</AdditionalOptions>
+    </ResourceCompile>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <ClCompile>
+      <WarningLevel>Level3</WarningLevel>
+      <FunctionLevelLinking>true</FunctionLevelLinking>
+      <IntrinsicFunctions>true</IntrinsicFunctions>
+      <SDLCheck>true</SDLCheck>
+      <PreprocessorDefinitions>WIN32;NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <ConformanceMode>true</ConformanceMode>
+      <LanguageStandard>stdcpplatest</LanguageStandard>
+      <AdditionalIncludeDirectories>aviutl_exedit_sdk;winwrap;json.h;%CUDA_PATH%\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalOptions>/source-charset:utf-8 /execution-charset:shift_jis %(AdditionalOptions)</AdditionalOptions>
+      <MultiProcessorCompilation>true</MultiProcessorCompilation>
+    </ClCompile>
+    <Link>
+      <SubSystem>Console</SubSystem>
+      <EnableCOMDATFolding>true</EnableCOMDATFolding>
+      <OptimizeReferences>true</OptimizeReferences>
+      <GenerateDebugInformation>false</GenerateDebugInformation>
+      <DelayLoadDLLs>OpenCL.DLL</DelayLoadDLLs>
+      <AdditionalLibraryDirectories>%CUDA_PATH%\lib\Win32</AdditionalLibraryDirectories>
+    </Link>
+    <PostBuildEvent>
+      <Command>copy /Y "$(TargetPath)" "$(SolutionDir)test\$(TargetFileName)"
+copy /Y "$(TargetPath)" "$(SolutionDir)pack\$(TargetFileName)"
+copy /Y "$(SolutionDir)patch.aul.txt" "$(SolutionDir)pack\patch.aul.txt"
+copy /Y "$(SolutionDir)credits.md" "$(SolutionDir)pack\credits.md"
+copy /Y "$(SolutionDir)LICENSE" "$(SolutionDir)pack\LICENSE"
+copy /Y "$(SolutionDir)COPYING" "$(SolutionDir)pack\COPYING"
+copy /Y "$(SolutionDir)COPYING.LESSER" "$(SolutionDir)pack\COPYING.LESSER"</Command>
+    </PostBuildEvent>
+    <ResourceCompile>
+      <AdditionalOptions>/c 65001 %(AdditionalOptions)</AdditionalOptions>
+    </ResourceCompile>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release_PDB|Win32'">
+    <ClCompile>
+      <WarningLevel>Level3</WarningLevel>
+      <FunctionLevelLinking>true</FunctionLevelLinking>
+      <IntrinsicFunctions>true</IntrinsicFunctions>
+      <SDLCheck>true</SDLCheck>
+      <PreprocessorDefinitions>WIN32;NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <ConformanceMode>true</ConformanceMode>
+      <LanguageStandard>stdcpplatest</LanguageStandard>
+      <AdditionalIncludeDirectories>aviutl_exedit_sdk;winwrap;json.h;%CUDA_PATH%\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalOptions>/source-charset:utf-8 %(AdditionalOptions)</AdditionalOptions>
+      <MultiProcessorCompilation>true</MultiProcessorCompilation>
+    </ClCompile>
+    <Link>
+      <SubSystem>Console</SubSystem>
+      <EnableCOMDATFolding>true</EnableCOMDATFolding>
+      <OptimizeReferences>true</OptimizeReferences>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+      <DelayLoadDLLs>OpenCL.DLL</DelayLoadDLLs>
+      <AdditionalLibraryDirectories>%CUDA_PATH%\lib\Win32</AdditionalLibraryDirectories>
+    </Link>
+    <PostBuildEvent>
+      <Command>copy /Y "$(TargetPath)" "$(SolutionDir)test\$(TargetFileName)"
+copy /Y "$(TargetPath)" "$(SolutionDir)pack\$(TargetFileName)"
+copy /Y "$(SolutionDir)patch.aul.txt" "$(SolutionDir)pack\patch.aul.txt"
+copy /Y "$(SolutionDir)credits.md" "$(SolutionDir)pack\credits.md"
+copy /Y "$(SolutionDir)LICENSE" "$(SolutionDir)pack\LICENSE"
+copy /Y "$(SolutionDir)COPYING" "$(SolutionDir)pack\COPYING"
+copy /Y "$(SolutionDir)COPYING.LESSER" "$(SolutionDir)pack\COPYING.LESSER"</Command>
+    </PostBuildEvent>
+    <ResourceCompile>
+      <AdditionalOptions>/c 65001 %(AdditionalOptions)</AdditionalOptions>
+    </ResourceCompile>
+  </ItemDefinitionGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
+  <ImportGroup Label="ExtensionTargets">
+    <Import Project="..\packages\boost.1.79.0\build\boost.targets" Condition="Exists('..\packages\boost.1.79.0\build\boost.targets')" />
+    <Import Project="..\packages\boost_system-vc143.1.79.0\build\boost_system-vc143.targets" Condition="Exists('..\packages\boost_system-vc143.1.79.0\build\boost_system-vc143.targets')" />
+  </ImportGroup>
+  <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">
+    <PropertyGroup>
+      <ErrorText>このプロジェクトは、このコンピューター上にない NuGet パッケージを参照しています。それらのパッケージをダウンロードするには、[NuGet パッケージの復元] を使用します。詳細については、http://go.microsoft.com/fwlink/?LinkID=322105 を参照してください。見つからないファイルは {0} です。</ErrorText>
+    </PropertyGroup>
+    <Error Condition="!Exists('..\packages\boost.1.79.0\build\boost.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\boost.1.79.0\build\boost.targets'))" />
+    <Error Condition="!Exists('..\packages\boost_system-vc143.1.79.0\build\boost_system-vc143.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\boost_system-vc143.1.79.0\build\boost_system-vc143.targets'))" />
+  </Target>
 </Project>

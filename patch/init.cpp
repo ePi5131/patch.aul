@@ -96,6 +96,9 @@ void init_t::InitAtPatchLoaded() {
 	patch::fileinfo.init();
 #endif
 
+#ifdef PATCH_SWITCH_WARNING_DUPLICATE_PLUGINS
+	patch::WarningDuplicate.init();
+#endif
 }
 
 void init_t::InitAtExeditLoad() {
@@ -196,6 +199,9 @@ void init_t::InitAtExeditLoad() {
 #ifdef PATCH_SWITCH_OBJ_LENSBLUR
 	patch::LensBlur.init();
 #endif
+#ifdef PATCH_SWITCH_OBJ_IMAGELOOP
+	patch::ImageLoop.init();
+#endif
 #ifdef PATCH_SWITCH_OBJ_NOISE
 	patch::Noise.init();
 #endif
@@ -216,6 +222,9 @@ void init_t::InitAtExeditLoad() {
 #ifdef PATCH_SWITCH_BLEND
 	patch::blend.init();
 #endif
+#ifdef PATCH_SWITCH_RENDERING
+	patch::Rendering.init();
+#endif
 #ifdef PATCH_SWITCH_ADD_EXTENSION
 	patch::add_extension.init();
 #endif
@@ -224,6 +233,12 @@ void init_t::InitAtExeditLoad() {
 #endif
 #ifdef PATCH_SWITCH_PLAYBACK_SPEED
 	patch::playback_speed.init();
+#endif
+#ifdef PATCH_SWITCH_SCENE_CACHE
+	patch::scene_cache.init();
+#endif
+#ifdef PATCH_SWITCH_SHARED_CACHE
+	patch::SharedCache.init();
 #endif
 #ifdef PATCH_SWITCH_YC_RGB_CONV
 	patch::yc_rgb_conv.init();
@@ -262,8 +277,8 @@ void init_t::InitAtExeditLoad() {
 		#ifdef PATCH_SWITCH_CL
 			if (patch::fast::cl.init()) {
 				if (patch::fast::cl.is_enabled_i()) {
-					#ifdef PATCH_SWITCH_FAST_POLORTRANSFORM
-						patch::fast::PolorTransform.init();
+					#ifdef PATCH_SWITCH_FAST_POLARTRANSFORM
+						patch::fast::PolarTransform.init();
 					#endif
 					#ifdef PATCH_SWITCH_FAST_DISPLACEMENTMAP
 						patch::fast::DisplacementMap.init();
@@ -361,6 +376,11 @@ HMODULE WINAPI init_t::LoadLibraryAWrap(LPCSTR lpLibFileName) {
 		}
 	}
 #endif
+#ifdef PATCH_SWITCH_SCRIPT_SORT_PATCH
+	else if (lstrcmpiA(filename, "script_sort.auf") == 0) {
+		patch::patch_script_sort.init(ret);
+	}
+#endif
 #ifdef PATCH_SWITCH_WARNING_OLD_LSW
 	else if (lstrcmpiA(filename, "lwcolor.auc") == 0) {
 		static const SHA256 r940_hash(0xc7, 0xe2, 0x51, 0xde, 0xd2, 0xf8, 0x21, 0xcb, 0x1b, 0xc6, 0xb1, 0x9a, 0x66, 0x43, 0xd3, 0x0d, 0xa4, 0xeb, 0xd6, 0x97, 0x1e, 0x34, 0x1a, 0xb2, 0x11, 0xd9, 0x41, 0x1d, 0xcc, 0xbf, 0x9a, 0x18);
@@ -379,6 +399,7 @@ HMODULE WINAPI init_t::LoadLibraryAWrap(LPCSTR lpLibFileName) {
 			"bakusoku.auf",
 			"eclipse_fast.auf",
 			"redo.auf",
+			"script_sort_patch.auf",
 		};
 
 		std::string check = filename;
@@ -444,7 +465,6 @@ BOOL __cdecl init_t::func_initWrap(AviUtl::FilterPlugin* fp) {
 	#ifdef PATCH_SWITCH_LUA_GETVALUE
 		patch::lua_getvalueex.init();
 	#endif
-
 #endif
 	
 	return TRUE;
