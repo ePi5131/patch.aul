@@ -57,6 +57,9 @@ public:
 		cr.regist("switch", [](json_value_s* value) {
 			ConfigReader cr(value);
 			
+			#ifdef PATCH_SWITCH_KEYCONFIG
+				patch::KeyConfig.switch_load(cr);
+			#endif
 			#ifdef PATCH_SWITCH_ACCESS_KEY
 				patch::access_key.switch_load(cr);
 			#endif
@@ -198,12 +201,12 @@ public:
 			#ifdef PATCH_SWITCH_SHARED_CACHE
 				patch::SharedCache.switch_load(cr);
 			#endif
-            #ifdef PATCH_SWITCH_YC_RGB_CVT
-                patch::yc_rgb_cvt.switch_load(cr);
-            #endif
-            #ifdef PATCH_SWITCH_GROUP_CAMERA_SCENE
-                patch::group_camera_scene.switch_load(cr);
-            #endif
+			#ifdef PATCH_SWITCH_YC_RGB_CVT
+				patch::yc_rgb_cvt.switch_load(cr);
+			#endif
+			#ifdef PATCH_SWITCH_GROUP_CAMERA_SCENE
+				patch::group_camera_scene.switch_load(cr);
+			#endif
             #ifdef PATCH_SWITCH_CHANGE_DISP_SCENE
                 patch::change_disp_scene.switch_load(cr);
             #endif
@@ -431,6 +434,9 @@ public:
 		{
 			ConfigWriter switch_(++level);
 			
+			#ifdef PATCH_SWITCH_KEYCONFIG
+				patch::KeyConfig.switch_store(switch_);
+			#endif
 			#ifdef PATCH_SWITCH_ACCESS_KEY
 				patch::access_key.switch_store(switch_);
 			#endif
@@ -575,12 +581,12 @@ public:
 			#ifdef PATCH_SWITCH_SHARED_CACHE
 				patch::SharedCache.switch_store(switch_);
 			#endif
-            #ifdef PATCH_SWITCH_YC_RGB_CVT
-                patch::yc_rgb_cvt.switch_store(switch_);
-            #endif
-            #ifdef PATCH_SWITCH_GROUP_CAMERA_SCENE
-                patch::group_camera_scene.switch_store(switch_);
-            #endif
+			#ifdef PATCH_SWITCH_YC_RGB_CVT
+				patch::yc_rgb_cvt.switch_store(switch_);
+			#endif
+			#ifdef PATCH_SWITCH_GROUP_CAMERA_SCENE
+				patch::group_camera_scene.switch_store(switch_);
+			#endif
             #ifdef PATCH_SWITCH_CHANGE_DISP_SCENE
                 patch::change_disp_scene.switch_store(switch_);
             #endif
