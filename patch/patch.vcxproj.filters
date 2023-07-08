@@ -19,7 +19,6 @@
     <ClInclude Include="global_minimum.hpp" />
     <ClInclude Include="hash.hpp" />
     <ClInclude Include="init.hpp" />
-    <ClInclude Include="json.h" />
     <ClInclude Include="macro.h" />
     <ClInclude Include="moduledata.hpp" />
     <ClInclude Include="multi_threading.hpp" />
@@ -125,7 +124,7 @@
     <ClInclude Include="patch_fast_getputpixeldata.hpp">
       <Filter>feature\fast</Filter>
     </ClInclude>
-    <ClInclude Include="patch_fast_polortransform.hpp">
+    <ClInclude Include="patch_fast_polartransform.hpp">
       <Filter>feature\fast</Filter>
     </ClInclude>
     <ClInclude Include="patch_fast_radiationalblur.hpp">
@@ -226,6 +225,68 @@
     <ClInclude Include="patch_obj_colorcorrection.hpp">
       <Filter>feature</Filter>
     </ClInclude>
+    <ClInclude Include="patch_obj_imageloop.hpp">
+      <Filter>feature</Filter>
+    </ClInclude>
+    <ClInclude Include="patch_aup_scene_setting.hpp">
+      <Filter>feature</Filter>
+    </ClInclude>
+    <ClInclude Include="patch_add_extension.hpp">
+      <Filter>feature</Filter>
+    </ClInclude>
+    <ClInclude Include="patch_aup_layer_setting.hpp">
+      <Filter>feature</Filter>
+    </ClInclude>
+    <ClInclude Include="patch_obj_glow.hpp">
+      <Filter>feature</Filter>
+    </ClInclude>
+    <ClInclude Include="patch_obj_specialcolorconv.hpp">
+      <Filter>feature</Filter>
+    </ClInclude>
+    <ClInclude Include="patch_fileinfo.hpp">
+      <Filter>feature</Filter>
+    </ClInclude>
+    <ClInclude Include="patch_colorpalette_cache.hpp">
+      <Filter>feature</Filter>
+    </ClInclude>
+    <ClInclude Include="patch_dialog_new_file.hpp">
+      <Filter>feature</Filter>
+    </ClInclude>
+    <ClInclude Include="patch_exo_fold_gui.hpp">
+      <Filter>feature</Filter>
+    </ClInclude>
+    <ClInclude Include="patch_exo_midpt_and_tra.hpp">
+      <Filter>feature</Filter>
+    </ClInclude>
+    <ClInclude Include="patch_failed_file_drop.hpp">
+      <Filter>feature</Filter>
+    </ClInclude>
+    <ClInclude Include="patch_setting_new_project.hpp">
+      <Filter>feature</Filter>
+    </ClInclude>
+    <ClInclude Include="patch_fast_glow.hpp">
+      <Filter>feature\fast</Filter>
+    </ClInclude>
+    <ClInclude Include="patch_scene_cache.hpp">
+      <Filter>feature</Filter>
+    </ClInclude>
+    <ClInclude Include="jsleep.hpp" />
+    <ClInclude Include="patch_script_sort.hpp">
+      <Filter>feature</Filter>
+    </ClInclude>
+    <ClInclude Include="scope_exit.hpp" />
+    <ClInclude Include="patch_rendering.hpp">
+      <Filter>feature</Filter>
+    </ClInclude>
+    <ClInclude Include="patch_yc_rgb_cvt.hpp">
+      <Filter>feature</Filter>
+    </ClInclude>
+    <ClInclude Include="patch_shared_cache.hpp">
+      <Filter>feature</Filter>
+    </ClInclude>
+    <ClInclude Include="patch_warning_duplicate_plugins.hpp">
+      <Filter>feature</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="init.cpp" />
@@ -270,7 +331,7 @@
     <ClCompile Include="patch_fast_getputpixeldata.cpp">
       <Filter>feature\fast</Filter>
     </ClCompile>
-    <ClCompile Include="patch_fast_polortransform.cpp">
+    <ClCompile Include="patch_fast_polartransform.cpp">
       <Filter>feature\fast</Filter>
     </ClCompile>
     <ClCompile Include="patch_fast_radiationalblur.cpp">
@@ -339,13 +400,42 @@
     <ClCompile Include="patch_obj_colorcorrection.cpp">
       <Filter>feature</Filter>
     </ClCompile>
+    <ClCompile Include="patch_obj_imageloop.cpp">
+      <Filter>feature</Filter>
+    </ClCompile>
+    <ClCompile Include="patch_add_extension.cpp">
+      <Filter>feature</Filter>
+    </ClCompile>
+    <ClCompile Include="patch_failed_longer_path.cpp">
+      <Filter>feature</Filter>
+    </ClCompile>
+    <ClCompile Include="patch_setting_new_project.cpp">
+      <Filter>feature</Filter>
+    </ClCompile>
+    <ClCompile Include="patch_fast_glow.cpp">
+      <Filter>feature\fast</Filter>
+    </ClCompile>
+    <ClCompile Include="patch_scene_cache.cpp">
+      <Filter>feature</Filter>
+    </ClCompile>
+    <ClCompile Include="patch_rendering.cpp">
+      <Filter>feature</Filter>
+    </ClCompile>
+    <ClCompile Include="patch_yc_rgb_cvt.cpp">
+      <Filter>feature</Filter>
+    </ClCompile>
+    <ClCompile Include="patch_shared_cache.cpp">
+      <Filter>feature</Filter>
+    </ClCompile>
+    <ClCompile Include="patch_warning_duplicate_plugins.cpp">
+      <Filter>feature</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="patch.rc" />
   </ItemGroup>
   <ItemGroup>
     <None Include=".editorconfig" />
-    <None Include="clprogram.cl" />
     <None Include="packages.config" />
   </ItemGroup>
 </Project>
