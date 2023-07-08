@@ -47,10 +47,7 @@ namespace patch {
 		bool enabled_i;
 		inline static const char key[] = "scene_cache";
 
-		inline static int make_cache_key1(int idx) {
-			return reinterpret_cast<int>(&scene_cache_t::get_scene_image) + idx;
-		}
-	public:
+    public:
 
 		void init() {
 			enabled_i = enabled;
