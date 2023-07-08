@@ -90,3 +90,4 @@
 #include "patch_shared_cache.hpp"
 #include "patch_rendering.hpp"
 #include "patch_yc_rgb_cvt.hpp"
+#include "patch_group_camera_scene.hpp"
