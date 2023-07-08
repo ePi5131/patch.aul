@@ -9,25 +9,25 @@ namespace patch::fast {
 
 	public:
 		void init() {
-            enabled_i = enabled;
-        }
+			enabled_i = enabled;
+		}
 
-        void switching(bool flag) {
-            enabled = flag;
-        }
+		void switching(bool flag) {
+			enabled = flag;
+		}
 
-        bool is_enabled() { return enabled; }
-        bool is_enabled_i() { return enabled_i; }
+		bool is_enabled() { return enabled; }
+		bool is_enabled_i() { return enabled_i; }
 
-        void switch_load(ConfigReader& cr) {
-            cr.regist(key, [this](json_value_s* value) {
-                ConfigReader::load_variable(value, enabled);
-            });
-        }
+		void switch_load(ConfigReader& cr) {
+			cr.regist(key, [this](json_value_s* value) {
+				ConfigReader::load_variable(value, enabled);
+			});
+		}
 
-        void switch_store(ConfigWriter& cw) {
-            cw.append(key, enabled);
-        }
+		void switch_store(ConfigWriter& cw) {
+			cw.append(key, enabled);
+		}
 
 	} fast;
 }

@@ -13,7 +13,7 @@
 	along with this program.  If not, see <https://www.gnu.org/licenses/>.
 */
 
-kernel void PolorTransform(global short* dst, global short* src, int obj_w, int obj_h, int obj_line,
+kernel void PolarTransform(global short* dst, global short* src, int obj_w, int obj_h, int obj_line,
 	int center_length, int radius, float angle, float uzu, float uzu_a){
 	int x = get_global_id(0);
 	int y = get_global_id(1);
@@ -143,9 +143,9 @@ kernel void DisplacementMap_move(global short* dst, global short* src, global sh
 		p0 = p1;
 		p1 = tmp;
 	}
-	int xx_range = p1 - p0;
-	int xx_begin = p0 + (x << 12);
-	int xx_end = xx_range + xx_begin;
+	int u_range = p1 - p0;
+	int u_begin = p0 + (x << 12);
+	int u_end = u_range + u_begin;
 
 	p0 = min(mem[1], mem[5]);
 	p1 = max(mem[obj_line * 4 + 1], mem[obj_line * 4 + 5]);
@@ -156,86 +156,72 @@ kernel void DisplacementMap_move(global short* dst, global short* src, global sh
 		p0 = p1;
 		p1 = tmp;
 	}
-	int yy_range = p1 - p0;
-	int yy_begin = p0 + (y << 12);
-	int yy_end = yy_range + yy_begin;
+	int v_range = p1 - p0;
+	int v_begin = p0 + (y << 12);
+	int v_end = v_range + v_begin;
 
-	if (xx_range < 0x1000) {
-		xx_begin += (xx_range - 0x1000) >> 1;
-		xx_end = xx_begin + 0x1000;
-		xx_range = 0x1000;
+	if (u_range < 0x1000) {
+		u_begin += (u_range - 0x1000) >> 1;
+		u_end = u_begin + 0x1000;
+		u_range = 0x1000;
 	}
-	if (yy_range < 0x1000) {
-		yy_begin += (yy_range - 0x1000) >> 1;
-		yy_end = yy_begin + 0x1000;
-		yy_range = 0x1000;
+	if (v_range < 0x1000) {
+		v_begin += (v_range - 0x1000) >> 1;
+		v_end = v_begin + 0x1000;
+		v_range = 0x1000;
 	}
 
-	int xx_level = 12;
-	int yy_level = 12;
-	while (0x20000 < xx_range) {
-		xx_begin >>= 1;
-		xx_end++;
-		xx_end >>= 1;
-		xx_range = xx_end - xx_begin;
-		xx_level--;
+	int u_level = 12;
+	int v_level = 12;
+	while (0x20000 < u_range) {
+		u_begin >>= 1;
+		u_end++;
+		u_end >>= 1;
+		u_range = u_end - u_begin;
+		u_level--;
 	}
-	while (0x20000 < yy_range) {
-		yy_begin >>= 1;
-		yy_end++;
-		yy_end >>= 1;
-		yy_range = yy_end - yy_begin;
-		yy_level--;
+	while (0x20000 < v_range) {
+		v_begin >>= 1;
+		v_end++;
+		v_end >>= 1;
+		v_range = v_end - v_begin;
+		v_level--;
 	}
-	xx_level &= 0x1f;
-	yy_level &= 0x1f;
 
-	xx_begin = max(xx_begin, 0);
-	xx_end = min(xx_end, obj_w << xx_level);
-	yy_begin = max(yy_begin, 0);
-	yy_end = min(yy_end, obj_h << yy_level);
+	u_begin = max(u_begin, 0);
+	u_end = min(u_end, obj_w << u_level);
+	v_begin = max(v_begin, 0);
+	v_end = min(v_end, obj_h << v_level);
 
 	float dsum_y = 0.0f;
 	float dsum_cb = 0.0f;
 	float dsum_cr = 0.0f;
 	float dsum_a = 0.0f;
-	int yy = yy_begin;
-	while (yy < yy_end) {
-		int yy_itr = yy >> yy_level;
+	int v = v_begin;
+	while (v < v_end) {
+		global short* srcv = src + (v >> v_level) * obj_line * 4;
 		int sum_y = 0;
 		int sum_cb = 0;
 		int sum_cr = 0;
 		int sum_a = 0;
-		int xx = xx_begin;
-		while (xx < xx_end) {
-			int xx_itr = xx >> xx_level;
-			int fraction;
-			if (xx & 0xfff) {
-				fraction = -xx & 0xfff;
-			} else {
-				fraction = min(xx_end - xx, 0x1000);
-			}
-
-			global short* srct = src + (xx_itr + yy_itr * obj_line) * 4;
-			int src_a = srct[3] * fraction >> 8;
+		int u = u_begin;
+		while (u < u_end) {
+			int range = min(0x1000 - (u & 0xfff), u_end - u);
+			global short* srct = srcv + (u >> u_level) * 4;
+			int src_a = srct[3] * range >> 8;
 			sum_y += srct[0] * src_a >> 16;
 			sum_cb += srct[1] * src_a >> 16;
 			sum_cr += srct[2] * src_a >> 16;
 			sum_a += src_a;
-			xx += fraction;
+			u += range;
 		}
-		int fraction;
-		if (yy & 0xfff) {
-			fraction = -yy & 0xfff;
-		} else {
-			fraction = min(yy_end - yy, 0x1000);
-		}
-		float fraction_rate = (float)fraction * 0.000244140625f;
-		dsum_y += (float)sum_y * fraction_rate;
-		dsum_cb += (float)sum_cb * fraction_rate;
-		dsum_cr += (float)sum_cr * fraction_rate;
-		dsum_a += (float)sum_a * fraction_rate;
-		yy += fraction;
+		int range = min(0x1000 - (v & 0xfff), v_end - v);
+		float range_d = (float)range * 0.000244140625f;
+		dsum_y += (float)sum_y * range_d;
+		dsum_cb += (float)sum_cb * range_d;
+		dsum_cr += (float)sum_cr * range_d;
+		dsum_a += (float)sum_a * range_d;
+		v += range;
 	}
 
 	if (256.0f <= dsum_a) {
@@ -243,7 +229,7 @@ kernel void DisplacementMap_move(global short* dst, global short* src, global sh
 		dst[0] = (short)round(dsum_y * inv_a);
 		dst[1] = (short)round(dsum_cb * inv_a);
 		dst[2] = (short)round(dsum_cr * inv_a);
-		dst[3] = (short)round(dsum_a / ((float)yy_range / 1024.0f) / ((float)xx_range / 1024.0f));
+		dst[3] = (short)round(1048576.0f / (float)v_range / (float)u_range * dsum_a);
 	} else {
 		dst[0] = dst[1] = dst[2] = dst[3] = 0;
 	}
@@ -256,134 +242,120 @@ kernel void DisplacementMap_zoom(global short* dst, global short* src, global sh
 	dst += (x + y * obj_line) * 4;
 	mem += (x + y * obj_line) * 4;
 
-	int xx_min, xx_max, yy_min, yy_max;
-	int xx_temp, yy_temp;
+	int u_min, u_max, v_min, v_max;
+	int u_temp, v_temp;
 
 	float zoom;
-	float xxd = (float)(x * 0x1000 - ox);
+	float ud = (float)(x * 0x1000 - ox);
 	if (0 < param0) {
 		zoom = (1024.0f / (float)(param0 + 1000) - 1.0) * 0.00048828125f;
 	} else {
 		zoom = (float)param0 * -0.00000048828125f;
 	}
-	float temp = xxd * zoom;
-	xx_min = xx_max = x * 0x1000 + (int)((float)(mem[0] - 0x800) * temp);
+	float temp = ud * zoom;
+	u_min = u_max = x * 0x1000 + (int)((float)(mem[0] - 0x800) * temp);
 
-	xx_temp = x * 0x1000 + (int)((float)(mem[obj_line * 4] - 0x800) * temp);
-	xx_min = min(xx_min, xx_temp);
-	xx_max = max(xx_max, xx_temp);
+	u_temp = x * 0x1000 + (int)((float)(mem[obj_line * 4] - 0x800) * temp);
+	u_min = min(u_min, u_temp);
+	u_max = max(u_max, u_temp);
 
-	temp = (xxd + 4096.0f) * zoom;
-	xx_temp = (x + 1) * 0x1000 + (int)((float)(mem[4] - 0x800) * temp);
-	xx_min = min(xx_min, xx_temp);
-	xx_max = max(xx_max, xx_temp);
+	temp = (ud + 4096.0f) * zoom;
+	u_temp = (x + 1) * 0x1000 + (int)((float)(mem[4] - 0x800) * temp);
+	u_min = min(u_min, u_temp);
+	u_max = max(u_max, u_temp);
 
-	xx_temp = (x + 1) * 0x1000 + (int)((float)(mem[(obj_line + 1) * 4] - 0x800) * temp);
-	int xx_begin = min(xx_min, xx_temp);
-	int xx_end = max(xx_max, xx_temp);
+	u_temp = (x + 1) * 0x1000 + (int)((float)(mem[(obj_line + 1) * 4] - 0x800) * temp);
+	int u_begin = min(u_min, u_temp);
+	int u_end = max(u_max, u_temp);
 
 
-	float yyd = (float)(y * 0x1000 - oy);
+	float vd = (float)(y * 0x1000 - oy);
 	if (0 < param1) {
 		zoom = (1024.0f / (float)(param1 + 1000) - 1.0) * 0.00048828125f;
 	} else {
 		zoom = (float)param1 * -0.00000048828125f;
 	}
-	temp = yyd * zoom;
-	yy_min = yy_max = y * 0x1000 + (int)((float)(mem[1] - 0x800) * temp);
+	temp = vd * zoom;
+	v_min = v_max = y * 0x1000 + (int)((float)(mem[1] - 0x800) * temp);
 
-	yy_temp = y * 0x1000 + (int)((float)(mem[5] - 0x800) * temp);
-	yy_min = min(yy_min, yy_temp);
-	yy_max = max(yy_max, yy_temp);
+	v_temp = y * 0x1000 + (int)((float)(mem[5] - 0x800) * temp);
+	v_min = min(v_min, v_temp);
+	v_max = max(v_max, v_temp);
 
-	temp = (yyd + 4096.0f) * zoom;
-	yy_temp = (y + 1) * 0x1000 + (int)((float)(mem[(obj_line + 1) * 4] - 0x800) * temp);
-	yy_min = min(yy_min, yy_temp);
-	yy_max = max(yy_max, yy_temp);
+	temp = (vd + 4096.0f) * zoom;
+	v_temp = (y + 1) * 0x1000 + (int)((float)(mem[(obj_line + 1) * 4] - 0x800) * temp);
+	v_min = min(v_min, v_temp);
+	v_max = max(v_max, v_temp);
 
-	yy_temp = (y + 1) * 0x1000 + (int)((float)(mem[obj_line * 4 + 5] - 0x800) * temp);
-	int yy_begin = min(yy_min, yy_temp);
-	int yy_end = max(yy_max, yy_temp);
+	v_temp = (y + 1) * 0x1000 + (int)((float)(mem[obj_line * 4 + 5] - 0x800) * temp);
+	int v_begin = min(v_min, v_temp);
+	int v_end = max(v_max, v_temp);
 
-	int xx_range = xx_end - xx_begin;
-	int yy_range = yy_end - yy_begin;
+	int u_range = u_end - u_begin;
+	int v_range = v_end - v_begin;
 
-	if (xx_range < 0x1000) {
-		xx_begin += (xx_range - 0x1000) >> 1;
-		xx_end = xx_begin + 0x1000;
-		xx_range = 0x1000;
+	if (u_range < 0x1000) {
+		u_begin += (u_range - 0x1000) >> 1;
+		u_end = u_begin + 0x1000;
+		u_range = 0x1000;
 	}
-	if (yy_range < 0x1000) {
-		yy_begin += (yy_range - 0x1000) >> 1;
-		yy_end = yy_begin + 0x1000;
-		yy_range = 0x1000;
+	if (v_range < 0x1000) {
+		v_begin += (v_range - 0x1000) >> 1;
+		v_end = v_begin + 0x1000;
+		v_range = 0x1000;
 	}
 
-	int xx_level = 12;
-	int yy_level = 12;
-	while (0x20000 < xx_range) {
-		xx_begin >>= 1;
-		xx_end++;
-		xx_end >>= 1;
-		xx_range = xx_end - xx_begin;
-		xx_level--;
+	int u_level = 12;
+	int v_level = 12;
+	while (0x20000 < u_range) {
+		u_begin >>= 1;
+		u_end++;
+		u_end >>= 1;
+		u_range = u_end - u_begin;
+		u_level--;
 	}
-	while (0x20000 < yy_range) {
-		yy_begin >>= 1;
-		yy_end++;
-		yy_end >>= 1;
-		yy_range = yy_end - yy_begin;
-		yy_level--;
+	while (0x20000 < v_range) {
+		v_begin >>= 1;
+		v_end++;
+		v_end >>= 1;
+		v_range = v_end - v_begin;
+		v_level--;
 	}
-	xx_level &= 0x1f;
-	yy_level &= 0x1f;
 
-	xx_begin = max(xx_begin, 0);
-	xx_end = min(xx_end, obj_w << xx_level);
-	yy_begin = max(yy_begin, 0);
-	yy_end = min(yy_end, obj_h << yy_level);
+	u_begin = max(u_begin, 0);
+	u_end = min(u_end, obj_w << u_level);
+	v_begin = max(v_begin, 0);
+	v_end = min(v_end, obj_h << v_level);
 
 	float dsum_y = 0.0f;
 	float dsum_cb = 0.0f;
 	float dsum_cr = 0.0f;
 	float dsum_a = 0.0f;
-	int yy = yy_begin;
-	while (yy < yy_end) {
-		int yy_itr = yy >> yy_level;
+	int v = v_begin;
+	while (v < v_end) {
+		global short* srcv = src + (v >> v_level) * obj_line * 4;
 		int sum_y = 0;
 		int sum_cb = 0;
 		int sum_cr = 0;
 		int sum_a = 0;
-		int xx = xx_begin;
-		while (xx < xx_end) {
-			int xx_itr = xx >> xx_level;
-			int fraction;
-			if (xx & 0xfff) {
-				fraction = -xx & 0xfff;
-			} else {
-				fraction = min(xx_end - xx, 0x1000);
-			}
-
-			global short* srct = src + (xx_itr + yy_itr * obj_line) * 4;
-			int src_a = srct[3] * fraction >> 8;
+		int u = u_begin;
+		while (u < u_end) {
+			int range = min(0x1000 - (u & 0xfff), u_end - u);
+			global short* srct = srcv + (u >> u_level) * 4;
+			int src_a = srct[3] * range >> 8;
 			sum_y += srct[0] * src_a >> 16;
 			sum_cb += srct[1] * src_a >> 16;
 			sum_cr += srct[2] * src_a >> 16;
 			sum_a += src_a;
-			xx += fraction;
+			u += range;
 		}
-		int fraction;
-		if (yy & 0xfff) {
-			fraction = -yy & 0xfff;
-		} else {
-			fraction = min(yy_end - yy, 0x1000);
-		}
-		float fraction_rate = (float)fraction * 0.000244140625f;
-		dsum_y += (float)sum_y * fraction_rate;
-		dsum_cb += (float)sum_cb * fraction_rate;
-		dsum_cr += (float)sum_cr * fraction_rate;
-		dsum_a += (float)sum_a * fraction_rate;
-		yy += fraction;
+		int range = min(0x1000 - (v & 0xfff), v_end - v);
+		float range_d = (float)range * 0.000244140625f;
+		dsum_y += (float)sum_y * range_d;
+		dsum_cb += (float)sum_cb * range_d;
+		dsum_cr += (float)sum_cr * range_d;
+		dsum_a += (float)sum_a * range_d;
+		v += range;
 	}
 
 	if (256.0f <= dsum_a) {
@@ -391,7 +363,7 @@ kernel void DisplacementMap_zoom(global short* dst, global short* src, global sh
 		dst[0] = (short)round(dsum_y * inv_a);
 		dst[1] = (short)round(dsum_cb * inv_a);
 		dst[2] = (short)round(dsum_cr * inv_a);
-		dst[3] = (short)round(dsum_a / ((float)yy_range / 1024.0f) / ((float)xx_range / 1024.0f));
+		dst[3] = (short)round(1048576.0f / (float)v_range / (float)u_range * dsum_a);
 	} else {
 		dst[0] = dst[1] = dst[2] = dst[3] = 0;
 	}
@@ -404,130 +376,116 @@ kernel void DisplacementMap_rot(global short* dst, global short* src, global sho
 	dst += (x + y * obj_line) * 4;
 	mem += (x + y * obj_line) * 4;
 
-	int xx_min, xx_max, yy_min, yy_max;
-	int xx_temp, yy_temp;
+	int u_min, u_max, v_min, v_max;
+	int u_temp, v_temp;
 
-	float xxd = (float)((x << 12) - ox);
-	float yyd = (float)((y << 12) - oy);
-	float xxd_next = xxd + 4096.0f;
-	float yyd_next = yyd + 4096.0f;
+	float ud = (float)((x << 12) - ox);
+	float vd = (float)((y << 12) - oy);
+	float ud_next = ud + 4096.0f;
+	float vd_next = vd + 4096.0f;
 	float paramrad = (float)param0 * (float)-0.000003067961642955197f;
 
 	float rad = (float)(mem[0] - 0x800) * paramrad;
 	float sinv = sin(rad);
 	float cosv = cos(rad);
-	xx_min = xx_max = (int)(xxd * cosv - yyd * sinv);
-	yy_min = yy_max = (int)(xxd * sinv + yyd * cosv);
+	u_min = u_max = (int)(ud * cosv - vd * sinv);
+	v_min = v_max = (int)(ud * sinv + vd * cosv);
 
 	rad = (float)(mem[4] - 0x800) * paramrad;
 	sinv = sin(rad);
 	cosv = cos(rad);
-	xx_temp = (int)(xxd_next * cosv - yyd * sinv);
-	yy_temp = (int)(xxd_next * sinv + yyd * cosv);
-	xx_min = min(xx_min, xx_temp);
-	xx_max = max(xx_max, xx_temp);
-	yy_min = min(yy_min, yy_temp);
-	yy_max = max(yy_max, yy_temp);
+	u_temp = (int)(ud_next * cosv - vd * sinv);
+	v_temp = (int)(ud_next * sinv + vd * cosv);
+	u_min = min(u_min, u_temp);
+	u_max = max(u_max, u_temp);
+	v_min = min(v_min, v_temp);
+	v_max = max(v_max, v_temp);
 
 	rad = (float)(mem[obj_line * 4] - 0x800) * paramrad;
 	sinv = sin(rad);
 	cosv = cos(rad);
-	xx_temp = (int)(xxd * cosv - yyd_next * sinv);
-	yy_temp = (int)(xxd * sinv + yyd_next * cosv);
-	xx_min = min(xx_min, xx_temp);
-	xx_max = max(xx_max, xx_temp);
-	yy_min = min(yy_min, yy_temp);
-	yy_max = max(yy_max, yy_temp);
+	u_temp = (int)(ud * cosv - vd_next * sinv);
+	v_temp = (int)(ud * sinv + vd_next * cosv);
+	u_min = min(u_min, u_temp);
+	u_max = max(u_max, u_temp);
+	v_min = min(v_min, v_temp);
+	v_max = max(v_max, v_temp);
 
 	rad = (float)(mem[(obj_line + 1) * 4] - 0x800) * paramrad;
 	sinv = sin(rad);
 	cosv = cos(rad);
-	xx_temp = (int)(xxd_next * cosv - yyd_next * sinv);
-	yy_temp = (int)(xxd_next * sinv + yyd_next * cosv);
-	int xx_begin = min(xx_min, xx_temp) + ox;
-	int xx_end = max(xx_max, xx_temp) + ox;
-	int yy_begin = min(yy_min, yy_temp) + oy;
-	int yy_end = max(yy_max, yy_temp) + oy;
+	u_temp = (int)(ud_next * cosv - vd_next * sinv);
+	v_temp = (int)(ud_next * sinv + vd_next * cosv);
+	int u_begin = min(u_min, u_temp) + ox;
+	int u_end = max(u_max, u_temp) + ox;
+	int v_begin = min(v_min, v_temp) + oy;
+	int v_end = max(v_max, v_temp) + oy;
 
-	int xx_range = xx_end - xx_begin;
-	int yy_range = yy_end - yy_begin;
+	int u_range = u_end - u_begin;
+	int v_range = v_end - v_begin;
 
-	if (xx_range < 0x1000) {
-		xx_begin += (xx_range - 0x1000) >> 1;
-		xx_end = xx_begin + 0x1000;
-		xx_range = 0x1000;
+	if (u_range < 0x1000) {
+		u_begin += (u_range - 0x1000) >> 1;
+		u_end = u_begin + 0x1000;
+		u_range = 0x1000;
 	}
-	if (yy_range < 0x1000) {
-		yy_begin += (yy_range - 0x1000) >> 1;
-		yy_end = yy_begin + 0x1000;
-		yy_range = 0x1000;
+	if (v_range < 0x1000) {
+		v_begin += (v_range - 0x1000) >> 1;
+		v_end = v_begin + 0x1000;
+		v_range = 0x1000;
 	}
 
-	int xx_level = 12;
-	int yy_level = 12;
-	while (0x20000 < xx_range) {
-		xx_begin >>= 1;
-		xx_end++;
-		xx_end >>= 1;
-		xx_range = xx_end - xx_begin;
-		xx_level--;
+	int u_level = 12;
+	int v_level = 12;
+	while (0x20000 < u_range) {
+		u_begin >>= 1;
+		u_end++;
+		u_end >>= 1;
+		u_range = u_end - u_begin;
+		u_level--;
 	}
-	while (0x20000 < yy_range) {
-		yy_begin >>= 1;
-		yy_end++;
-		yy_end >>= 1;
-		yy_range = yy_end - yy_begin;
-		yy_level--;
+	while (0x20000 < v_range) {
+		v_begin >>= 1;
+		v_end++;
+		v_end >>= 1;
+		v_range = v_end - v_begin;
+		v_level--;
 	}
-	xx_level &= 0x1f;
-	yy_level &= 0x1f;
 
-	xx_begin = max(xx_begin, 0);
-	xx_end = min(xx_end, obj_w << xx_level);
-	yy_begin = max(yy_begin, 0);
-	yy_end = min(yy_end, obj_h << yy_level);
+	u_begin = max(u_begin, 0);
+	u_end = min(u_end, obj_w << u_level);
+	v_begin = max(v_begin, 0);
+	v_end = min(v_end, obj_h << v_level);
 
 	float dsum_y = 0.0f;
 	float dsum_cb = 0.0f;
 	float dsum_cr = 0.0f;
 	float dsum_a = 0.0f;
-	int yy = yy_begin;
-	while (yy < yy_end) {
-		int yy_itr = yy >> yy_level;
+	int v = v_begin;
+	while (v < v_end) {
+		global short* srcv = src + (v >> v_level) * obj_line * 4;
 		int sum_y = 0;
 		int sum_cb = 0;
 		int sum_cr = 0;
 		int sum_a = 0;
-		int xx = xx_begin;
-		while (xx < xx_end) {
-			int xx_itr = xx >> xx_level;
-			int fraction;
-			if (xx & 0xfff) {
-				fraction = -xx & 0xfff;
-			} else {
-				fraction = min(xx_end - xx, 0x1000);
-			}
-
-			global short* srct = src + (xx_itr + yy_itr * obj_line) * 4;
-			int src_a = srct[3] * fraction >> 8;
+		int u = u_begin;
+		while (u < u_end) {
+			int range = min(0x1000 - (u & 0xfff), u_end - u);
+			global short* srct = srcv + (u >> u_level) * 4;
+			int src_a = srct[3] * range >> 8;
 			sum_y += srct[0] * src_a >> 16;
 			sum_cb += srct[1] * src_a >> 16;
 			sum_cr += srct[2] * src_a >> 16;
 			sum_a += src_a;
-			xx += fraction;
+			u += range;
 		}
-		int fraction;
-		if (yy & 0xfff) {
-			fraction = -yy & 0xfff;
-		} else {
-			fraction = min(yy_end - yy, 0x1000);
-		}
-		float fraction_rate = (float)fraction * 0.000244140625f;
-		dsum_y += (float)sum_y * fraction_rate;
-		dsum_cb += (float)sum_cb * fraction_rate;
-		dsum_cr += (float)sum_cr * fraction_rate;
-		dsum_a += (float)sum_a * fraction_rate;
-		yy += fraction;
+		int range = min(0x1000 - (v & 0xfff), v_end - v);
+		float range_d = (float)range * 0.000244140625f;
+		dsum_y += (float)sum_y * range_d;
+		dsum_cb += (float)sum_cb * range_d;
+		dsum_cr += (float)sum_cr * range_d;
+		dsum_a += (float)sum_a * range_d;
+		v += range;
 	}
 
 	if (256.0f <= dsum_a) {
@@ -535,7 +493,7 @@ kernel void DisplacementMap_rot(global short* dst, global short* src, global sho
 		dst[0] = (short)round(dsum_y * inv_a);
 		dst[1] = (short)round(dsum_cb * inv_a);
 		dst[2] = (short)round(dsum_cr * inv_a);
-		dst[3] = (short)round(dsum_a / ((float)yy_range / 1024.0f) / ((float)xx_range / 1024.0f));
+		dst[3] = (short)round(1048576.0f / (float)v_range / (float)u_range * dsum_a);
 	} else {
 		dst[0] = dst[1] = dst[2] = dst[3] = 0;
 	}
