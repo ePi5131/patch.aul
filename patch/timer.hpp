@@ -13,42 +13,34 @@
     along with this program.  If not, see <https://www.gnu.org/licenses/>.
 */
 
-#include <functional>
-#include <chrono>
-#include <vector>
+#pragma once
 #include <thread>
-#include <atomic>
 #include <unordered_map>
+#include <chrono>
+#include <memory>
 
-#include <Windows.h>
+#include "jsleep.hpp"
 
-class Timer;
-extern Timer timer;
-
-inline class Timer {
-	using timer_func = std::function<void()>;
-
-	std::unordered_map<UINT_PTR, timer_func> list;
-
-	static VOID CALLBACK timerproc(HWND, UINT, UINT_PTR nIDEvent, DWORD) {
-		const auto& list = timer.list;
-		if (auto func = list.find(nIDEvent); func != list.end())
-			func->second();
-	}
+class Timer {
+	std::unique_ptr<JSleep> sleep;
+	std::jthread thread;
 
 public:
-	~Timer() {
-		for (auto [id, _] : list) {
-			KillTimer(NULL, id);
+	template<class Rep, class Period, class F>
+	Timer(const std::chrono::duration<Rep, Period>& rel_time, F&& f) : sleep{ std::make_unique<JSleep>()}, thread{[f = std::forward<F>(f), rel_time, this](std::stop_token stoken) {
+		while (!stoken.stop_requested()) {
+			const auto now = std::chrono::system_clock::now();
+			std::invoke(f);
+			sleep->wait_until(now + rel_time);
 		}
+	} } {}
+
+	~Timer() {
+		kill();
 	}
 
-	void set(timer_func f, UINT elapse) {
-		UINT_PTR try_id = 1;
-		UINT_PTR timer_id;
-		while ((timer_id = SetTimer(NULL, try_id, elapse, timerproc)) == 0) {
-			try_id++;
-		}
-		list.try_emplace(timer_id, f);
+	void kill() {
+		thread.request_stop();
+		sleep->cancel();
 	}
-} timer;
+};
