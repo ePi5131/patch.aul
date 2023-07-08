@@ -42,6 +42,7 @@
     <ClInclude Include="offset_address.hpp" />
     <ClInclude Include="overwrite_resource.hpp" />
     <ClInclude Include="patch.hpp" />
+    <ClInclude Include="patch_keyconfig.hpp" />
     <ClInclude Include="resource.h" />
     <ClInclude Include="scope_exit.hpp" />
     <ClInclude Include="stopwatch.hpp" />
@@ -285,6 +286,7 @@
     <ClCompile Include="patch_helpful_msgbox.cpp">
       <Filter>feature</Filter>
     </ClCompile>
+    <ClCompile Include="patch_keyconfig.cpp" />
     <ClCompile Include="patch_lua.cpp">
       <Filter>feature</Filter>
     </ClCompile>
