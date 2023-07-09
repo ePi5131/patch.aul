@@ -23,11 +23,11 @@ namespace {
 	int32_t make_key1(int scene_idx) {
 		return GLOBAL::exedit_base + OFS::ExEdit::get_scene_image
 			+ scene_idx
-			+ (*reinterpret_cast<int*>(GLOBAL::exedit_base + OFS::ExEdit::is_saving) & 1 << state_shift)
-			+ (*reinterpret_cast<int*>(GLOBAL::exedit_base + OFS::ExEdit::fast_process) & 1<< (state_shift + 1));
+			+ ((*reinterpret_cast<int*>(GLOBAL::exedit_base + OFS::ExEdit::is_saving) & 1) << state_shift)
+			+ ((*reinterpret_cast<int*>(GLOBAL::exedit_base + OFS::ExEdit::fast_process) & 1) << (state_shift + 1));
 	}
 	int32_t make_key2(int frame, int subframe) {
-		return (frame << 7) | subframe;
+		return frame * 100 + subframe;
 	}
 
 	struct SceneCacheHeader {
