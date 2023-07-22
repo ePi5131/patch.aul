@@ -43,17 +43,17 @@ namespace patch {
 			if (!enabled_i)return;
 
 			{
-				char save_scene_setting_all[] = {
-					"\x8d\x7e\x48"             // lea     edi,dword ptr [esi+48] ; dst
-					"\x56"                     // push    esi
-					"\x8d\x75\x04"             // lea     esi,dword ptr [ebp+04] ; src
-					"\xb9\x16\x00\x00\x00"     // mov     ecx,00000016 ; scenesetting.widthから22項目
-					"\xf3\xa5"                 // rep     movsd
-					"\x5e"                     // pop     esi
-					"\xeb\x2e"                 // jmp     skip,2e (10032781)
-				};
-				OverWriteOnProtectHelper h(GLOBAL::exedit_base + 0x032742, sizeof(save_scene_setting_all) - 1);
-				memcpy(reinterpret_cast<void*>(h.address()), save_scene_setting_all, sizeof(save_scene_setting_all) - 1);
+				static constinit auto save_scene_setting_all = binstr_array(
+					"8d7e48"      // lea     edi,dword ptr [esi+48] ; dst
+					"56"          // push    esi
+					"8d7504"      // lea     esi,dword ptr [ebp+04] ; src
+					"b916000000"  // mov     ecx,00000016 ; scenesetting.widthから22項目
+					"f3a5"        // rep     movsd
+					"5e"          // pop     esi
+					"eb2e"        // jmp     skip,2e (10032781)
+				);
+				OverWriteOnProtectHelper h(GLOBAL::exedit_base + 0x032742, save_scene_setting_all.size());
+				h.copy_from(save_scene_setting_all.data(), save_scene_setting_all.size());
 			}
 			{
 				/*
@@ -68,19 +68,19 @@ namespace patch {
 					10031b4e 8dbaXxXxXxXx       lea     edi,dword ptr [edx+exedit+177a58] ; Xの部分は書きかえなければ良い
 					10031b54 ...       load_scene_setting_all
 				*/
-				char load_scene_setting_all[] = {
-					"\x83\xc6\x48"             // add     esi,+48
-					"\xb9\x15\x00\x00\x00"     // mov     ecx,00000015 ; こっちは21(22項目目はこの後に別の判定がある)
-					"\xf3\xa5"                 // rep     movsd
-					"\x8b\xf8"                 // mov     edi,eax
-					"\x81\xee\x9c\x00\x00\x00" // sub     esi,0000009c ; 21*4 + 0x48
-					"\x81\xfb\x2b\x23\x00\x00" // cmp     ebx,0000232b
-					"\xeb\x74"                 // jmp     skip,74 (10031be2)
-				};
-				OverWriteOnProtectHelper h(GLOBAL::exedit_base + 0x031b49, 25);
+				static constinit auto load_scene_setting_all = binstr_array(
+					"83c648"       // add     esi,+48
+					"b915000000"   // mov     ecx,00000015 ; こっちは21(22項目目はこの後に別の判定がある)
+					"f3a5"         // rep     movsd
+					"8bf8"         // mov     edi,eax
+					"81ee9c000000" // sub     esi,0000009c ; 21*4 + 0x48
+					"81fb2b230000" // cmp     ebx,0000232b
+					"eb74"         // jmp     skip,74 (10031be2)
+				);
+				OverWriteOnProtectHelper h(GLOBAL::exedit_base + 0x031b49, 11 + load_scene_setting_all.size());
 				h.store_i16(0, '\xc7\x90');
 				h.store_i16(5, '\x8d\xba');
-				memcpy(reinterpret_cast<void*>(h.address() + 11), load_scene_setting_all, sizeof(load_scene_setting_all) - 1);
+				h.copy_from(11, load_scene_setting_all.data(), load_scene_setting_all.size());
 			}
 
 		}

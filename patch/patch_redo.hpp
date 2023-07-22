@@ -475,11 +475,9 @@ namespace patch {
 				1008d4cb
 			*/
 			{
-				OverWriteOnProtectHelper h(GLOBAL::exedit_base + 0x08d4c5, 6);
-				char patch[] = {
-					0x66, 0x0f, 0x1f, 0x44, 0x00, 0x00
-				};
-				memcpy(reinterpret_cast<void*>(h.address()), patch, 6);
+				static constinit auto patch = binstr_array("660f1f440000");
+				OverWriteOnProtectHelper h(GLOBAL::exedit_base + 0x08d4c5, patch.size());
+				h.copy_from(patch.data(), patch.size());
 			}
 
 

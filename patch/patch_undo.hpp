@@ -196,19 +196,19 @@ namespace patch {
 
 			// グループ制御とかの対象レイヤー数を変更してもUndoデータが生成されない
 			{
-				OverWriteOnProtectHelper h(GLOBAL::exedit_base + 0x059e1b, 20);
-				const char patch[] = {
-					"\x51" // push ecx=message
-					"\x50" // push eax=efp
-					"\x8b\x4c\x24\x28" // mov ecx, dword ptr[esp + 0x28]=lparam
-					"\x51" // push ecx
-					"\x8b\x4c\x24\x28" // mov ecx, dword ptr[esp + 0x28]=wparam
-					"\x51" // push ecx
-					"\xe8XXXX" // call rel32
-					"\x85\xc0" // test eax, eax
-					"\x74" /* 0x6e */ // JZ +0x6e
-				};
-				memcpy(reinterpret_cast<void*>(h.address()), patch, sizeof(patch) - 1);
+				static constinit auto patch = binstr_array(
+					"51"                           // push ecx=message
+					"50"                           // push eax=efp
+					"8b4c2428"                     // mov ecx, dword ptr[esp + 0x28]=lparam
+					"51"                           // push ecx
+					"8b4c2428"                     // mov ecx, dword ptr[esp + 0x28]=wparam
+					"51"                           // push ecx
+					"e8" PATCH_BINSTR_DUMMY_32(13) // call rel32
+					"85c0"                         // test eax, eax
+					"74"                           /* 0x6e */ // JZ +0x6e
+				);
+				OverWriteOnProtectHelper h(GLOBAL::exedit_base + 0x059e1b, patch.size());
+				h.copy_from(patch.data(), patch.size());
 				h.replaceNearJmp(13, &f59e27);
 			}
 

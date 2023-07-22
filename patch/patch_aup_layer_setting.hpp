@@ -127,34 +127,29 @@ namespace patch {
 						}
 					}
 				*/
-				char code_put[] = {
-			/*\x8b*/"\x0d\x50\x62\x14\x00"        // mov     ecx,dword ptr [exedit+146250]
-					"\x3b\xc1"                    // cmp     eax,ecx
-					"\x7c\xe4"                    // jl      100326c4
-					"\xb8\x10\x27\x00\x00"        // mov     eax,0x2710 ; 10000
-					"\x48"                        // dec     eax
-					"\x8b\x0c\x85\x98\x84\x18\x00"// mov     ecx,dword ptr [eax*4+ exedit+188498]
-					"\x85\xc9"                    // test    ecx,ecx
-					"\x74\x09"                    // jz      skip,9 ; 100326fa
-					"\x8b\xd0"                    // mov     edx,eax
-					"\xc1\xea\x01"                // shr     edx,1
-					"\xc6\x04\x2a\x01"            // mov     byte ptr [edx+ebp],01
-					"\x85\xc0"                    // test    eax,eax
-					"\x75\xe7"                    // jnz     back,19 ; 100326e5
-					"\x90"                        // nop
-					"\x90"                        // nop
-				};
+				auto code = binstr_array(
+			        /*8b*/"0d" PATCH_BINSTR_DUMMY_32(1) // mov     ecx,dword ptr [i32(exedit+146250)]
+					"3bc1"                              // cmp     eax,ecx
+					"7ce4"                              // jl      100326c4
+					"b810270000"                        // mov     eax,0x2710 ; 10000
+					"48"                                // dec     eax
+					"8b0c85" PATCH_BINSTR_DUMMY_32(18)  // mov     ecx,dword ptr [eax*4+ i32(exedit+188498)]
+					"85c9"                              // test    ecx,ecx
+					"7409"                              // jz      skip,9 ; 100326fa
+					"8bd0"                              // mov     edx,eax
+					"c1ea01"                            // shr     edx,1
+					"c6042a01"                          // mov     byte ptr [edx+ebp],01
+					"85c0"                              // test    eax,eax
+					"75e7"                              // jnz     back,19 ; 100326e5
+					"6690"                              // nop
+				);
 
-				*(int*)(&code_put[1]) = GLOBAL::exedit_base + 0x146250;
-				*(int*)(&code_put[18]) = GLOBAL::exedit_base + 0x188498;
-
-				OverWriteOnProtectHelper h(GLOBAL::exedit_base + 0x0326c3, 61);
+				OverWriteOnProtectHelper h(GLOBAL::exedit_base + 0x0326c3, 20 + code.size());
 				h.store_i8(0, 0x1c);
-
-				memcpy(reinterpret_cast<void*>(h.address()+20), code_put, sizeof(code_put) - 1);
+				h.copy_from(20, code.data(), code.size());
+				h.store_i32(20 + 1, GLOBAL::exedit_base + 0x146250);
+				h.store_i32(20 + 18, GLOBAL::exedit_base + 0x188498);
 			}
-
-
 		}
 		void switching(bool flag) {
 			enabled = flag;

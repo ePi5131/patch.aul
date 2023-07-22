@@ -68,18 +68,18 @@ namespace patch {
 					; しきい値 track[2] が0未満の時に0にする
 				*/
 
-				static const char code_put[] =
-					"\x8b\x49\x08"             // mov     ecx,dword ptr [ecx+08]
-					"\x85\xc9"                 // test    ecx,ecx
-					"\x7c\x04"                 // jl      skip,4
-					"\xc1\xe1\x0c"             // shl     ecx,0c
-					"\xc3"                     // ret
-					"\x33\xc9"                 // xor     ecx,ecx
-					"\xc3"                     // ret
-					;
+				static constinit auto code_put = binstr_array(
+					"8b4908" // mov     ecx,dword ptr [ecx+08]
+					"85c9"   // test    ecx,ecx
+					"7c04"   // jl      skip,4
+					"c1e10c" // shl     ecx,0c
+					"c3"     // ret
+					"33c9"   // xor     ecx,ecx
+					"c3"     // ret
+				);
 
-				memcpy(cursor, code_put, sizeof(code_put) - 1);
-				cursor += sizeof(code_put) - 1;
+				std::memcpy(cursor, code_put.data(), code_put.size());
+				cursor += code_put.size();
 			}
 
 			

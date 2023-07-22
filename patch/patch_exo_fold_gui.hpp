@@ -21,6 +21,7 @@
 
 #include "global.hpp"
 #include "util.hpp"
+#include "config_rw.hpp"
 
 namespace patch {
 
@@ -55,32 +56,32 @@ namespace patch {
 
 				*/
 
-				static const char code_put_write[] =
-					"\x8b\xc8"                 // mov     ecx,eax
-					"\x50"                     // push    eax
-					"\x83\xe1\x07"             // and     ecx,07
-					"\xc1\xe9\x01"             // shr     ecx,01
-					"\x83\xf1\x02"             // xor     ecx,02
-					"\x85\xc9"                 // test    ecx,ecx
-					"\x74\x0e"                 // jz      skip 0e
-					"\x51"                     // push    ecx
-					"\x68XXXX"                 // push    "_fold_gui=%d\r\n"
-					"\x55"                     // push    ebp
-					"\xff\xd3"                 // call    ebx
-					"\x83\xc4\x0c"             // add     esp,0c
-					"\x03\xe8"                 // add     ebp,eax
-					"\x58"                     // pop     eax
-					"\x24\x01"                 // and     al,01
-					"\x84\xc0"                 // test    al,al
-					"\x0f\x84XXXX"             // jz      exedit + 0x288b7
-					"\xe9"// & XXXX            // jmp     exedit + 0x288c6
-					;
+				static constinit auto code_put_write = binstr_array(
+					"8bc8"                           // mov     ecx,eax
+					"50"                             // push    eax
+					"83e107"                         // and     ecx,07
+					"c1e901"                         // shr     ecx,01
+					"83f102"                         // xor     ecx,02
+					"85c9"                           // test    ecx,ecx
+					"740e"                           // jz      skip 0e
+					"51"                             // push    ecx
+					"68" PATCH_BINSTR_DUMMY_32(18)   // push    "_fold_gui=%d\r\n"
+					"55"                             // push    ebp
+					"ffd3"                           // call    ebx
+					"83c40c"                         // add     esp,0c
+					"03e8"                           // add     ebp,eax
+					"58"                             // pop     eax
+					"2401"                           // and     al,01
+					"84c0"                           // test    al,al
+					"0f84" PATCH_BINSTR_DUMMY_32(37) // jz      exedit + 0x288b7
+					"e9" //PATCH_BINSTR_DUMMY_32(42) // jmp     exedit + 0x288c6
+				);
 
-				memcpy(cursor, code_put_write, sizeof(code_put_write) - 1);
+				std::memcpy(cursor, code_put_write.data(), code_put_write.size());
 				store_i32(cursor + 18, &fold_gui_write);
-				cursor += sizeof(code_put_write) - 1 + 4;
-				store_i32(cursor - 9, GLOBAL::exedit_base + 0x0288b7 - ((int)cursor - 5));
-				store_i32(cursor - 4, GLOBAL::exedit_base + 0x0288c6 - (int)cursor);
+				store_i32(cursor + 37, CalcNearJmp(reinterpret_cast<i32>(cursor + 37), GLOBAL::exedit_base + 0x0288b7));
+				store_i32(cursor + 42, CalcNearJmp(reinterpret_cast<i32>(cursor + 42), GLOBAL::exedit_base + 0x0288c6));
+				cursor += code_put_write.size() + 4;
 			}
 
 			{ // exo_read
@@ -95,34 +96,34 @@ namespace patch {
 
 				*/
 
-				static const char code_put_read[] =
-					"\x8b\x54\x24\x14"         // mov     edx,dword ptr [esp+14]
-					"\x52"                     // push    edx
-					"\x68XXXX"                 // push    "_fold_gui"
-					"\xff\xd6"                 // call    esi
-					"\x85\xc0"                 // test    eax,eax
-					"\x75\x1f"                 // jnz     skip,1f
-					"\x53"                     // push    ebx
-					"\xe8XXXX"                 // call    100918ab
-					"\x83\xc4\x04"             // add     esp,04
-					"\x85\xc0"                 // test    eax,eax
-					"\x74\x12"                 // jz      skip,12
-					"\x83\xe0\x03"             // and     eax,03
-					"\xc1\xe0\x01"             // shl     eax,01
-					"\x8b\x4c\x24\x48"         // mov     ecx,dword ptr [esp+48]
-					"\x03\xcd"                 // add     ecx,ebp
-					"\x83\xc1\x72"             // add     ecx,+72
-					"\x30\x41\x72"             // xor     byte ptr [ecx+72],al
-					"\x8b\x54\x24\x14"         // mov     edx,dword ptr [esp+14]
-					"\x52"                     // push    edx
-					"\xe9"// & XXXX            // jmp     exedit + 0x29b26
-					;
+				static constinit auto code_put_read = binstr_array(
+					"8b542414"                       // mov     edx,dword ptr [esp+14]
+					"52"                             // push    edx
+					"68" PATCH_BINSTR_DUMMY_32(6)    // push    "_fold_gui"
+					"ffd6"                           // call    esi
+					"85c0"                           // test    eax,eax
+					"751f"                           // jnz     skip,1f
+					"53"                             // push    ebx
+					"e8" PATCH_BINSTR_DUMMY_32(18)   // call    100918ab
+					"83c404"                         // add     esp,04
+					"85c0"                           // test    eax,eax
+					"7412"                           // jz      skip,12
+					"83e003"                         // and     eax,03
+					"c1e001"                         // shl     eax,01
+					"8b4c2448"                       // mov     ecx,dword ptr [esp+48]
+					"03cd"                           // add     ecx,ebp
+					"83c172"                         // add     ecx,+72
+					"304172"                         // xor     byte ptr [ecx+72],al
+					"8b542414"                       // mov     edx,dword ptr [esp+14]
+					"52"                             // push    edx
+					"e9" //PATCH_BINSTR_DUMMY_32(53) // jmp     exedit + 0x29b26
+				);
 
-				memcpy(cursor, code_put_read, sizeof(code_put_read) - 1);
+				std::memcpy(cursor, code_put_read.data(), code_put_read.size());
 				store_i32(cursor + 6, &fold_gui_read);
-				store_i32(cursor + 18, GLOBAL::exedit_base + 0x0918ab - ((int)cursor + 22));
-				cursor += sizeof(code_put_read) - 1 + 4;
-				store_i32(cursor - 4, GLOBAL::exedit_base + 0x029b26 - (int)cursor);
+				store_i32(cursor + 18, CalcNearJmp(reinterpret_cast<i32>(cursor + 18), GLOBAL::exedit_base + 0x0918ab));
+				store_i32(cursor + 53, CalcNearJmp(reinterpret_cast<i32>(cursor + 53), GLOBAL::exedit_base + 0x029b26));
+				cursor += code_put_read.size() + 4;
 			}
 
 		}

@@ -63,21 +63,19 @@ namespace patch {
 				; eaxは0に
 			*/
 
-			static const char code_put[] =
-				"\x8b\x84\x24\xa4\x00\x00\x00"// mov     eax,dword ptr [esp+000000a4]
-				"\x53"                        // push    ebx ; efpip
-				"\x50"                        // push    eax ; efp
-				"\xe8XXXX"                    // call    new_function
-				"\x83\xc4\x08"                // add     esp,+08
-				"\x33\xc0"                    // xor     eax,eax
-				"\xc3"                        // ret
-				;
+			static constinit auto code_put = binstr_array(
+				"8b8424a4000000"               // mov     eax,dword ptr [esp+000000a4]
+				"53"                           // push    ebx ; efpip
+				"50"                           // push    eax ; efp
+				"e8" PATCH_BINSTR_DUMMY_32(10) // call    new_function
+				"83c408"                       // add     esp,+08
+				"33c0"                         // xor     eax,eax
+				"c3"                           // ret
+			);
 
-			memcpy(cursor, code_put, sizeof(code_put) - 1);
-			store_i32(cursor + 10, (int32_t)&save_current_image - (int32_t)cursor - 14);
-			cursor += sizeof(code_put) - 1;
-
-
+			std::memcpy(cursor, code_put.data(), code_put.size());
+			store_i32(cursor + 10, CalcNearJmp(reinterpret_cast<i32>(cursor + 10), reinterpret_cast<i32>(&save_current_image)));
+			cursor += code_put.size();
 
 			ReplaceNearJmp(GLOBAL::exedit_base + 0x05a92c, &obj_effect_noargs_wrap);
 			

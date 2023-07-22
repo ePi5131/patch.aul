@@ -66,20 +66,19 @@ namespace patch {
 			h.store_i32(5, '\x8b\x8c\xb7\xf8');
 			h.store_i32(8, '\xf8\x00\x00\x00'); // \xf8は範囲ダブらせてstore_i32 * 2 で行っています
 
-			static const char code_put[] =
-				"\x0f\xaf\x44\x24\x5c"     // imul    eax,dword ptr [esp+5c] ;eax *= obj_frame
-				"\x8b\x4d\x10"             // mov     ecx,dword ptr [ebp+10] ;ecx = arg3_subframe
-				"\x85\xc9"                 // test    ecx,ecx
-				"\x74\x08"                 // jz      skip 8 byte ;if(ecx == 0)return
-				"\xb9\x64\x00\x00\x00"     // mov     ecx,00000064 ;ecx = 100
-				"\x99"                     // cdq
-				"\xf7\xf9"                 // idiv    ecx ;edx = eax % ecx, eax /= ecx
-				"\xc3"                     // ret      ;return
-				;
+			static constinit auto code_put = binstr_array(
+				"0faf44245c" // imul    eax,dword ptr [esp+5c] ;eax *= obj_frame
+				"8b4d10"     // mov     ecx,dword ptr [ebp+10] ;ecx = arg3_subframe
+				"85c9"       // test    ecx,ecx
+				"7408"       // jz      skip 8 byte ;if(ecx == 0)return
+				"b964000000" // mov     ecx,00000064 ;ecx = 100
+				"99"         // cdq
+				"f7f9"       // idiv    ecx ;edx = eax % ecx, eax /= ecx
+				"c3"         // ret      ;return
+			);
 
-			memcpy(cursor, code_put, sizeof(code_put) - 1);
-
-			cursor += sizeof(code_put) - 1;
+			std::memcpy(cursor, code_put.data(), code_put.size());
+			cursor += code_put.size();
 		}
 
 		void switching(bool flag) {

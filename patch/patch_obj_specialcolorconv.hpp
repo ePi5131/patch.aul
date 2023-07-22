@@ -84,17 +84,17 @@ namespace patch {
 
 							; esi(pix->y)が0未満の場合、0にする
 					*/
-					static const char code_put[] =
-						"\x0f\xbf\x31"             // movsx   esi,dword ptr [ecx]
-						"\x0f\xbf\x5d\x00"         // movsx   ebx,dword ptr [ebp+00]
-						"\x85\xf6"                 // test    esi,esi
-						"\x7f\x02"                 // jg      skip,+02
-						"\x33\xf6"                 // xor     esi,esi
-						"\xc3"                     // ret
-						;
+					static constinit auto code_put = binstr_array(
+						"0fbf31"   // movsx   esi,dword ptr [ecx]
+						"0fbf5d00" // movsx   ebx,dword ptr [ebp+00]
+						"85f6"     // test    esi,esi
+						"7f02"     // jg      skip,+02
+						"33f6"     // xor     esi,esi
+						"c3"       // ret
+					);
 
-					memcpy(cursor, code_put, sizeof(code_put) - 1);
-					cursor += sizeof(code_put) - 1;
+					std::memcpy(cursor, code_put.data(), code_put.size());
+					cursor += code_put.size();
 				}
 			}
 
@@ -113,17 +113,17 @@ namespace patch {
 
 						; ebx(pix->y)が0未満の場合、0にする
 				*/
-				static const char code_put[] =
-					"\x0f\xbf\x1f"             // movsx   ebx,dword ptr [edi]
-					"\x0f\xbf\x2e"             // movsx   ebp,dword ptr [esi]
-					"\x85\xdb"                 // test    ebx,ebx
-					"\x7f\x02"                 // jg      skip,+02
-					"\x33\xdb"                 // xor     ebx,ebx
-					"\xc3"                     // ret
-					;
+				static constinit auto code_put = binstr_array(
+					"0fbf1f" // movsx   ebx,dword ptr [edi]
+					"0fbf2e" // movsx   ebp,dword ptr [esi]
+					"85db"   // test    ebx,ebx
+					"7f02"   // jg      skip,+02
+					"33db"   // xor     ebx,ebx
+					"c3"     // ret
+				);
 
-				memcpy(cursor, code_put, sizeof(code_put) - 1);
-				cursor += sizeof(code_put) - 1;
+				std::memcpy(cursor, code_put.data(), code_put.size());
+				cursor += code_put.size();
 			}
 
 		}

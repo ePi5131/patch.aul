@@ -54,14 +54,14 @@ namespace patch {
                 00000000 8b4d10             mov     ecx,dword ptr [ebp+10]
             */
 
-            static const char code_put[] =
-                "\x8b\x90\xc0\x05\x00\x00" // mov     edx,dword ptr [eax+000005c0]
-                "\x8b\x4d\x10"             // mov     ecx,dword ptr [ebp+10]
-                "\xc3"                     // ret
-                ;
+            static constinit auto code_put = binstr_array(
+                "8b90c0050000" // mov     edx,dword ptr [eax+000005c0]
+                "8b4d10"       // mov     ecx,dword ptr [ebp+10]
+                "c3"           // ret
+            );
 
-            memcpy(cursor, code_put, sizeof(code_put) - 1);
-            cursor += sizeof(code_put) - 1;
+            std::memcpy(cursor, code_put.data(), code_put.size());
+            cursor += code_put.size();
         }
 
         void switching(bool flag) {

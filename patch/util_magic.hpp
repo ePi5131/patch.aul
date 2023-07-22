@@ -85,6 +85,26 @@ public:
 	auto address(uintptr_t ofs) const {
 		return m_address + ofs;
 	}
+
+	void copy_to(size_t ofs, void* dst, size_t size) const {
+		std::memcpy(dst, reinterpret_cast<void*>(m_address + ofs), size);
+	}
+	void copy_to(void* dst, size_t size) const {
+		std::memcpy(dst, reinterpret_cast<void*>(m_address), size);
+	}
+	void copy_to(void* dst) const {
+		copy_to(dst, m_size);
+	}
+
+	void copy_from(size_t ofs, const void* src, size_t size) const {
+		std::memcpy(reinterpret_cast<void*>(m_address + ofs), src, size);
+	}
+	void copy_from(const void* src, size_t size) const {
+		std::memcpy(reinterpret_cast<void*>(m_address), src, size);
+	}
+	void copy_from(const void* src) const {
+		copy_from(src, m_size);
+	}
 };
 
 /// <summary>
@@ -92,8 +112,14 @@ public:
 /// </summary>
 /// <param name="address">書き換える対象のアドレス</param>
 /// <param name="jmp_address">代わりに飛ばして欲しいアドレス</param>
+template<bool Protected = true>
 inline void ReplaceNearJmp(i32 address, void* jmp_address) {
-	OverWriteOnProtectHelper(address, 4).replaceNearJmp(0, jmp_address);
+	if constexpr (Protected) {
+		OverWriteOnProtectHelper(address, 4).replaceNearJmp(0, jmp_address);
+	}
+	else {
+		store_i32(address, CalcNearJmp(address, reinterpret_cast<i32>(jmp_address)));
+	}
 }
 
 // 既存の関数を破壊して，自分の関数を実行する
@@ -207,3 +233,7 @@ inline bool InjectFunction_fastcall(uint32_t address, void(*func)(), size_t asm_
 
 	return true;
 }
+
+#define PATCH_BINSTR_DUMMY_32(...) "00000000"
+#define PATCH_BINSTR_DUMMY_16(...) "0000"
+#define PATCH_BINSTR_DUMMY_8(...) "00"

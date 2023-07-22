@@ -162,14 +162,21 @@ public:
 		auto default_resource_hmod_ptr = (HMODULE*)(GLOBAL::aviutl_base + OFS::AviUtl::default_resource_hmod);
 		default_default_resource_hmod = std::exchange(*default_resource_hmod_ptr, GLOBAL::patchaul_hinst);
 
-		const char code[] =
-			"\x50" // push eax
-			"\xff\x15xxxx" // call [i32]
-			"\x58" // pop eax
-			"\xc3"; // ret
+		//const char code[] =
+		//	"\x50" // push eax
+		//	"\xff\x15xxxx" // call [i32]
+		//	"\x58" // pop eax
+		//	"\xc3"; // ret
 
-		OverWriteOnProtectHelper h(GLOBAL::aviutl_base + 0x0548e0, sizeof(code) - 1);
-		memcpy((void*)(GLOBAL::aviutl_base + 0x0548e0), code, sizeof(code) - 1);
+		static constinit auto code = binstr_array(
+			"50"                            // push eax
+			"ff15" PATCH_BINSTR_DUMMY_32(3) // call [i32]
+			"58"                            // pop eax
+			"c3"                            // ret
+		);
+
+		OverWriteOnProtectHelper h(GLOBAL::aviutl_base + 0x0548e0, std::ranges::size(code));
+		h.copy_from(code.data());
 		h.store_i32(3, &InitAtResourceLoaded_ptr);
 
 	}

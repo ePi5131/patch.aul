@@ -271,6 +271,7 @@
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="hash.cpp" />
     <ClCompile Include="init.cpp" />
     <ClCompile Include="overwrite_resource.cpp" />
     <ClCompile Include="patch.cpp" />

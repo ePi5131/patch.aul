@@ -22,6 +22,7 @@
 #include "global.hpp"
 #include "offset_address.hpp"
 #include "util.hpp"
+#include "config_rw.hpp"
 
 namespace patch {
 
@@ -61,30 +62,26 @@ namespace patch {
 					; filter_param_ptr->track_scale[eax] の部分を 1 に
 			*/
 
-			static const char code_put[] =
-				"\x03\xc3"          // add     eax, ebx
-				"\x50"              // push    eax
-				"\x8a\x51\x03"      // mov     dl,[ecx + 03]
-				"\xf6\xc2\x04"      // test    dl,04
-				"\x74\x14"          // jz      +20byte
-				"\x8b\x91\xd0"
-				"\x00\x00\x00"      // mov     edx, dword ptr[ecx + 000000d0]
-				"\x8b\x89\xcc"
-				"\x00\x00\x00"      // mov     ecx, dword ptr[ecx + 000000cc]
-				"\x85\xc9"          // test    ecx
-				"\x0f\x85XXXX"      // jnz     exedit_base + 65789
-				"\x33\xd2"          // xor     edx
-				"\x52"              // push    edx
-				"\x42"              // inc     edx
-				"\xe9XXXX"          // jmp     exedit_base + 6578d
-				;
+			static constinit auto code_put = binstr_array(
+				"03c3"                           // add     eax, ebx
+				"50"                             // push    eax
+				"8a5103"                         // mov     dl,[ecx + 03]
+				"f6c204"                         // test    dl,04
+				"7414"                           // jz      +20byte
+				"8b91d0000000"                   // mov     edx, dword ptr[ecx + 000000d0]
+				"8b89cc000000"                   // mov     ecx, dword ptr[ecx + 000000cc]
+				"85c9"                           // test    ecx
+				"0f85" PATCH_BINSTR_DUMMY_32(27) // jnz     exedit_base + 65789
+				"33d2"                           // xor     edx
+				"52"                             // push    edx
+				"42"                             // inc     edx
+				"e9" //PATCH_BINSTR_DUMMY_32(36) // jmp     exedit_base + 6578d
+			);
 
-			memcpy(cursor, code_put, sizeof(code_put) - 1);
-
-			store_i32(cursor + 27, GLOBAL::exedit_base + 0x065789 - (uint32_t)(cursor + 31));
-
-			cursor += sizeof(code_put) - 1;
-			store_i32(cursor - 4, GLOBAL::exedit_base + 0x06578d - (uint32_t)cursor);
+			std::memcpy(cursor, code_put.data(), code_put.size());
+			store_i32(cursor + 27, CalcNearJmp(reinterpret_cast<i32>(cursor + 27), GLOBAL::exedit_base + 0x065789));
+			store_i32(cursor + 36, CalcNearJmp(reinterpret_cast<i32>(cursor + 36), GLOBAL::exedit_base + 0x06578d));
+			cursor += code_put.size();
 		}
 		
 		void switching(bool flag) {

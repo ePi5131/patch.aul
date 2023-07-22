@@ -73,3 +73,11 @@ template<class T0, class T1>
 inline T1 exchange_i64(T0 address, T1&& value) {
 	return (T1)std::exchange(*std::bit_cast<i64*>(address), (i64)value);
 }
+
+inline constexpr int8_t operator""_i8(unsigned long long v) {
+	return int8_t(v);
+}
+
+inline constexpr uint8_t operator""_u8(unsigned long long v) {
+	return uint8_t(v);
+}

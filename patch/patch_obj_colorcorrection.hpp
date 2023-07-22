@@ -43,43 +43,43 @@ namespace patch {
 			if (!enabled_i)return;
 
 			{ // メディアオブジェクト
-				char code_effect[] =
-					"\x8b\x44\x24\x2c"         // mov     eax,dword ptr [esp+2c] ; efp
-					"\x8b\x48\x44"             // mov     ecx,dword ptr [eax+44] ; efp->track
-					"\x8b\x41\x08"             // mov     eax,dword ptr [ecx+08] ; efp->track[2]
-					"\x53"                     // push    ebx
-					"\x57"                     // push    edi
-					"\xff\x74\x24\x38"         // push    dword ptr [esp+38]
-					"\x50"                     // push    eax
-					"\x56"                     // push    esi
-					"\xe8XXXX"                 // call    rot_hue()
-					"\x83\xc4\x14"             // add     esp,+14
-					"\xe9\x8d\x00\x00\x00"     // jmp     10014996
-					;
-				OverWriteOnProtectHelper h(GLOBAL::exedit_base + 0x148ea, sizeof(code_effect) - 1);
-				memcpy(reinterpret_cast<void*>(h.address()), code_effect, sizeof(code_effect) - 1);
+				static constinit auto code_effect = binstr_array(
+					"8b44242c"                     // mov     eax,dword ptr [esp+2c] ; efp
+					"8b4844"                       // mov     ecx,dword ptr [eax+44] ; efp->track
+					"8b4108"                       // mov     eax,dword ptr [ecx+08] ; efp->track[2]
+					"53"                           // push    ebx
+					"57"                           // push    edi
+					"ff742438"                     // push    dword ptr [esp+38]
+					"50"                           // push    eax
+					"56"                           // push    esi
+					"e8" PATCH_BINSTR_DUMMY_32(19) // call    rot_hue()
+					"83c414"                       // add     esp,+14
+					"e98d000000"                   // jmp     10014996
+				);
+				OverWriteOnProtectHelper h(GLOBAL::exedit_base + 0x148ea, code_effect.size());
+				h.copy_from(code_effect.data(), code_effect.size());
 				h.replaceNearJmp(19, rot_hue);
 			}
 
 
 			{ // メディアオブジェクト // 飽和する
 				{
-					char code_effect_sat[] =
-						"\x8b\x44\x24\x34"         // mov     eax,dword ptr [esp+34] ; efp
-						"\x8b\x48\x44"             // mov     ecx,dword ptr [eax+44] ; efp->track
-						"\x8b\x41\x08"             // mov     eax,dword ptr [ecx+08] ; efp->track[2]
-						"\xff\x74\x24\x2c"         // push    dword ptr [esp+2c]
-						"\xff\x74\x24\x28"         // push    dword ptr [esp+28]
-						"\xff\x74\x24\x18"         // push    dword ptr [esp+18]
-						"\x50"                     // push    eax
-						"\x53"                     // push    ebx
-						"\xe8XXXX"                 // call    rot_hue_sat()
-						"\x83\xc4\x14"             // add     esp,+14
-						"\x8b\x44\x24\x38"         // mov     eax,dword ptr [esp+38] ; efpip
-						"\xe9\xea\x00\x00\x00"     // jmp     10014f8c
-						;
-					OverWriteOnProtectHelper h(GLOBAL::exedit_base + 0x14e79, sizeof(code_effect_sat) - 1);
-					memcpy(reinterpret_cast<void*>(h.address()), code_effect_sat, sizeof(code_effect_sat) - 1);
+					static constinit auto code_effect_sat = binstr_array(
+						"8b442434"                     // mov     eax,dword ptr [esp+34] ; efp
+						"8b4844"                       // mov     ecx,dword ptr [eax+44] ; efp->track
+						"8b4108"                       // mov     eax,dword ptr [ecx+08] ; efp->track[2]
+						"ff74242c"                     // push    dword ptr [esp+2c]
+						"ff742428"                     // push    dword ptr [esp+28]
+						"ff742418"                     // push    dword ptr [esp+18]
+						"50"                           // push    eax
+						"53"                           // push    ebx
+						"e8" PATCH_BINSTR_DUMMY_32(25) // call    rot_hue_sat()
+						"83c414"                       // add     esp,+14
+						"8b442438"                     // mov     eax,dword ptr [esp+38] ; efpip
+						"e9ea000000"                   // jmp     10014f8c
+					);
+					OverWriteOnProtectHelper h(GLOBAL::exedit_base + 0x14e79, code_effect_sat.size());
+					h.copy_from(code_effect_sat.data(), code_effect_sat.size());
 					h.replaceNearJmp(25, rot_hue_sat);
 				}
 				{
@@ -98,46 +98,46 @@ namespace patch {
 
 
 			{ // フィルタオブジェクト
-				char code_filter[] =
-					"\x8b\x44\x24\x2c"         // mov     eax,dword ptr [esp+2c] ; efp
-					"\x8b\x48\x44"             // mov     ecx,dword ptr [eax+44] ; efp->track
-					"\x8b\x41\x08"             // mov     eax,dword ptr [ecx+08] ; efp->track[2]
-					"\x57"                     // push    edi
-					"\x55"                     // push    ebp
-					"\xff\x74\x24\x38"         // push    dword ptr [esp+38]
-					"\x50"                     // push    eax
-					"\x56"                     // push    esi
-					"\xe8XXXX"                 // call    rot_hue()
-					"\x83\xc4\x14"             // add     esp,+14
-					"\x8b\x4c\x24\x18"         // mov     ecx,dword ptr [esp+18] ; x
-					"\x83\xc6\x06"             // add     esi,+06
-					"\xe9\x8e\x00\x00\x00"     // jmp     10014c67
-					;
-				OverWriteOnProtectHelper h(GLOBAL::exedit_base + 0x14bb3, sizeof(code_filter) - 1);
-				memcpy(reinterpret_cast<void*>(h.address()), code_filter, sizeof(code_filter) - 1);
+				static constinit auto code_filter = binstr_array(
+					"8b44242c"                     // mov     eax,dword ptr [esp+2c] ; efp
+					"8b4844"                       // mov     ecx,dword ptr [eax+44] ; efp->track
+					"8b4108"                       // mov     eax,dword ptr [ecx+08] ; efp->track[2]
+					"57"                           // push    edi
+					"55"                           // push    ebp
+					"ff742438"                     // push    dword ptr [esp+38]
+					"50"                           // push    eax
+					"56"                           // push    esi
+					"e8" PATCH_BINSTR_DUMMY_32(19) // call    rot_hue()
+					"83c414"                       // add     esp,+14
+					"8b4c2418"                     // mov     ecx,dword ptr [esp+18] ; x
+					"83c606"                       // add     esi,+06
+					"e98e000000"                   // jmp     10014c67
+				);
+				OverWriteOnProtectHelper h(GLOBAL::exedit_base + 0x14bb3, code_filter.size());
+				h.copy_from(code_filter.data(), code_filter.size());
 				h.replaceNearJmp(19, rot_hue);
 			}
 
 
 			{ // フィルタオブジェクト 飽和する
 				{
-					char code_filter_sat[] =
-						"\x8b\x44\x24\x34"         // mov     eax,dword ptr [esp+34] ; efp
-						"\x8b\x48\x44"             // mov     ecx,dword ptr [eax+44] ; efp->track
-						"\x8b\x41\x08"             // mov     eax,dword ptr [ecx+08] ; efp->track[2]
-						"\xff\x74\x24\x10"         // push    dword ptr [esp+10]
-						"\xff\x74\x24\x28"         // push    dword ptr [esp+28]
-						"\xff\x74\x24\x34"         // push    dword ptr [esp+34]
-						"\x50"                     // push    eax
-						"\x53"                     // push    ebx
-						"\xe8XXXX"                 // call    rot_hue_sat()
-						"\x83\xc4\x14"             // add     esp,+14
-						"\x8b\x4c\x24\x30"         // mov     ecx,dword ptr [esp+30]
-						"\x8b\x44\x24\x38"         // mov     eax,dword ptr [esp+38] ; efpip
-						"\xe9\xea\x00\x00\x00"     // jmp     10015354
-						;
-					OverWriteOnProtectHelper h(GLOBAL::exedit_base + 0x1523d, sizeof(code_filter_sat) - 1);
-					memcpy(reinterpret_cast<void*>(h.address()), code_filter_sat, sizeof(code_filter_sat) - 1);
+					static constinit auto code_filter_sat = binstr_array(
+						"8b442434"                     // mov     eax,dword ptr [esp+34] ; efp
+						"8b4844"                       // mov     ecx,dword ptr [eax+44] ; efp->track
+						"8b4108"                       // mov     eax,dword ptr [ecx+08] ; efp->track[2]
+						"ff742410"                     // push    dword ptr [esp+10]
+						"ff742428"                     // push    dword ptr [esp+28]
+						"ff742434"                     // push    dword ptr [esp+34]
+						"50"                           // push    eax
+						"53"                           // push    ebx
+						"e8" PATCH_BINSTR_DUMMY_32(25) // call    rot_hue_sat()
+						"83c414"                       // add     esp,+14
+						"8b4c2430"                     // mov     ecx,dword ptr [esp+30]
+						"8b442438"                     // mov     eax,dword ptr [esp+38] ; efpip
+						"e9ea000000"                   // jmp     10015354
+					);
+					OverWriteOnProtectHelper h(GLOBAL::exedit_base + 0x1523d, code_filter_sat.size());
+					h.copy_from(code_filter_sat.data(), code_filter_sat.size());
 					h.replaceNearJmp(25, rot_hue_sat);
 				}
 				{

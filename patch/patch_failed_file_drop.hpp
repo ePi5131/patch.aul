@@ -58,29 +58,27 @@ namespace patch {
 
 			*/
 
-			char code_put[] =
-				"\x8d\x8c\x24\xd0\x00\x00\x00"//  lea     ecx,dword ptr [esp+000000d0]
-				"\x51"                        //  push    ecx
-				"\xe8XXXX"                    //  call    1004e1d0 ; ExtractExtension
-				"\x83\xc4\x04"                //  add     esp,+04
-				"\x68\x30\x20\x04\x00"        //  push    0x42030
-				"\x50"                        //  push    eax
-				"\x68XXXX"                    //  push    &str_failed_drop_msg
-				"\xa1\x44\x7a\x17\x00"        //  mov     eax,[exedit+exedit_hwnd]
-				"\x50"                        //  push    eax
-				"\xff\x15\x20\xa3\x09\x00"    //  call    dword ptr [exedit+MessageBoxA]
-				"\xe9"                        //  jmp     10043b4c
-				;
+			static constinit auto code_put = binstr_array(
+				"8d8c24d0000000"                 //  lea     ecx,dword ptr [esp+000000d0]
+				"51"                             //  push    ecx
+				"e8" PATCH_BINSTR_DUMMY_32(9)    //  call    1004e1d0 ; ExtractExtension
+				"83c404"                         //  add     esp,+04
+				"6830200400"                     //  push    0x42030
+				"50"                             //  push    eax
+				"68" PATCH_BINSTR_DUMMY_32(23)   //  push    i32(&str_failed_drop_msg)
+				"a1" PATCH_BINSTR_DUMMY_32(28)   //  mov     eax, [i32(exedit+exedit_hwnd)]
+				"50"                             //  push    eax
+				"ff15" PATCH_BINSTR_DUMMY_32(35) //  call    dword ptr [exedit+MessageBoxA]
+				"e9"                             //  jmp     10043b4c
+			);
 
-			memcpy(cursor, code_put, sizeof(code_put) - 1);
-			store_i32(cursor + 9, GLOBAL::exedit_base + 0x04e1d0 - (int)cursor - 13);
+			std::memcpy(cursor, code_put.data(), code_put.size());
+			store_i32(cursor + 9, CalcNearJmp(reinterpret_cast<i32>(cursor + 13), GLOBAL::exedit_base + 0x04e1d0));
 			store_i32(cursor + 23, &str_failed_drop_msg);
 			store_i32(cursor + 28, GLOBAL::exedit_base + OFS::ExEdit::exedit_hwnd);
 			store_i32(cursor + 35, GLOBAL::exedit_base + 0x09a320);
-			cursor += sizeof(code_put) - 1 + 4;
-			store_i32(cursor - 4, GLOBAL::exedit_base + 0x043b4c - (int)cursor);
-
-
+			store_i32(cursor + 40, CalcNearJmp(reinterpret_cast<i32>(cursor + 40), GLOBAL::exedit_base + 0x043b4c));
+			cursor += code_put.size() + 4;
 		}
 
 		void switching(bool flag) {

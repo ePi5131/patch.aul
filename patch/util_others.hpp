@@ -20,6 +20,8 @@
 #include <format>
 #include <concepts>
 #include <string_view>
+#include <ranges>
+#include <array>
 
 #include <Windows.h>
 #include <CommCtrl.h>
@@ -242,4 +244,27 @@ inline void open_explorer(const std::wstring& path) {
 	SCOPE_EXIT_AUTO{[il]{ ILFree(il); }};
 
 	SHOpenFolderAndSelectItems(il, 0, nullptr, 0);
+}
+
+
+// "010203" のような文字列を std::byte[]{ 1, 2, 3 } のように変換
+template<size_t N>
+requires (N % 2 == 1)
+constexpr auto binstr(const char(&str)[N]) {
+	return str |
+		std::views::chunk(2) |
+		std::views::take(N / 2) |
+		std::views::transform([](const auto& x) {
+			std::uint8_t b;
+			std::from_chars(x.begin(), x.end(), b, 16);
+			return std::byte{b};
+		});
+}
+
+template<size_t N>
+requires (N % 2 == 1)
+constexpr auto binstr_array(const char(&str)[N]) {
+	std::array<std::byte, N / 2> ret;
+	std::ranges::copy(binstr(str), ret.begin());
+	return ret;
 }

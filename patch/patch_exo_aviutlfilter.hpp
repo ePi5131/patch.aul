@@ -65,21 +65,21 @@ namespace patch {
 						 RET
 			*/
 
-			static const char code_put[] =
-				"\x8a\x46\x03"				// MOV AL, BYTE PTR [ESI + 3H]
-				"\xa8\x04"					// TEST AL, 04H
-				"\x75\x03"					// JNZ SKIP, 03H
-				"\x33\xc0"					// XOR EAX, EAX
-				"\xc3"						// RET
-				"\x8b\x86\xcc\x00\x00\x00"	// MOV EAX, DWORD PTR [ESI + CCH] ; filter_param_ptr->track_scale
-				"\xc3"						// RET
-				;
-			memcpy(cursor, code_put, sizeof(code_put) - 1);
+			static constinit auto code_put = binstr_array(
+				"8a4603"       // MOV AL, BYTE PTR [ESI + 3H]
+				"a804"         // TEST AL, 04H
+				"7503"         // JNZ SKIP, 03H
+				"33c0"         // XOR EAX, EAX
+				"c3"           // RET
+				"8b86cc000000" // MOV EAX, DWORD PTR [ESI + CCH] ; filter_param_ptr->track_scale
+				"c3"           // RET
+			);
+			std::memcpy(cursor, code_put.data(), code_put.size());
 
 			auto apply = [&cursor](uint32_t ofs, std::optional<restorable_patch>& rp) {
 				char injection[6];
-				injection[0] = '\x90'; // nop
-				injection[1] = '\xe8'; // call rel32
+				injection[0] = 0x90_i8; // nop
+				injection[1] = 0xe8_i8; // call rel32
 				store_i32(&injection[2], CalcNearJmp(ofs + 2, reinterpret_cast<i32>(cursor)));
 				rp.emplace(ofs, injection, sizeof(injection));
 			};
@@ -88,7 +88,7 @@ namespace patch {
 			apply(GLOBAL::exedit_base + OFS::ExEdit::ConvertFilter2Exo_TrackScaleJudge_Overwrite2, rp2);
 			apply(GLOBAL::exedit_base + OFS::ExEdit::ConvertFilter2Exo_TrackScaleJudge_Overwrite3, rp3);
 
-			cursor += sizeof(code_put) - 1;
+			cursor += code_put.size();
 
 			rp1->switching(enabled);
 			rp2->switching(enabled);

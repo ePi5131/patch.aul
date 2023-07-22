@@ -22,6 +22,7 @@
 #include "global.hpp"
 #include "offset_address.hpp"
 #include "util.hpp"
+#include "config_rw.hpp"
 
 namespace patch {
 
@@ -51,16 +52,15 @@ namespace patch {
 				ecx,dword ptr [edx+8]を ecx,dword ptr [edx+ track_id*4]にする
 			*/
 
-			static const char code_put[] =
+			static constinit auto code_put = binstr_array(
+				"2bf0"     // sub     esi, eax
+				"8b4c244c" // mov     ecx, dword ptr[esp + 0x4c]
+				"8b0c8a"   // mov     ecx, dword ptr[edx + ecx * 4]
+				"c3"       // ret     exedit_base + 0x4d8ec
+			);
 
-				"\x2b\xf0"          // sub     esi, eax
-				"\x8b\x4c\x24\x4c"  // mov     ecx, dword ptr[esp + 0x4c]
-				"\x8b\x0c\x8a"      // mov     ecx, dword ptr[edx + ecx * 4]
-				"\xc3"              // ret     exedit_base + 0x4d8ec
-				;
-
-			memcpy(cursor, code_put, sizeof(code_put) - 1);
-			cursor += sizeof(code_put) - 1;
+			std::memcpy(cursor, code_put.data(), code_put.size());
+			cursor += code_put.size();
 		}
 
 		void switching(bool flag) {
