@@ -20,6 +20,7 @@
 #include <type_traits>
 #include <stdexcept>
 #include <ranges>
+#include <algorithm>
 
 #include <Windows.h>
 
@@ -101,11 +102,12 @@ public:
 
 		return ret;
 	}
+
+	inline friend bool operator==(const SHA256& a, const SHA256& b) {
+		return std::ranges::equal(a.data, b.data);
+	}
 };
 
-inline bool operator==(const SHA256& a, const SHA256& b) {
-	return std::ranges::equal(a.data, b.data);
-}
 
 struct FNV1_32 {
 	uint32_t hash;
