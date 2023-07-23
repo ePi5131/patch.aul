@@ -339,7 +339,7 @@ namespace patch {
 
 	public:
 		void operator()() {
-			log_dir = WinWrap::Module{}.getFileNameW();
+			log_dir = WinWrap::Module::getCallingProcessModule().getFileNameW();
 			log_dir.resize(log_dir.find_last_of(L"/\\") + 1);
 			log_dir += L"log\\";
 

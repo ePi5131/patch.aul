@@ -17,6 +17,7 @@
 #include <bit>
 #include <cstdint>
 #include <Windows.h>
+#include <winwrap.hpp>
 
 namespace GLOBAL {
 	inline HMODULE aviutl_hmod;
@@ -25,6 +26,6 @@ namespace GLOBAL {
 
 	inline void init_minimum(HINSTANCE patch_hmod) {
 		GLOBAL::patchaul_hinst = patch_hmod;
-		GLOBAL::aviutl_base = std::bit_cast<uint32_t>(GetModuleHandleA(NULL));
+		GLOBAL::aviutl_base = std::bit_cast<uint32_t>(WinWrap::Module::getCallingProcessModule());
 	}
 }

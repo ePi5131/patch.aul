@@ -140,7 +140,7 @@ static bool warning_duplicate_message(
 
 
 static HMODULE warning_duplicate_common(path_cache& map, LPCSTR lpLibFileName) {
-	static auto exe_dir = std::filesystem::path{ WinWrap::Module{GetModuleHandleA(NULL)}.getFileNameW() }.parent_path();
+	static auto exe_dir = std::filesystem::path{ WinWrap::Module::getCallingProcessModule().getFileNameW() }.parent_path();
 
 	const std::filesystem::path arg_path{ lpLibFileName };
 	const auto arg_filename = arg_path.filename();
