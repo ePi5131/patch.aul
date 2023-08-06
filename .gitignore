@@ -364,7 +364,8 @@ FodyWeavers.xsd
 
 
 # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
-.vscode/
-test/
-pack/
-Release_PDB/
+/.vscode/
+/test/
+/pack/
+/Intermediate/
+/Output/
